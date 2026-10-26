@@ -97,6 +97,6 @@ function aiPrevBtn(sec,G){if(!AION)return;const ok=G.filter(r=>+r.dati.importo>0
   sec.appendChild(b);sec.appendChild(out);}
 function aiPercBtn(box,P){if(!AION)return;const b=h('<button type="button" class="lnk2">Fai controllare il percorso all’assistente</button>');const out=h('<div class="aibox" hidden></div>');
   b.addEventListener('click',async()=>{b.disabled=true;b.textContent='L’assistente sta controllando…';const T=P.tappe||[];
-    const percorso={nome:P.nome,data:P.data,ora:P.ora,anziani_o_disabili:!!P.fragili,lunghezza_m:Math.round(lung(T)),durata_min:durata(P),tappe:T.map((t,i)=>({n:i+1,nome:t.n||'',lat:+t.lat.toFixed(5),lng:+t.lng.toFixed(5),sosta:t.sosta||'',minuti:t.min||0,nei_sassi:inSassi(t)})),corteo:P.corteo||[],punti_sicurezza:((P.sic&&P.sic.punti)||[]).map(p=>({tipo:(PT[p.t]||[p.t])[0],lat:+p.lat.toFixed(5),lng:+p.lng.toFixed(5)})),avvisi_automatici:avvisi(P).map(a=>a[1])};
+    const percorso=percorsoPerAI(P);
     const x=await ai('percorso',{percorso});b.remove();out.hidden=false;out.innerHTML=x.err?esc(x.err):'<div class="wh"><span class="orb sm"></span><b>Controllo dell’assistente</b></div><p>'+testoAI(x.testo)+'</p><span class="aisig">Controllo preliminare scritto dall’assistente: non sostituisce le verifiche della Sicurezza.</span>';});
   box.appendChild(b);box.appendChild(out);}

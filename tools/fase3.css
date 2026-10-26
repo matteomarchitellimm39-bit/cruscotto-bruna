@@ -31,3 +31,14 @@
 .bb.ko{color:var(--bad)}
 .pdfing .leaflet-control-zoom{display:none}
 @media(max-width:700px){.big3.mini{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.big3.mini .kpi{padding:12px;border-radius:18px}.big3.mini .kpi span{font-size:12.5px}.big3.mini .kpi b{font-size:17px;letter-spacing:-.2px}}
+/* strumenti della mappa e vie */
+.mtools{display:flex;flex-wrap:wrap;gap:6px}
+.mtools button{display:flex;align-items:center;gap:6px;font:inherit;font-size:14px;font-weight:650;border:0;border-radius:16px;padding:8px 12px;background:#F2F3F7;color:#16161D;cursor:pointer;min-height:44px}
+.mtools button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.vrow{display:flex;align-items:center;gap:8px;padding:6px 0}
+.vrow input{flex:1;min-width:0;font:inherit;font-size:16px;min-height:48px;border-radius:14px;border:1.5px solid #D6D6DE;padding:0 12px;background:#fff;color:#16161D}
+.gmsg{margin:0;font-size:15.5px;color:#4B4E5A}.gmsg.warn{color:#9A3733;font-weight:600}.gmsg.ok{color:var(--good);font-weight:600}
+.eg{padding:8px 0;border-top:1px solid #F0F0F3}.egh{display:flex;align-items:center;gap:8px;font-size:16px}.egi{font-size:15px;color:#4B4E5A;padding:3px 0 0 28px}
+.storico summary{cursor:pointer;list-style:none}.storico summary::-webkit-details-marker{display:none}
+.pin.tp b{border-radius:15px}
+@media(max-width:700px){.mtools{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}.mtools button{flex:0 0 auto}.lmap.tall{height:62vh}}
