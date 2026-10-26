@@ -11,7 +11,7 @@ create table if not exists public.inviti (
   email text primary key,
   nome text,
   admin boolean not null default false,
-  permessi jsonb not null default '{}'::jsonb,   -- {"s-bil":"vedi","s-map":"modifica",...}
+  permessi jsonb not null default '{}'::jsonb,
   usato boolean not null default false,
   creato timestamptz not null default now()
 );
