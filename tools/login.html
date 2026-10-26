@@ -1,0 +1,49 @@
+<div id="login" class="lg" hidden>
+ <div class="lg-box glass">
+  <div class="sb-brand" style="padding:0 0 6px"><i aria-hidden="true">✦</i><span>Maria SS. della Bruna<br><span class="muted" style="font-weight:600;font-size:14px">Piattaforma di lavoro</span></span></div>
+  <div class="lg-v" data-v="entra">
+   <h2>Entra</h2>
+   <div class="ctl"><label for="le">Email</label><input type="text" id="le" autocomplete="username" inputmode="email"></div>
+   <div class="ctl"><label for="lp">Password</label><input type="password" id="lp" autocomplete="current-password"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="lgo">Entra</button></div>
+   <p class="small"><a href="#" class="lnk" data-go="primo">Primo accesso? Crea la tua password</a><br><a href="#" class="lnk" data-go="reset">Password dimenticata</a></p>
+  </div>
+  <div class="lg-v" data-v="primo" hidden>
+   <h2>Primo accesso</h2>
+   <p class="small muted">Usa l’email con cui sei stato invitato.</p>
+   <div class="ctl"><label for="pe">Email</label><input type="text" id="pe" autocomplete="username" inputmode="email"></div>
+   <div class="ctl"><label for="pp">Scegli una password (almeno 8 caratteri)</label><input type="password" id="pp" autocomplete="new-password"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="pgo">Crea l’accesso</button></div>
+   <p class="small"><a href="#" class="lnk" data-go="entra">Torna a Entra</a></p>
+  </div>
+  <div class="lg-v" data-v="reset" hidden>
+   <h2>Password dimenticata</h2>
+   <div class="ctl"><label for="re">Email</label><input type="text" id="re" inputmode="email"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="rgo">Mandami il link</button></div>
+   <p class="small"><a href="#" class="lnk" data-go="entra">Torna a Entra</a></p>
+  </div>
+  <div class="lg-v" data-v="nuova" hidden>
+   <h2>Nuova password</h2>
+   <div class="ctl"><label for="np">Nuova password (almeno 8 caratteri)</label><input type="password" id="np" autocomplete="new-password"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="ngo">Salva e entra</button></div>
+  </div>
+  <div class="lg-v" data-v="importa" hidden>
+   <h2>Primo avvio</h2>
+   <p class="small">Il database è vuoto. Scrivi la chiave di importazione che ti ha dato Claude: carico bilancio, fornitori, previsione, eventi, censimento e le scelte già fatte nel cruscotto.</p>
+   <div class="ctl"><label for="ik">Chiave di importazione</label><input type="text" id="ik" autocomplete="off" autocapitalize="off"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="igo">Importa i dati</button></div>
+  </div>
+  <p class="lg-msg" id="lmsg" role="status"></p>
+ </div>
+</div>
+<style>
+.lg{position:relative;z-index:5;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 14px}
+.lg-box{width:min(440px,100%);border-radius:32px;padding:26px 22px;display:flex;flex-direction:column;gap:14px}
+.lg-box h2{font-size:30px;font-weight:300;margin:0 0 6px}
+.lg-v{display:flex;flex-direction:column;gap:12px}
+.lg input[type=password]{font:inherit;font-size:18px;padding:10px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);min-height:50px;width:100%}
+.lg input[type=text]{background:var(--surface)}
+.lg-msg{margin:0;font-weight:600;min-height:1em}
+#app[hidden]{display:none!important}
+#s-adm select{font:inherit;font-size:16px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);padding:0 10px}
+</style>

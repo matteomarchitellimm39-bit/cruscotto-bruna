@@ -1,0 +1,3 @@
+*.sql.local
+supabase/02-dati.sql
+__pycache__/
