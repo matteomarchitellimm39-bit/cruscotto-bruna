@@ -56,10 +56,10 @@ rep("let PRES={},mapSel='vv',presRef=null,presCan=true,presQ=Promise.resolve();"
 # pulsante Esci e nome
 # --- Bruna27: menu a 5 sezioni, barra in alto con campanella e avatar
 i = T.index('<nav class="side glass" id="tabs"'); j = T.index('</nav>', i) + 6
-T = T[:i] + ('<nav class="b27side" aria-label="Menu"><button type="button" class="b27logo" data-go="p-home" aria-label="Home"><i aria-hidden="true">B</i><b>Bruna<span>27</span></b></button><div id="navlist"></div></nav>'
+T = T[:i] + ('<nav class="b27side" aria-label="Menu"><button type="button" class="b27logo" data-go="p-home" aria-label="Home"><img src="logo-bruna.png" alt=""><b>Bruna<span>27</span></b></button><div id="navlist"></div></nav>'
   '<nav id="botnav" aria-label="Sezioni"></nav><div hidden><div role="tablist" id="tablist"></div><button type="button" id="sbm"></button></div>') + T[j:]
 i = T.index('  <div class="topbar">'); j = T.index('</div>\n', i) + 7
-T = T[:i] + ('  <div class="topbar"><button type="button" class="b27logo m" data-go="p-home" aria-label="Home"><i aria-hidden="true">B</i><b>Bruna<span>27</span></b></button>'
+T = T[:i] + ('  <div class="topbar"><button type="button" class="b27logo m" data-go="p-home" aria-label="Home"><img src="logo-bruna.png" alt=""><b>Bruna<span>27</span></b></button>'
   '<span class="status" id="status">Carico…</span><div class="tbr"><button type="button" class="bb soft" id="edt" aria-pressed="false">✎ Modifica</button>'
   '<button type="button" class="round" id="sbs" aria-label="Cerca"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>'
   '<button type="button" class="round" id="bell" aria-label="Notifiche"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span id="bellN" hidden></span></button>'

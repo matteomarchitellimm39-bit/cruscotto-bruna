@@ -443,7 +443,7 @@ section[role=tabpanel]>p.muted{color:var(--muted)}
 :root,:root[data-theme="light"]{
   --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --bg:#F6F6F8;--panel:transparent;--surface:#FFFFFF;--raised:#F6F6F8;--fg:#16161D;--ink:#16161D;--muted:#6B6E7A;--line:#ECECF1;
-  --acc:#4A45B5;--acc-soft:#F0F0FA;--good:#1F6B4F;--good-soft:#E8F3EE;--bad:#B8433F;--bad-soft:#FBECEB;--gold:#8A6414;--gold-soft:#F7EFDC;
+  --acc:#1F3F7A;--acc-soft:#EEF2FA;--navy:#0B2147;--good:#1F6B4F;--good-soft:#E8F3EE;--bad:#B8433F;--bad-soft:#FBECEB;--gold:#8A6414;--gold-soft:#F7EFDC;
   --shadow:0 10px 30px rgba(22,22,29,.05);--side-w:248px;
   --glass:#FFFFFF;--glass-b:transparent;--glass-sh:0 10px 30px rgba(22,22,29,.06);--glass-hl:transparent;
 }
@@ -454,7 +454,7 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .sh h2{font-size:clamp(28px,4vw,36px);font-weight:800;letter-spacing:-.8px;line-height:1.15}
 .sh .eyb,.eyb{color:var(--acc);font-weight:700;letter-spacing:0;text-transform:none;font-size:15px}
 .bb{border-radius:999px;font-weight:700}
-.bb[aria-pressed="true"],.bb.dark{background:#16161D;color:#fff;border-color:#16161D}
+.bb[aria-pressed="true"],.bb.dark{background:var(--navy);color:#fff;border-color:#16161D}
 .bb.soft{background:#fff;color:#16161D}
 .bb.sm{min-height:42px;padding:8px 16px;font-size:15px}
 .muted{color:var(--muted)} .small{font-size:14px}
@@ -464,11 +464,11 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .topbar{gap:10px}
 .topbar .status{flex:1 1 200px;font-size:14px;color:var(--muted);min-width:0}
 .b27logo{display:flex;align-items:center;gap:10px;border:0;background:none;font:inherit;cursor:pointer;color:#16161D;padding:4px}
-.b27logo i{width:40px;height:40px;border-radius:13px;background:#16161D;color:#fff;font-style:normal;font-weight:800;display:grid;place-items:center;font-size:18px}
+.b27logo i{width:40px;height:40px;border-radius:13px;background:var(--navy);color:#fff;font-style:normal;font-weight:800;display:grid;place-items:center;font-size:18px}
 .b27logo b{font-size:20px;font-weight:800;letter-spacing:-.4px}.b27logo b span{color:var(--acc)}
 .tbr{display:flex;gap:8px;align-items:center}
 .round{width:48px;height:48px;border-radius:24px;border:0;background:#fff;display:grid;place-items:center;color:#16161D;position:relative;cursor:pointer;box-shadow:var(--shadow);font:inherit;font-weight:800;font-size:17px}
-.round.av{background:#E4E3F6;color:var(--acc)}
+.round.av{background:#E2E8F5;color:var(--acc)}
 #bellN{position:absolute;top:4px;right:2px;min-width:20px;height:20px;border-radius:10px;background:#D9534F;color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;padding:0 5px}
 
 /* menu: computer a sinistra, telefono in basso */
@@ -477,9 +477,9 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 #navlist{display:flex;flex-direction:column;gap:4px;flex:1}
 .nv{font:inherit;border:0;background:transparent;color:#4B4E5A;display:flex;align-items:center;gap:12px;border-radius:20px;min-height:54px;padding:8px 14px;font-size:17px;font-weight:650;text-align:left;cursor:pointer}
 .nv:hover{background:#F6F6F8}
-.nv[aria-current="true"]{background:#16161D;color:#fff}
+.nv[aria-current="true"]{background:var(--navy);color:#fff}
 .nv.small{font-size:15px;min-height:46px}
-.nv.me{background:#F0F0FA;color:var(--acc)}.nv.me[aria-current="true"]{background:var(--acc);color:#fff}
+.nv.me{background:#EEF2FA;color:var(--acc)}.nv.me[aria-current="true"]{background:var(--acc);color:#fff}
 #botnav{display:none}
 .shell{margin-left:calc(var(--side-w) + 36px);margin-right:auto;max-width:1180px;padding:20px 28px 60px}
 .topbar .b27logo.m{display:none}
@@ -497,26 +497,26 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .tilegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .vtile{font:inherit;text-align:left;border:0;background:#fff;border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:8px;cursor:pointer;box-shadow:var(--shadow);min-height:150px;color:#16161D}
 .vtile:hover{box-shadow:0 14px 34px rgba(22,22,29,.09)}
-.vtile .vic{width:48px;height:48px;border-radius:16px;background:#F0F0FA;color:var(--acc);display:grid;place-items:center}
+.vtile .vic{width:48px;height:48px;border-radius:16px;background:#EEF2FA;color:var(--acc);display:grid;place-items:center}
 .vtile .vt{font-size:19px;font-weight:800;line-height:1.25}
 .vtile .vs{font-size:15px;color:var(--muted)}
-.vtile.first{background:#16161D;color:#fff}.vtile.first .vic{background:rgba(255,255,255,.12);color:#fff}.vtile.first .vs{color:#B9BAC6}
+.vtile.first{background:var(--navy);color:#fff}.vtile.first .vic{background:rgba(255,255,255,.12);color:#fff}.vtile.first .vs{color:#B9BAC6}
 
 /* numeri grandi, elenchi a schede */
 .big3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
 .kpi{background:#fff;border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow)}
 .kpi span{font-size:15px;color:var(--muted);font-weight:600}.kpi b{font-size:28px;font-weight:800;letter-spacing:-.6px}
-.kpi.dark{background:#16161D;color:#fff}.kpi.dark span{color:#B9BAC6}.kpi.dark .pos{color:#7FD6AE}.kpi.dark .neg{color:#FF9C95}
+.kpi.dark{background:var(--navy);color:#fff}.kpi.dark span{color:#B9BAC6}.kpi.dark .pos{color:#7FD6AE}.kpi.dark .neg{color:#FF9C95}
 .seg{display:flex;gap:6px;background:#EEEEF3;border-radius:22px;padding:5px;align-self:flex-start;max-width:100%;overflow-x:auto}
 .seg.wrap{flex-wrap:wrap}
 .seg button{font:inherit;border:0;background:transparent;border-radius:18px;padding:10px 16px;font-size:15px;font-weight:650;color:#4B4E5A;cursor:pointer;white-space:nowrap;min-height:44px}
 .seg button[aria-pressed="true"]{background:#fff;color:#16161D;font-weight:800;box-shadow:0 2px 8px rgba(22,22,29,.08)}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .card.rc,.card.vc{gap:10px}
-.card.hot{box-shadow:inset 0 0 0 2px #16161D,var(--shadow)}
+.card.hot{box-shadow:inset 0 0 0 2px var(--navy),var(--shadow)}
 .vn{font-size:19px;font-weight:800;line-height:1.3}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip2{background:#F0F0FA;color:var(--acc);font-weight:700;font-size:13.5px;border-radius:12px;padding:5px 10px}
+.chip2{background:#EEF2FA;color:var(--acc);font-weight:700;font-size:13.5px;border-radius:12px;padding:5px 10px}
 .chip2.ok{background:var(--good-soft);color:var(--good)}.chip2.ko{background:var(--bad-soft);color:#9A3733}
 .fact2{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #F0F0F3;font-size:16px}
 .fact2 span{color:var(--muted)}.fact2 b{text-align:right;overflow-wrap:anywhere}
@@ -526,7 +526,7 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .res{font-size:16px;padding-top:6px}.res b{font-size:20px}
 .rowb{display:flex;gap:8px;margin-top:4px}
 .rowb button{flex:1;font:inherit;font-weight:700;font-size:15px;border:0;border-radius:18px;padding:12px;background:#F6F6F8;color:#16161D;cursor:pointer;min-height:46px}
-.rowb .ko{color:var(--bad)}.rowb .okb{background:#16161D;color:#fff}
+.rowb .ko{color:var(--bad)}.rowb .okb{background:var(--navy);color:#fff}
 .bigadd{font:inherit;font-weight:800;font-size:17px;border:2px dashed #D6D6DE;background:rgba(255,255,255,.7);color:var(--acc);border-radius:26px;padding:18px;cursor:pointer;min-height:60px}
 .card.soon{align-items:flex-start}
 .gh{margin:10px 4px 0;font-size:18px;font-weight:800}
@@ -540,13 +540,13 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 @media(max-width:1023px){.wgrid{grid-template-columns:1fr}}
 .w{background:#fff;border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);position:relative;min-width:0;border:0;font:inherit;text-align:left;color:#16161D}
 .w.wide{grid-column:1/-1}
-.w.wdark{background:#16161D;color:#fff}.w.wdark .wl,.w.wdark .wsub{color:#B9BAC6}
+.w.wdark{background:var(--navy);color:#fff}.w.wdark .wl,.w.wdark .wsub{color:#B9BAC6}
 .wl{font-size:14px;font-weight:700;color:var(--muted)}
 .wsub{font-size:15.5px;color:#4B4E5A}
 .wbig{font-size:46px;font-weight:800;letter-spacing:-1.6px;line-height:1.05}.wbig small{font-size:19px;font-weight:600;letter-spacing:0}
 .w .bb{align-self:flex-start;margin-top:6px}
 .wh{display:flex;align-items:center;gap:10px;justify-content:space-between}.wh b{font-size:17px;flex:1}
-.orb{width:34px;height:34px;border-radius:17px;background:radial-gradient(circle at 30% 30%,#FFF 0%,#C9C6F2 45%,#7C77D8 100%);flex-shrink:0}
+.orb{width:34px;height:34px;border-radius:17px;background:radial-gradient(circle at 30% 30%,#FFF 0%,#C9D3EE 45%,#36579A 100%);flex-shrink:0}
 .brief{margin:0;font-size:16.5px;line-height:1.55}
 .rq{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #F0F0F3}
 .rq>div{display:flex;flex-direction:column;min-width:0}.rq>div b{font-size:16px}.rq>div span{font-size:14px;color:var(--muted)}.rq>div span.neg{color:#D9534F;font-weight:600}
@@ -555,7 +555,7 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:4px 0}
 .day2{background:#F6F6F8;border-radius:18px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
 .day2 span{font-size:12.5px;color:var(--muted);text-transform:capitalize}.day2 b{font-size:19px}
-.day2.on{background:#16161D;color:#fff}.day2.on span{color:#B9BAC6}
+.day2.on{background:var(--navy);color:#fff}.day2.on span{color:#B9BAC6}
 .day2 i{width:6px;height:6px;border-radius:3px;background:var(--acc)}.day2.on i{background:#C9C6F2}
 .ev2{display:flex;gap:12px;align-items:center;background:#F6F6F8;border-radius:18px;padding:12px 16px;flex-wrap:wrap}
 .ev2 b{font-size:15px;text-transform:capitalize}.ev2 span{font-size:16px;flex:1;min-width:140px}.ev2 em{font-style:normal;font-size:13.5px;font-weight:700;color:var(--acc)}
@@ -567,7 +567,7 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 /* Il mio spazio, persone */
 .mehead{display:flex;align-items:center;gap:16px}
 .mehead h2{margin:0;font-size:30px;font-weight:800;letter-spacing:-.6px}
-.av{width:40px;height:40px;border-radius:20px;background:#E4E3F6;color:var(--acc);font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.av{width:40px;height:40px;border-radius:20px;background:#E2E8F5;color:var(--acc);font-weight:800;display:grid;place-items:center;flex-shrink:0}
 .av.big{width:64px;height:64px;border-radius:32px;font-size:26px}
 .who{display:flex;align-items:center;gap:12px;font-size:16px}
 .noti{display:flex;gap:12px;align-items:flex-start;width:100%;border:0;background:none;font:inherit;text-align:left;padding:12px 0;border-top:1px solid #F0F0F3;cursor:pointer;color:#16161D;font-size:16px}
@@ -598,9 +598,9 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .pdfing .back,.pdfing .b27side,.pdfing #botnav,.pdfing .rowb,.pdfing .bigadd{display:none!important}
 /* ===== Bruna27 · Fase 2 ===== */
 .amt{font-size:26px;font-weight:800;letter-spacing:-.6px}
-.filebtn{display:flex;align-items:center;gap:12px;border:0;background:#F0F0FA;color:var(--acc);font:inherit;border-radius:18px;padding:12px 14px;cursor:pointer;text-align:left;min-height:52px}
+.filebtn{display:flex;align-items:center;gap:12px;border:0;background:#EEF2FA;color:var(--acc);font:inherit;border-radius:18px;padding:12px 14px;cursor:pointer;text-align:left;min-height:52px}
 .filebtn span{display:flex;flex-direction:column;font-weight:700;font-size:15.5px;min-width:0}.filebtn em{font-style:normal;font-weight:500;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
-.steps{display:flex;gap:8px}.steps i{flex:1;height:6px;border-radius:3px;background:#D6D6DE}.steps i.on{background:#16161D}
+.steps{display:flex;gap:8px}.steps i{flex:1;height:6px;border-radius:3px;background:#D6D6DE}.steps i.on{background:var(--navy)}
 .drop{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px dashed #D6D6DE;border-radius:24px;padding:30px 16px;text-align:center;cursor:pointer;color:var(--acc);background:#FAFAFC}
 .drop b{font-size:18px;color:#16161D;overflow-wrap:anywhere}.drop span{font-size:15px;color:var(--muted)}
 .drop input{position:absolute;opacity:0;width:1px;height:1px}
@@ -608,7 +608,7 @@ body{background:radial-gradient(120% 60% at 70% 0%,#E9EBF6 0%,#F4F4F7 55%,#F6F6F
 .orb.sm{width:22px;height:22px;display:inline-block;vertical-align:middle;margin-right:6px}
 .pv{gap:12px}.pv h3{margin:0;font-size:19px}
 .offer{background:#F6F6F8;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:8px}
-.offer.best{background:#fff;box-shadow:inset 0 0 0 2px #16161D}
+.offer.best{background:#fff;box-shadow:inset 0 0 0 2px var(--navy)}
 .offer.off{opacity:.6}
 .oh2{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.oh2 b{font-size:17px}.oh2 .amt{font-size:22px}
 .why{margin:0;font-size:15.5px;line-height:1.5}
@@ -636,10 +636,10 @@ body.editing .bxw{display:flex}
 .flow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
 .flow span{font-size:13.5px;font-weight:700;border-radius:12px;padding:6px 10px;background:#EEEEF3;color:#6B6E7A}
 .flow span.done{background:var(--good-soft);color:var(--good)}
-.flow span.now{background:#16161D;color:#fff}
+.flow span.now{background:var(--navy);color:#fff}
 .tappa{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #F0F0F3}
-.tn{width:34px;height:34px;border-radius:17px;background:#16161D;color:#fff;font-weight:800;display:grid;place-items:center;flex-shrink:0}
-.tn.s{background:#D9822B}.tn.c{background:#F0F0FA;color:var(--acc)}
+.tn{width:34px;height:34px;border-radius:17px;background:var(--navy);color:#fff;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.tn.s{background:#D9822B}.tn.c{background:#EEF2FA;color:var(--acc)}
 .tb2{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
 .tb2 input,.tb2 select{font:inherit;font-size:16px;min-height:46px;border-radius:14px;border:1.5px solid #D6D6DE;padding:0 10px;background:#fff;color:#16161D;min-width:0}
 .trow{display:flex;gap:6px}.trow select{flex:1}.trow input{width:96px}
@@ -648,7 +648,7 @@ body.editing .bxw{display:flex}
 .tbtn button.ko{color:var(--bad)}
 @media(max-width:520px){.tappa{flex-wrap:wrap}.tb2{flex:1 1 calc(100% - 50px)}.tbtn{margin-left:46px}}
 .avv{margin:0;padding:10px 12px;border-radius:14px;font-size:15.5px;line-height:1.45}
-.avv.warn{background:#FBECEB;color:#7A2A26}.avv.info{background:#F0F0FA;color:#2E2A80}.avv.ok{background:var(--good-soft);color:var(--good)}
+.avv.warn{background:#FBECEB;color:#7A2A26}.avv.info{background:#EEF2FA;color:#1F3F7A}.avv.ok{background:var(--good-soft);color:var(--good)}
 .ptools button{display:flex;align-items:center;gap:6px}
 .opac{display:flex;align-items:center;gap:10px;font-size:15px;color:#4B4E5A;flex-wrap:wrap}
 .opac input{flex:1;min-width:140px;accent-color:var(--acc)}
@@ -656,13 +656,23 @@ body.editing .bxw{display:flex}
 .pdfing .leaflet-control-zoom{display:none}
 @media(max-width:700px){.big3.mini{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.big3.mini .kpi{padding:12px;border-radius:18px}.big3.mini .kpi span{font-size:12.5px}.big3.mini .kpi b{font-size:17px;letter-spacing:-.2px}}
 /* ===== Bruna27 · Fase 4-5 ===== */
-.aibox{background:#F4F3FC;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:15.5px;line-height:1.5}
+.aibox{background:#F1F4FA;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:15.5px;line-height:1.5}
 .aibox p{margin:0}.aibox .wh b{font-size:15.5px}
 .aisig{display:block;font-size:13px;color:var(--muted);margin-top:4px}
 .fbw{display:flex;flex-direction:column;gap:8px}
-.filebtn.soft{background:#fff;box-shadow:inset 0 0 0 1.5px #E2E1F6;color:var(--acc);font-weight:700;font-size:15.5px}
+.filebtn.soft{background:#fff;box-shadow:inset 0 0 0 1.5px #DCE3F2;color:var(--acc);font-weight:700;font-size:15.5px}
 .riass{font-size:17px;line-height:1.55;margin:0}
 .pstate{margin:0}
+
+/* ===== logo della Madonna della Bruna ===== */
+.b27logo img{width:42px;height:42px;border-radius:13px;object-fit:cover;display:block;flex-shrink:0;box-shadow:0 2px 8px rgba(11,33,71,.25)}
+.b27logo.big img{width:84px;height:84px;border-radius:24px}
+.b27logo.big{flex-direction:column;align-items:flex-start;gap:12px}
+.b27logo b span{color:var(--acc)}
+body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500px);height:min(92vh,1080px);background:url(logo-sagoma.png) no-repeat right bottom/contain;opacity:.055;pointer-events:none;z-index:0}
+@media(max-width:1023px){body::before{width:78vw;height:70vh;right:-14vw;bottom:8vh;opacity:.045}}
+#login{position:relative;z-index:1}
+.pdfing::before{display:none}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -673,7 +683,7 @@ body.editing .bxw{display:flex}
 <div class="bgfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 <div id="login" class="lg" hidden>
  <div class="lg-box glass">
-  <div class="b27logo" style="padding:0 0 2px"><i aria-hidden="true">B</i><b>Bruna<span>27</span></b></div><p class="muted" style="margin:0 0 4px">Associazione Maria SS. della Bruna · piattaforma di lavoro</p>
+  <div class="b27logo big" style="padding:0 0 2px"><img src="logo-bruna.png" alt="Maria SS. della Bruna"><b>Bruna<span>27</span></b></div><p class="muted" style="margin:0 0 4px">Associazione Maria SS. della Bruna · piattaforma di lavoro</p>
   <div class="lg-v" data-v="entra">
    <h2>Entra</h2>
    <div class="ctl"><label for="le">Email</label><input type="text" id="le" autocomplete="username" inputmode="email"></div>
@@ -722,9 +732,9 @@ body.editing .bxw{display:flex}
 </style>
 
 <div id="app" hidden>
-<nav class="b27side" aria-label="Menu"><button type="button" class="b27logo" data-go="p-home" aria-label="Home"><i aria-hidden="true">B</i><b>Bruna<span>27</span></b></button><div id="navlist"></div></nav><nav id="botnav" aria-label="Sezioni"></nav><div hidden><div role="tablist" id="tablist"></div><button type="button" id="sbm"></button></div>
+<nav class="b27side" aria-label="Menu"><button type="button" class="b27logo" data-go="p-home" aria-label="Home"><img src="logo-bruna.png" alt=""><b>Bruna<span>27</span></b></button><div id="navlist"></div></nav><nav id="botnav" aria-label="Sezioni"></nav><div hidden><div role="tablist" id="tablist"></div><button type="button" id="sbm"></button></div>
 <div class="shell"><div class="panel">
-  <div class="topbar"><button type="button" class="b27logo m" data-go="p-home" aria-label="Home"><i aria-hidden="true">B</i><b>Bruna<span>27</span></b></button><span class="status" id="status">Carico…</span><div class="tbr"><button type="button" class="bb soft" id="edt" aria-pressed="false">✎ Modifica</button><button type="button" class="round" id="sbs" aria-label="Cerca"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button><button type="button" class="round" id="bell" aria-label="Notifiche"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span id="bellN" hidden></span></button><button type="button" class="round av" id="avt" data-go="p-me" aria-label="Il mio spazio">·</button><button type="button" id="esci" hidden>Esci</button></div></div>
+  <div class="topbar"><button type="button" class="b27logo m" data-go="p-home" aria-label="Home"><img src="logo-bruna.png" alt=""><b>Bruna<span>27</span></b></button><span class="status" id="status">Carico…</span><div class="tbr"><button type="button" class="bb soft" id="edt" aria-pressed="false">✎ Modifica</button><button type="button" class="round" id="sbs" aria-label="Cerca"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button><button type="button" class="round" id="bell" aria-label="Notifiche"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span id="bellN" hidden></span></button><button type="button" class="round av" id="avt" data-go="p-me" aria-label="Il mio spazio">·</button><button type="button" id="esci" hidden>Esci</button></div></div>
   <div class="editbar" id="editbar" hidden><span><b>Modalità modifica.</b> Tocca ✎ accanto a un titolo, una voce, un fornitore, un evento o un luogo per cambiarlo. Le modifiche si salvano per tutti.</span><button type="button" class="bb" id="edt2">Ho finito</button></div>
   <div class="welcome"><div><h1>Cruscotto della <b>Festa della Bruna</b></h1><div class="pills" id="pills" aria-label="Dove sono andati i costi 2026"></div></div><div class="bignums" id="kpis"></div></div>
   <section id="s-bil" role="tabpanel"></section>
@@ -2146,7 +2156,7 @@ function leggiTesto(lines){const T=lines.join('\n');const AM=/(\d{1,3}(?:\.\d{3}
   o.tipo=ci>=0&&/bruna/i.test(lines[ci]+' '+(lines[ci+1]||''))?'Ricavo':'Costo';
   const sc=T.match(/scadenza[^\d]{0,30}(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})/i);if(sc)o.scadenza=isoD(sc[1],sc[2],sc[3]);
   o.voce=bilDaNome(o.soggetto);return o;}
-async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AION){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
+async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AIFOTO){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
 async function leggiFile0(file){const n=(file.name||'').toLowerCase();
   try{if(n.endsWith('.xml'))return xmlFattura(await file.text());
     if(n.endsWith('.p7m'))return xmlFattura(p7mInXml(await file.arrayBuffer()));
@@ -2214,6 +2224,7 @@ function renderPrev(){const id='v-prev',el=document.getElementById(id);el.innerH
         const m=h('<button type="button">Modifica</button>');m.addEventListener('click',()=>editRec(id,r));bx.appendChild(m);
         const x=h('<button type="button" class="ko">Elimina</button>');x.addEventListener('click',()=>ask('Eliminare il preventivo di «'+(d.fornitore||'')+'»?','Elimina',async()=>{await CTX.sb.from('voci_dati').delete().eq('id',r.id);await loadVD();renderPrev();}));bx.appendChild(x);c.appendChild(bx);}
       sec.appendChild(c);});
+    if(!acc)aiPrevBtn(sec,G);
     if(can&&!acc){const a=h('<button type="button" class="lnk2">+ Aggiungi un preventivo per questa voce</button>');a.addEventListener('click',()=>editRec(id,null,{voce:v}));sec.appendChild(a);}
     el.appendChild(sec);});
   if(!L.length)el.appendChild(h('<div class="card soon"><p>Ancora nessun preventivo.'+(can?' Caricane uno o chiedilo a un collega.':'')+'</p></div>'));
@@ -2370,7 +2381,7 @@ async function editorPerc(el,r,can){const P=r.dati;const edit=can&&(P.stato==='B
   const m=mkMap(mapC.querySelector('#pmap'),'perc');let lay=null;
   const refresh=(fit)=>{if(lay)lay.remove();lay=drawRoute(m,P,{drag:edit,onChange:()=>{refresh(false);changedP();},fit});
     info.querySelector('#pl').textContent=fmtM(lung(P.tappe||[]));info.querySelector('#pdu').textContent=fmtMin(durata(P));info.querySelector('#por').textContent=P.ora?P.ora+(fine(P)?' → '+fine(P):''):'da decidere';
-    avv.innerHTML='';avv.appendChild(h(avvisiHtml(P)));drawList();};
+    avv.innerHTML='';const ah=h(avvisiHtml(P));aiPercBtn(ah,P);avv.appendChild(ah);drawList();};
   const changedP=()=>{if(edit)autoSave(r);};
   const drawList=()=>{const box=tl.querySelector('.tlist');box.innerHTML='';const T=P.tappe||[];
     if(!T.length)box.appendChild(h('<p class="muted">Nessuna tappa: '+(edit?'tocca la mappa per iniziare dalla partenza.':'il percorso è vuoto.')+'</p>'));
@@ -2428,7 +2439,7 @@ async function editorSic(el,r,can){const P=r.dati;P.sic=P.sic||{punti:[],nota:''
   const m=mkMap(tools.querySelector('#smap'),'sic');let lay=null;
   const refresh=fit=>{if(lay)lay.remove();lay=drawRoute(m,P,{fit,onPoint:edPts?(i=>{P.sic.punti.splice(i,1);refresh(false);autoSave(r);}):null});
     const c={};P.sic.punti.forEach(p=>c[p.t]=(c[p.t]||0)+1);cnt.querySelector('.pcount').innerHTML=Object.entries(PT).map(([k,d])=>'<div class="fact2"><span><i class="dotp" style="background:'+d[2]+'">'+d[1]+'</i> '+d[0]+'</span><b>'+(c[k]||0)+'</b></div>').join('');
-    avv.innerHTML='';avv.appendChild(h(avvisiHtml(P)));};
+    avv.innerHTML='';const ah=h(avvisiHtml(P));aiPercBtn(ah,P);avv.appendChild(ah);};
   if(edPts){tools.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{tipo=b.dataset.t;tools.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));}));
     m.on('click',e=>{P.sic.punti.push({lat:e.latlng.lat,lng:e.latlng.lng,t:tipo,n:''});refresh(false);autoSave(r);});
     nt.querySelector('#snota').addEventListener('change',e=>{P.sic.nota=e.target.value;autoSave(r);});}
@@ -2504,10 +2515,10 @@ function pubWidget(){const L1=vperc().filter(r=>r.dati.stato==='Pubblicato');con
   return h('<section class="w"><div class="wh"><b>Percorsi</b><button type="button" class="lnk2" data-go="p-pub">Tutti</button></div>'+(mine.length?'<div class="rq"><div><b>'+mine.length+' da convalidare</b><span class="neg">aspettano la Sicurezza</span></div><button type="button" class="bb dark sm" data-go="v-psic">Apri</button></div>':'')+L1.slice(0,3).map(r=>'<div class="rq"><div><b>'+esc(r.dati.nome)+'</b><span>'+(r.dati.data?fmtD(r.dati.data):'')+(r.dati.ora?' · ore '+esc(r.dati.ora):'')+' · '+fmtM(lung(r.dati.tappe||[]))+'</span></div></div>').join('')+'</section>');}
 
 /* ================= Bruna27 · Fase 4-5: assistente, notifiche sul telefono, richieste di documenti ================= */
-let AION=false,MYREQ=[];
-async function aiStato(){if(!CTX.sb||!CTX.sb.functions)return;try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:{tipo:'stato'}});AION=!error&&!!(data&&data.attivo);}catch(e){AION=false;}}
+let AION=false,AIFOTO=false,AISERV='',MYREQ=[];
+async function aiStato(){if(!CTX.sb||!CTX.sb.functions)return;try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:{tipo:'stato'}});AION=!error&&!!(data&&data.attivo);AIFOTO=AION&&!!data.foto;AISERV=(data&&data.servizio)||'';}catch(e){AION=false;}}
 async function ai(tipo,payload){try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:Object.assign({tipo},payload||{})});
-    if(error)return {err:'L’assistente non risponde. Riprova tra poco.'};if(data&&data.error)return {err:data.error==='limite'?'Hai usato l’assistente molte volte oggi: riprova domani.':data.error==='chiave'?'L’assistente non è ancora attivo.':'L’assistente ha avuto un problema: '+(data.dettaglio||data.error)};
+    if(error)return {err:'L’assistente non risponde. Riprova tra poco.'};if(data&&data.error)return {err:data.error==='limite'?'Hai usato l’assistente molte volte oggi: riprova domani.':data.error==='limite_gratuito'?'Il servizio gratuito ha finito le risposte per oggi: riprova domani.':data.error==='chiave'?'L’assistente non è ancora attivo.':'L’assistente ha avuto un problema: '+(data.dettaglio||data.error)};
     return {testo:(data&&data.testo)||''};}catch(e){return {err:'L’assistente non risponde.'};}}
 const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
 function hashS(s){let x=0;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))|0;return String(x>>>0);}
@@ -2533,7 +2544,7 @@ function aiConsigli(id){if(AION)ai('richiesta',{id}).then(async x=>{if(!x.err){a
 
 /* --- riassunto dei documenti --- */
 function riassBtn(f){const b=h('<button type="button" class="filebtn soft">'+'<span class="orb sm"></span><span>Riassumi con l’assistente</span></button>');
-  b.addEventListener('click',async()=>{const d=sheet('Riassunto di «'+(f.nome||'documento')+'»','<p class="riass">Leggo il documento…</p><p class="muted small">Il testo del documento viene mandato al servizio di intelligenza artificiale solo per fare il riassunto.</p>','Chiudi',async()=>{});const out=d.querySelector('.riass');
+  b.addEventListener('click',async()=>{const d=sheet('Riassunto di «'+(f.nome||'documento')+'»','<p class="riass">Leggo il documento…</p><p class="muted small">'+avvisoPrivacy()+'</p>','Chiudi',async()=>{});const out=d.querySelector('.riass');
     try{const {data}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,600);if(!data)throw new Error('');const bl=await (await fetch(data.signedUrl)).blob();const L1=await pdfTesto(new File([bl],f.nome||'doc.pdf',{type:'application/pdf'}));const t=L1.join('\n').trim();
       if(t.length<40){out.textContent='Questo PDF è una scansione senza testo: non riesco a leggerlo.';return;}out.textContent='L’assistente sta scrivendo il riassunto…';
       const k='b27riass:'+f.path;const c=lsGet(k);if(c){out.innerHTML=testoAI(c);return;}const r=await ai('riassunto',{nome:f.nome,testo:t});if(r.err){out.textContent=r.err;return;}lsSet(k,r.testo);out.innerHTML=testoAI(r.testo);}
@@ -2592,6 +2603,19 @@ async function mePush(el){const on=await pushAttiva();
 async function extraLoad(){evNoti();await Promise.all([loadMyReq(),aiStato()]);}
 function dopoAvvio(){swReg();try{const g0=new URLSearchParams(location.search).get('go');if(g0&&canOpen(g0)){history.replaceState(null,'',location.pathname);go(g0);}}catch(e){}
   if(SW_OK)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.go&&canOpen(e.data.go))go(e.data.go);});}
+
+function avvisoPrivacy(){return AISERV==='gemini'?'Il testo va al servizio gratuito di Google: Google può usarlo per migliorare i suoi sistemi. Non usare l’assistente su documenti con dati personali o riservati.':'Il testo del documento viene mandato al servizio di intelligenza artificiale solo per questa risposta.';}
+/* --- confronto dei preventivi e controllo dei percorsi fatti dall'assistente --- */
+function aiPrevBtn(sec,G){if(!AION)return;const ok=G.filter(r=>+r.dati.importo>0&&r.dati.stato!=='Scartato');if(ok.length<2)return;
+  const b=h('<button type="button" class="lnk2">Chiedi all’assistente un confronto ragionato</button>');const out=h('<div class="aibox" hidden></div>');
+  b.addEventListener('click',async()=>{b.disabled=true;b.textContent='L’assistente sta confrontando…';const offerte=ok.map(r=>({fornitore:r.dati.fornitore,importo:+r.dati.importo,qualita:r.dati.qualita,giorni_consegna:r.dati.giorni,da_dove:r.dati.regione,garanzie:r.dati.garanzie,nota:r.dati.nota}));
+    const x=await ai('preventivi',{offerte});b.remove();out.hidden=false;out.innerHTML=x.err?esc(x.err):'<div class="wh"><span class="orb sm"></span><b>Confronto dell’assistente</b></div><p>'+testoAI(x.testo)+'</p><span class="aisig">Scritto dall’assistente: è un aiuto, la scelta resta vostra.</span>';});
+  sec.appendChild(b);sec.appendChild(out);}
+function aiPercBtn(box,P){if(!AION)return;const b=h('<button type="button" class="lnk2">Fai controllare il percorso all’assistente</button>');const out=h('<div class="aibox" hidden></div>');
+  b.addEventListener('click',async()=>{b.disabled=true;b.textContent='L’assistente sta controllando…';const T=P.tappe||[];
+    const percorso={nome:P.nome,data:P.data,ora:P.ora,anziani_o_disabili:!!P.fragili,lunghezza_m:Math.round(lung(T)),durata_min:durata(P),tappe:T.map((t,i)=>({n:i+1,nome:t.n||'',lat:+t.lat.toFixed(5),lng:+t.lng.toFixed(5),sosta:t.sosta||'',minuti:t.min||0,nei_sassi:inSassi(t)})),corteo:P.corteo||[],punti_sicurezza:((P.sic&&P.sic.punti)||[]).map(p=>({tipo:(PT[p.t]||[p.t])[0],lat:+p.lat.toFixed(5),lng:+p.lng.toFixed(5)})),avvisi_automatici:avvisi(P).map(a=>a[1])};
+    const x=await ai('percorso',{percorso});b.remove();out.hidden=false;out.innerHTML=x.err?esc(x.err):'<div class="wh"><span class="orb sm"></span><b>Controllo dell’assistente</b></div><p>'+testoAI(x.testo)+'</p><span class="aisig">Controllo preliminare scritto dall’assistente: non sostituisce le verifiche della Sicurezza.</span>';});
+  box.appendChild(b);box.appendChild(out);}
 
 /* ================= Bruna27 · Fase 5: foto delle fatture lette dall'assistente, preventivi dagli eventi, ricadute dei percorsi ================= */
 /* --- foto e scansioni lette dall'assistente --- */

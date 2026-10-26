@@ -49,7 +49,7 @@ function leggiTesto(lines){const T=lines.join('\n');const AM=/(\d{1,3}(?:\.\d{3}
   o.tipo=ci>=0&&/bruna/i.test(lines[ci]+' '+(lines[ci+1]||''))?'Ricavo':'Costo';
   const sc=T.match(/scadenza[^\d]{0,30}(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})/i);if(sc)o.scadenza=isoD(sc[1],sc[2],sc[3]);
   o.voce=bilDaNome(o.soggetto);return o;}
-async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AION){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
+async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AIFOTO){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
 async function leggiFile0(file){const n=(file.name||'').toLowerCase();
   try{if(n.endsWith('.xml'))return xmlFattura(await file.text());
     if(n.endsWith('.p7m'))return xmlFattura(p7mInXml(await file.arrayBuffer()));
@@ -117,6 +117,7 @@ function renderPrev(){const id='v-prev',el=document.getElementById(id);el.innerH
         const m=h('<button type="button">Modifica</button>');m.addEventListener('click',()=>editRec(id,r));bx.appendChild(m);
         const x=h('<button type="button" class="ko">Elimina</button>');x.addEventListener('click',()=>ask('Eliminare il preventivo di «'+(d.fornitore||'')+'»?','Elimina',async()=>{await CTX.sb.from('voci_dati').delete().eq('id',r.id);await loadVD();renderPrev();}));bx.appendChild(x);c.appendChild(bx);}
       sec.appendChild(c);});
+    if(!acc)aiPrevBtn(sec,G);
     if(can&&!acc){const a=h('<button type="button" class="lnk2">+ Aggiungi un preventivo per questa voce</button>');a.addEventListener('click',()=>editRec(id,null,{voce:v}));sec.appendChild(a);}
     el.appendChild(sec);});
   if(!L.length)el.appendChild(h('<div class="card soon"><p>Ancora nessun preventivo.'+(can?' Caricane uno o chiedilo a un collega.':'')+'</p></div>'));

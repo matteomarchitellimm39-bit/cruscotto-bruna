@@ -1,8 +1,8 @@
 /* ================= Bruna27 · Fase 4-5: assistente, notifiche sul telefono, richieste di documenti ================= */
-let AION=false,MYREQ=[];
-async function aiStato(){if(!CTX.sb||!CTX.sb.functions)return;try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:{tipo:'stato'}});AION=!error&&!!(data&&data.attivo);}catch(e){AION=false;}}
+let AION=false,AIFOTO=false,AISERV='',MYREQ=[];
+async function aiStato(){if(!CTX.sb||!CTX.sb.functions)return;try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:{tipo:'stato'}});AION=!error&&!!(data&&data.attivo);AIFOTO=AION&&!!data.foto;AISERV=(data&&data.servizio)||'';}catch(e){AION=false;}}
 async function ai(tipo,payload){try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:Object.assign({tipo},payload||{})});
-    if(error)return {err:'L’assistente non risponde. Riprova tra poco.'};if(data&&data.error)return {err:data.error==='limite'?'Hai usato l’assistente molte volte oggi: riprova domani.':data.error==='chiave'?'L’assistente non è ancora attivo.':'L’assistente ha avuto un problema: '+(data.dettaglio||data.error)};
+    if(error)return {err:'L’assistente non risponde. Riprova tra poco.'};if(data&&data.error)return {err:data.error==='limite'?'Hai usato l’assistente molte volte oggi: riprova domani.':data.error==='limite_gratuito'?'Il servizio gratuito ha finito le risposte per oggi: riprova domani.':data.error==='chiave'?'L’assistente non è ancora attivo.':'L’assistente ha avuto un problema: '+(data.dettaglio||data.error)};
     return {testo:(data&&data.testo)||''};}catch(e){return {err:'L’assistente non risponde.'};}}
 const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
 function hashS(s){let x=0;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))|0;return String(x>>>0);}
@@ -28,7 +28,7 @@ function aiConsigli(id){if(AION)ai('richiesta',{id}).then(async x=>{if(!x.err){a
 
 /* --- riassunto dei documenti --- */
 function riassBtn(f){const b=h('<button type="button" class="filebtn soft">'+'<span class="orb sm"></span><span>Riassumi con l’assistente</span></button>');
-  b.addEventListener('click',async()=>{const d=sheet('Riassunto di «'+(f.nome||'documento')+'»','<p class="riass">Leggo il documento…</p><p class="muted small">Il testo del documento viene mandato al servizio di intelligenza artificiale solo per fare il riassunto.</p>','Chiudi',async()=>{});const out=d.querySelector('.riass');
+  b.addEventListener('click',async()=>{const d=sheet('Riassunto di «'+(f.nome||'documento')+'»','<p class="riass">Leggo il documento…</p><p class="muted small">'+avvisoPrivacy()+'</p>','Chiudi',async()=>{});const out=d.querySelector('.riass');
     try{const {data}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,600);if(!data)throw new Error('');const bl=await (await fetch(data.signedUrl)).blob();const L1=await pdfTesto(new File([bl],f.nome||'doc.pdf',{type:'application/pdf'}));const t=L1.join('\n').trim();
       if(t.length<40){out.textContent='Questo PDF è una scansione senza testo: non riesco a leggerlo.';return;}out.textContent='L’assistente sta scrivendo il riassunto…';
       const k='b27riass:'+f.path;const c=lsGet(k);if(c){out.innerHTML=testoAI(c);return;}const r=await ai('riassunto',{nome:f.nome,testo:t});if(r.err){out.textContent=r.err;return;}lsSet(k,r.testo);out.innerHTML=testoAI(r.testo);}
@@ -87,3 +87,16 @@ async function mePush(el){const on=await pushAttiva();
 async function extraLoad(){evNoti();await Promise.all([loadMyReq(),aiStato()]);}
 function dopoAvvio(){swReg();try{const g0=new URLSearchParams(location.search).get('go');if(g0&&canOpen(g0)){history.replaceState(null,'',location.pathname);go(g0);}}catch(e){}
   if(SW_OK)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.go&&canOpen(e.data.go))go(e.data.go);});}
+
+function avvisoPrivacy(){return AISERV==='gemini'?'Il testo va al servizio gratuito di Google: Google può usarlo per migliorare i suoi sistemi. Non usare l’assistente su documenti con dati personali o riservati.':'Il testo del documento viene mandato al servizio di intelligenza artificiale solo per questa risposta.';}
+/* --- confronto dei preventivi e controllo dei percorsi fatti dall'assistente --- */
+function aiPrevBtn(sec,G){if(!AION)return;const ok=G.filter(r=>+r.dati.importo>0&&r.dati.stato!=='Scartato');if(ok.length<2)return;
+  const b=h('<button type="button" class="lnk2">Chiedi all’assistente un confronto ragionato</button>');const out=h('<div class="aibox" hidden></div>');
+  b.addEventListener('click',async()=>{b.disabled=true;b.textContent='L’assistente sta confrontando…';const offerte=ok.map(r=>({fornitore:r.dati.fornitore,importo:+r.dati.importo,qualita:r.dati.qualita,giorni_consegna:r.dati.giorni,da_dove:r.dati.regione,garanzie:r.dati.garanzie,nota:r.dati.nota}));
+    const x=await ai('preventivi',{offerte});b.remove();out.hidden=false;out.innerHTML=x.err?esc(x.err):'<div class="wh"><span class="orb sm"></span><b>Confronto dell’assistente</b></div><p>'+testoAI(x.testo)+'</p><span class="aisig">Scritto dall’assistente: è un aiuto, la scelta resta vostra.</span>';});
+  sec.appendChild(b);sec.appendChild(out);}
+function aiPercBtn(box,P){if(!AION)return;const b=h('<button type="button" class="lnk2">Fai controllare il percorso all’assistente</button>');const out=h('<div class="aibox" hidden></div>');
+  b.addEventListener('click',async()=>{b.disabled=true;b.textContent='L’assistente sta controllando…';const T=P.tappe||[];
+    const percorso={nome:P.nome,data:P.data,ora:P.ora,anziani_o_disabili:!!P.fragili,lunghezza_m:Math.round(lung(T)),durata_min:durata(P),tappe:T.map((t,i)=>({n:i+1,nome:t.n||'',lat:+t.lat.toFixed(5),lng:+t.lng.toFixed(5),sosta:t.sosta||'',minuti:t.min||0,nei_sassi:inSassi(t)})),corteo:P.corteo||[],punti_sicurezza:((P.sic&&P.sic.punti)||[]).map(p=>({tipo:(PT[p.t]||[p.t])[0],lat:+p.lat.toFixed(5),lng:+p.lng.toFixed(5)})),avvisi_automatici:avvisi(P).map(a=>a[1])};
+    const x=await ai('percorso',{percorso});b.remove();out.hidden=false;out.innerHTML=x.err?esc(x.err):'<div class="wh"><span class="orb sm"></span><b>Controllo dell’assistente</b></div><p>'+testoAI(x.testo)+'</p><span class="aisig">Controllo preliminare scritto dall’assistente: non sostituisce le verifiche della Sicurezza.</span>';});
+  box.appendChild(b);box.appendChild(out);}

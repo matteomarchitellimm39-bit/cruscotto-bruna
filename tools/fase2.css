@@ -1,8 +1,8 @@
 /* ===== Bruna27 · Fase 2 ===== */
 .amt{font-size:26px;font-weight:800;letter-spacing:-.6px}
-.filebtn{display:flex;align-items:center;gap:12px;border:0;background:#F0F0FA;color:var(--acc);font:inherit;border-radius:18px;padding:12px 14px;cursor:pointer;text-align:left;min-height:52px}
+.filebtn{display:flex;align-items:center;gap:12px;border:0;background:#EEF2FA;color:var(--acc);font:inherit;border-radius:18px;padding:12px 14px;cursor:pointer;text-align:left;min-height:52px}
 .filebtn span{display:flex;flex-direction:column;font-weight:700;font-size:15.5px;min-width:0}.filebtn em{font-style:normal;font-weight:500;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
-.steps{display:flex;gap:8px}.steps i{flex:1;height:6px;border-radius:3px;background:#D6D6DE}.steps i.on{background:#16161D}
+.steps{display:flex;gap:8px}.steps i{flex:1;height:6px;border-radius:3px;background:#D6D6DE}.steps i.on{background:var(--navy)}
 .drop{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px dashed #D6D6DE;border-radius:24px;padding:30px 16px;text-align:center;cursor:pointer;color:var(--acc);background:#FAFAFC}
 .drop b{font-size:18px;color:#16161D;overflow-wrap:anywhere}.drop span{font-size:15px;color:var(--muted)}
 .drop input{position:absolute;opacity:0;width:1px;height:1px}
@@ -10,7 +10,7 @@
 .orb.sm{width:22px;height:22px;display:inline-block;vertical-align:middle;margin-right:6px}
 .pv{gap:12px}.pv h3{margin:0;font-size:19px}
 .offer{background:#F6F6F8;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:8px}
-.offer.best{background:#fff;box-shadow:inset 0 0 0 2px #16161D}
+.offer.best{background:#fff;box-shadow:inset 0 0 0 2px var(--navy)}
 .offer.off{opacity:.6}
 .oh2{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.oh2 b{font-size:17px}.oh2 .amt{font-size:22px}
 .why{margin:0;font-size:15.5px;line-height:1.5}

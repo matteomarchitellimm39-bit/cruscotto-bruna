@@ -89,7 +89,7 @@ async function editorPerc(el,r,can){const P=r.dati;const edit=can&&(P.stato==='B
   const m=mkMap(mapC.querySelector('#pmap'),'perc');let lay=null;
   const refresh=(fit)=>{if(lay)lay.remove();lay=drawRoute(m,P,{drag:edit,onChange:()=>{refresh(false);changedP();},fit});
     info.querySelector('#pl').textContent=fmtM(lung(P.tappe||[]));info.querySelector('#pdu').textContent=fmtMin(durata(P));info.querySelector('#por').textContent=P.ora?P.ora+(fine(P)?' → '+fine(P):''):'da decidere';
-    avv.innerHTML='';avv.appendChild(h(avvisiHtml(P)));drawList();};
+    avv.innerHTML='';const ah=h(avvisiHtml(P));aiPercBtn(ah,P);avv.appendChild(ah);drawList();};
   const changedP=()=>{if(edit)autoSave(r);};
   const drawList=()=>{const box=tl.querySelector('.tlist');box.innerHTML='';const T=P.tappe||[];
     if(!T.length)box.appendChild(h('<p class="muted">Nessuna tappa: '+(edit?'tocca la mappa per iniziare dalla partenza.':'il percorso è vuoto.')+'</p>'));
@@ -147,7 +147,7 @@ async function editorSic(el,r,can){const P=r.dati;P.sic=P.sic||{punti:[],nota:''
   const m=mkMap(tools.querySelector('#smap'),'sic');let lay=null;
   const refresh=fit=>{if(lay)lay.remove();lay=drawRoute(m,P,{fit,onPoint:edPts?(i=>{P.sic.punti.splice(i,1);refresh(false);autoSave(r);}):null});
     const c={};P.sic.punti.forEach(p=>c[p.t]=(c[p.t]||0)+1);cnt.querySelector('.pcount').innerHTML=Object.entries(PT).map(([k,d])=>'<div class="fact2"><span><i class="dotp" style="background:'+d[2]+'">'+d[1]+'</i> '+d[0]+'</span><b>'+(c[k]||0)+'</b></div>').join('');
-    avv.innerHTML='';avv.appendChild(h(avvisiHtml(P)));};
+    avv.innerHTML='';const ah=h(avvisiHtml(P));aiPercBtn(ah,P);avv.appendChild(ah);};
   if(edPts){tools.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{tipo=b.dataset.t;tools.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));}));
     m.on('click',e=>{P.sic.punti.push({lat:e.latlng.lat,lng:e.latlng.lng,t:tipo,n:''});refresh(false);autoSave(r);});
     nt.querySelector('#snota').addEventListener('change',e=>{P.sic.nota=e.target.value;autoSave(r);});}
