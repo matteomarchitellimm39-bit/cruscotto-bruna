@@ -9,6 +9,16 @@
   const sb=window.supabase.createClient(C.url,C.anon);
   document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();view(a.dataset.go);}));
   const back=location.origin+location.pathname;
+  function it(m){m=m||'';
+    if(/at least one character of each/i.test(m))return 'La password deve contenere almeno una lettera minuscola, una maiuscola, un numero e un simbolo (per esempio Bruna2027!).';
+    const n=m.match(/at least (\d+) characters/i);if(n)return 'La password deve avere almeno '+n[1]+' caratteri.';
+    if(/weak|pwned|leaked/i.test(m))return 'Questa password è troppo comune o è comparsa in furti di dati: scegline una diversa.';
+    if(/already registered|already exists/i.test(m))return 'Hai già creato l’accesso con questa email: torna a «Entra» e usa la tua password.';
+    if(/Invalid login credentials/i.test(m))return 'Email o password non corrette. Se non hai ancora creato la password, scegli «Primo accesso».';
+    if(/not confirmed/i.test(m))return 'L’email non è confermata: in Supabase va spenta l’opzione «Confirm email».';
+    if(/invit|Database error/i.test(m))return 'Questa email non è stata invitata. Controlla di averla scritta uguale all’invito.';
+    if(/rate limit|too many/i.test(m))return 'Troppi tentativi ravvicinati: aspetta qualche minuto e riprova.';
+    return 'Errore: '+m;}
   async function start(session){
     msg('Carico i dati…');
     const uid=session.user.id;
@@ -32,15 +42,15 @@
     window.APP(D,CTX);
   }
   $('lgo').addEventListener('click',async()=>{msg('Entro…');const {data,error}=await sb.auth.signInWithPassword({email:$('le').value.trim().toLowerCase(),password:$('lp').value});
-    if(error){msg(/confirm/i.test(error.message)?'Prima conferma l’email: apri il messaggio che ti è arrivato.':'Email o password non corrette.');return;}start(data.session);});
+    if(error){msg(it(error.message));return;}start(data.session);});
   $('lp').addEventListener('keydown',e=>{if(e.key==='Enter')$('lgo').click();});
   $('pgo').addEventListener('click',async()=>{const email=$('pe').value.trim().toLowerCase(),password=$('pp').value;
     if(password.length<8){msg('La password deve avere almeno 8 caratteri.');return;}
     msg('Creo l’accesso…');const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:back}});
-    if(error){msg(/invit|Database error/i.test(error.message)?'Questa email non è stata invitata. Chiedi all’amministratore.':'Errore: '+error.message);return;}
+    if(error){msg(it(error.message));return;}
     if(data.session)start(data.session);else{view('entra');msg('Ti è arrivata un’email: aprila per confermare, poi torna qui ed entra.');}});
   $('rgo').addEventListener('click',async()=>{const {error}=await sb.auth.resetPasswordForEmail($('re').value.trim().toLowerCase(),{redirectTo:back});msg(error?'Errore: '+error.message:'Se l’email è registrata, ti è arrivato un link per cambiare la password.');});
-  $('ngo').addEventListener('click',async()=>{const p=$('np').value;if(p.length<8){msg('Almeno 8 caratteri.');return;}const {error}=await sb.auth.updateUser({password:p});if(error){msg('Errore: '+error.message);return;}const {data}=await sb.auth.getSession();if(data.session)start(data.session);});
+  $('ngo').addEventListener('click',async()=>{const p=$('np').value;if(p.length<8){msg('Almeno 8 caratteri.');return;}const {error}=await sb.auth.updateUser({password:p});if(error){msg(it(error.message));return;}const {data}=await sb.auth.getSession();if(data.session)start(data.session);});
   let pending=null;
   const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
   $('igo').addEventListener('click',async()=>{msg('Importo…');try{
