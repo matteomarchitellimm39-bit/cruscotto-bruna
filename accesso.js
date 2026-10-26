@@ -14,7 +14,7 @@
     const n=m.match(/at least (\d+) characters/i);if(n)return 'La password deve avere almeno '+n[1]+' caratteri.';
     if(/weak|pwned|leaked/i.test(m))return 'Questa password è troppo comune o è comparsa in furti di dati: scegline una diversa.';
     if(/already registered|already exists/i.test(m))return 'Hai già creato l’accesso con questa email: torna a «Entra» e usa la tua password.';
-    if(/Invalid login credentials/i.test(m))return 'Email o password non corrette. Se non hai ancora creato la password, scegli «Primo accesso».';
+    if(/Invalid login credentials/i.test(m))return 'Nome o password non corretti. Scrivi nome e cognome come te li ha dati l’amministratore.';
     if(/not confirmed/i.test(m))return 'L’email non è confermata: in Supabase va spenta l’opzione «Confirm email».';
     if(/invit|Database error/i.test(m))return 'Questa email non è stata invitata. Controlla di averla scritta uguale all’invito.';
     if(/rate limit|too many/i.test(m))return 'Troppi tentativi ravvicinati: aspetta qualche minuto e riprova.';
@@ -45,7 +45,7 @@
     $('login').hidden=true;$('app').hidden=false;msg('');
     window.APP(D,CTX);
   }
-  $('lgo').addEventListener('click',async()=>{msg('Entro…');const {data,error}=await sb.auth.signInWithPassword({email:$('le').value.trim().toLowerCase(),password:$('lp').value});
+  $('lgo').addEventListener('click',async()=>{msg('Entro…');const u=$('le').value.trim();const slug=u.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'.').replace(/^\.+|\.+$/g,'');const email=u.includes('@')?u.toLowerCase():slug+'@example.com';if(!u){msg('Scrivi nome e cognome.');return;}const {data,error}=await sb.auth.signInWithPassword({email,password:$('lp').value});
     if(error){msg(it(error.message));return;}start(data.session);});
   $('lp').addEventListener('keydown',e=>{if(e.key==='Enter')$('lgo').click();});
   $('pgo').addEventListener('click',async()=>{const email=$('pe').value.trim().toLowerCase(),password=$('pp').value;

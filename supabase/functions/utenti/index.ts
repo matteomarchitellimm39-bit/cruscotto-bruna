@@ -38,25 +38,30 @@ Deno.serve(async (req) => {
   }
 
   if (b.azione === "crea") {
-    const email = String(b.email || "").trim().toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return risposta({ error: "Email non valida" });
+    // Si entra con nome e cognome: l'indirizzo interno (mai usato per scrivere) è nome.cognome@example.com
+    const nome = String(b.nome || "").trim().replace(/\s+/g, " ");
+    const utente = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "");
+    if (nome.split(" ").length < 2 || utente.length < 3) return risposta({ error: "Scrivi nome e cognome" });
+    const email = b.email ? String(b.email).trim().toLowerCase() : utente + "@example.com";
+    const { data: gia } = await admin.from("profili").select("id").eq("email", email).maybeSingle();
+    if (gia) return risposta({ error: "Esiste già una persona con questo nome: aggiungi un secondo nome o un’iniziale (per esempio Mario B. Rossi)" });
     const permessi: Record<string, string> = {};
     for (const [k, v] of Object.entries(b.permessi || {})) if (v === "vedi" || v === "modifica") permessi[k] = v as string;
     if (b.presidente) permessi["_presidente"] = "si";
-    const inv = await admin.from("inviti").upsert({ email, nome: String(b.nome || "").trim() || null, admin: !!b.admin, permessi, usato: false });
+    const inv = await admin.from("inviti").upsert({ email, nome, admin: !!b.admin, permessi, usato: false });
     if (inv.error) return risposta({ error: inv.error.message });
     const password = temporanea();
     const { data: nuovo, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
-    if (error) return risposta({ error: /already/i.test(error.message) ? "Esiste già un account con questa email" : error.message });
+    if (error) return risposta({ error: /already/i.test(error.message) ? "Esiste già una persona con questo nome: aggiungi un secondo nome o un’iniziale" : error.message });
     await admin.rpc("registra_temporanea", { uid: nuovo.user!.id });
-    await annota("ha creato l'account di " + email);
-    return risposta({ id: nuovo.user!.id, password });
+    await annota("ha creato l'accesso di " + nome);
+    return risposta({ id: nuovo.user!.id, password, utente: nome });
   }
 
   const id = String(b.id || "");
   if (!id) return risposta({ error: "Manca la persona" });
   if (id === me.id && b.azione !== "reimposta") return risposta({ error: "Non puoi disattivare il tuo stesso account" });
-  const { data: p } = await admin.from("profili").select("email").eq("id", id).maybeSingle();
+  const { data: p } = await admin.from("profili").select("email,nome").eq("id", id).maybeSingle();
   if (!p) return risposta({ error: "Persona non trovata" });
 
   if (b.azione === "reimposta") {
@@ -64,7 +69,7 @@ Deno.serve(async (req) => {
     const { error } = await admin.auth.admin.updateUserById(id, { password });
     if (error) return risposta({ error: error.message });
     await admin.rpc("registra_temporanea", { uid: id });
-    await annota("ha dato una nuova password temporanea a " + p.email);
+    await annota("ha dato una nuova password temporanea a " + (p.nome || p.email));
     return risposta({ password });
   }
   if (b.azione === "disattiva" || b.azione === "riattiva") {
@@ -72,7 +77,7 @@ Deno.serve(async (req) => {
     const { error } = await admin.auth.admin.updateUserById(id, { ban_duration: on ? "none" : "876000h" });
     if (error) return risposta({ error: error.message });
     await admin.from("profili").update({ attivo: on }).eq("id", id);
-    await annota((on ? "ha riattivato " : "ha disattivato ") + p.email);
+    await annota((on ? "ha riattivato " : "ha disattivato ") + (p.nome || p.email));
     return risposta({ ok: true });
   }
   return risposta({ error: "Azione sconosciuta" }, 400);
