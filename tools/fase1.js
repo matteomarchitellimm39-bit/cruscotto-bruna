@@ -41,7 +41,7 @@ SEZ.forEach(s=>R['sec-'+s.k]=()=>renderSec(s));
 const NAVL=document.getElementById('navlist'),BOT=document.getElementById('botnav');
 function navBtn(id,label,ic,cls){return '<button type="button" class="nv '+(cls||'')+'" data-go="'+id+'">'+svg(ic)+'<span>'+esc(label)+'</span></button>';}
 function buildNav(){
-  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-cal','Riunioni',IC2.cal,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
+  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-cal','Riunioni',IC2.cal,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
   BOT.innerHTML=mySez().map(s=>navBtn('sec-'+s.k,s.n==='Amministrazione'?'Ammin.':s.n,s.i)).join('');
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-go]');if(!b)return;e.preventDefault();go(b.dataset.go);});
@@ -49,7 +49,7 @@ function secOf(id){if(id.startsWith('sec-'))return id.slice(4);if(VOCE[id])retur
 function markNav(id){const s=secOf(id);document.querySelectorAll('.nv').forEach(b=>{const g=b.dataset.go;b.setAttribute('aria-current',String(g===id||!!(s&&g==='sec-'+s)));});}
 function go(id){if(!canOpen(id))id='p-home';show(id);window.scrollTo({top:0});
   if(id==='v-crea')setTimeout(()=>{const x=[...document.querySelectorAll('#s-ev h3')].find(e=>/Aggiungi un evento/.test(e.textContent));if(x)x.scrollIntoView({block:'start',behavior:'smooth'});},80);}
-function canOpen(id){if(['p-home','p-me','p-req','p-cal'].includes(id))return true;if(id==='s-adm')return CTX.admin;if(id.startsWith('sec-'))return !!mySez().find(s=>'sec-'+s.k===id);return canV(id);}
+function canOpen(id){if(['p-home','p-me','p-req','p-cal','p-pub'].includes(id))return true;if(id==='s-adm')return CTX.admin;if(id.startsWith('sec-'))return !!mySez().find(s=>'sec-'+s.k===id);return canV(id);}
 show=function(id){
   if(!canOpen(id))id='p-home';if(id==='v-crea')id='s-ev';cur=id;applyEd();
   document.querySelectorAll('[role=tabpanel]').forEach(p=>{p.hidden=!(p.id===id||(id==='s-car'&&p.id==='s-fon'));});
@@ -96,7 +96,7 @@ const EL={
  'v-req':{f:[['documento','Documento richiesto','t'],['a','A chi','t'],['entro','Entro il','d'],['stato','Stato','s',['Richiesto','Arrivato']],['nota','Nota','ta'],['file','Documento arrivato','f']],intro:'I documenti chiesti alle persone e quelli già arrivati.',add:'Chiedi un documento',group:'stato'}};
 const COMING={'v-perc':'Disegnerai il percorso delle processioni sulla mappa di Matera: tappe, ordine del corteo, soste, lunghezza. Poi passa alla Sicurezza e ai fornitori.','v-psic':'Qui arriveranno i percorsi da convalidare, con uscite, bagni e soccorsi da aggiungere sulla mappa.','v-msic':'Qui potrai caricare i PDF delle mappe degli ingegneri: la piattaforma li ricostruirà in digitale.'};
 const VD={};
-async function loadVD(){if(!CTX.sb)return;const keys=Object.keys(EL).filter(canV);if(!keys.length)return;const {data}=await CTX.sb.from('voci_dati').select('*').in('voce',keys).order('creato');keys.forEach(k=>VD[k]=[]);(data||[]).forEach(r=>{(VD[r.voce]=VD[r.voce]||[]).push(r);});}
+async function loadVD(){if(!CTX.sb)return;const keys=[...new Set(Object.keys(EL).filter(canV).concat(extraVD()))];if(!keys.length)return;const {data}=await CTX.sb.from('voci_dati').select('*').in('voce',keys).order('creato');keys.forEach(k=>VD[k]=[]);(data||[]).forEach(r=>{(VD[r.voce]=VD[r.voce]||[]).push(r);});}
 let elFilt={};
 function renderVoce(id){const el=document.getElementById(id);if(!el)return;el.innerHTML='';
   addBack(id);
@@ -213,6 +213,7 @@ function renderHome(){const el=document.getElementById('p-home');el.innerHTML=''
   const td=myTodo();const tw=h('<section class="w"><div class="wh"><b>Da fare oggi</b><button type="button" class="lnk2" data-go="p-me">Il mio spazio</button></div>'+(td.length?td.slice(0,5).map(c=>'<label class="todo"><input type="checkbox" data-done="'+c.id+'"><span>'+esc(c.titolo)+(c.entro?' <em>entro il '+fmtD(c.entro)+'</em>':'')+'</span></label>').join(''):'<p class="muted">Niente da fare. Aggiungi un promemoria da Il mio spazio.</p>')+'</section>');
   tw.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));g.appendChild(tw);
   g.appendChild(h('<section class="w wide"><div class="wh"><b>Questa settimana</b><button type="button" class="lnk2" data-go="p-cal">Riunioni</button></div>'+weekStrip()+'</section>'));
+  const pw=pubWidget();if(pw)g.appendChild(pw);
   (PREF.w||[]).forEach(k=>{const w=extraW(k);if(w)g.appendChild(w);});
   const add=h('<button type="button" class="w wadd"><span>+</span><b>Aggiungi un riquadro</b></button>');add.addEventListener('click',pickW);g.appendChild(add);
   el.appendChild(g);}
@@ -351,7 +352,7 @@ R['s-adm']=renderAdm2;
 function avviso(t){try{if(window.Notification&&Notification.permission==='granted'&&document.hidden)new Notification('Bruna27',{body:t});}catch(e){}}
 function liveF1(){if(!CTX.sb)return;
   CTX.sb.channel('fase1')
-   .on('postgres_changes',{event:'*',schema:'public',table:'voci_dati'},async()=>{await loadVD();if(EL[cur]||cur.startsWith('sec-')||cur==='p-home')rerender();})
+   .on('postgres_changes',{event:'*',schema:'public',table:'voci_dati'},async()=>{await loadVD();if(!MAPEDIT&&(EL[cur]||cur.startsWith('sec-')||cur==='p-home'||cur==='p-pub'))rerender();})
    .on('postgres_changes',{event:'*',schema:'public',table:'richieste'},async()=>{await loadSocial();if(cur==='p-home'||cur==='p-req')rerender();})
    .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifiche'},async p=>{const n=p.new;if(!n||n.per!==CTX.user.id)return;NOTI.unshift(n);refreshBell();stEl.textContent=n.testo;avviso(n.testo);await loadSocial();if(cur==='p-home'||cur==='p-me'||cur==='p-cal')rerender();})
    .subscribe();}

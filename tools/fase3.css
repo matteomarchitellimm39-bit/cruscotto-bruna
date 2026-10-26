@@ -1,0 +1,33 @@
+/* ===== Bruna27 · Fase 3 ===== */
+.mapcard{gap:10px}
+.lmap{height:min(62vh,560px);border-radius:22px;overflow:hidden;background:#EEF0F4;z-index:0}
+.lmap.tall{height:min(72vh,680px)}
+.hint{margin:0;font-size:15.5px;color:#4B4E5A}
+.pin b{display:grid;place-items:center;width:30px;height:30px;border-radius:15px;color:#fff;font:800 14px/1 var(--font);box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;box-sizing:border-box}
+.pin.sq b{border-radius:9px}
+.leaflet-div-icon.pin{background:none;border:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:#4B4E5A}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i,.dotp{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;color:#fff;font-style:normal;font-weight:800;font-size:11px}
+.flow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.flow span{font-size:13.5px;font-weight:700;border-radius:12px;padding:6px 10px;background:#EEEEF3;color:#6B6E7A}
+.flow span.done{background:var(--good-soft);color:var(--good)}
+.flow span.now{background:#16161D;color:#fff}
+.tappa{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #F0F0F3}
+.tn{width:34px;height:34px;border-radius:17px;background:#16161D;color:#fff;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.tn.s{background:#D9822B}.tn.c{background:#F0F0FA;color:var(--acc)}
+.tb2{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tb2 input,.tb2 select{font:inherit;font-size:16px;min-height:46px;border-radius:14px;border:1.5px solid #D6D6DE;padding:0 10px;background:#fff;color:#16161D;min-width:0}
+.trow{display:flex;gap:6px}.trow select{flex:1}.trow input{width:96px}
+.tbtn{display:flex;gap:4px;flex-shrink:0}
+.tbtn button{width:40px;height:40px;border-radius:20px;border:0;background:#F6F6F8;font-size:17px;cursor:pointer;color:#16161D}
+.tbtn button.ko{color:var(--bad)}
+@media(max-width:520px){.tappa{flex-wrap:wrap}.tb2{flex:1 1 calc(100% - 50px)}.tbtn{margin-left:46px}}
+.avv{margin:0;padding:10px 12px;border-radius:14px;font-size:15.5px;line-height:1.45}
+.avv.warn{background:#FBECEB;color:#7A2A26}.avv.info{background:#F0F0FA;color:#2E2A80}.avv.ok{background:var(--good-soft);color:var(--good)}
+.ptools button{display:flex;align-items:center;gap:6px}
+.opac{display:flex;align-items:center;gap:10px;font-size:15px;color:#4B4E5A;flex-wrap:wrap}
+.opac input{flex:1;min-width:140px;accent-color:var(--acc)}
+.bb.ko{color:var(--bad)}
+.pdfing .leaflet-control-zoom{display:none}
+@media(max-width:700px){.big3.mini{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.big3.mini .kpi{padding:12px;border-radius:18px}.big3.mini .kpi span{font-size:12.5px}.big3.mini .kpi b{font-size:17px;letter-spacing:-.2px}}
