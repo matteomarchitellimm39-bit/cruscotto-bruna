@@ -19,7 +19,7 @@ async function save(){if(saving){pending=true;return;}saving=true;
     if(error)stEl.textContent='Non sono riuscito a salvare: '+error.message;else{todo.forEach(a=>SAVED[a]=JSON.parse(JSON.stringify(C[a]||{})));stEl.textContent='Modifiche salvate. Le vedono tutti.';}}
   saving=false;if(pending){pending=false;save();}}
 /* sola lettura: nelle schede senza permesso di modifica i campi sono bloccati */
-function lockRO(){const el=document.getElementById(cur);if(!el||CTX.canEdit(cur))return;el.querySelectorAll('input[type=number],input[type=checkbox],input[type=text],textarea').forEach(x=>{x.disabled=true;});}
+function lockRO(){const el=document.getElementById(cur);if(!el||!/^s-/.test(cur)||cur==='s-adm'||CTX.canEdit(cur))return;el.querySelectorAll('input[type=number],input[type=checkbox],input[type=text],textarea').forEach(x=>{x.disabled=true;});}
 new MutationObserver(()=>requestAnimationFrame(lockRO)).observe(document.querySelector('.panel'),{childList:true,subtree:true});
 /* ---------- 11. Utenti e permessi (solo amministratore) ---------- */
 const AREEP=TABS.length?[['s-bil','1. Bilancio 2026'],['s-for','2. Fornitori'],['s-fon','3. Fondo sociale'],['s-pre','4. Previsione 2027'],['s-car','5. Carità'],['s-ric','6. Ricavi'],['s-ter','7. Territorio'],['s-ev','8. Calendario eventi'],['s-map','9. Mappa di Matera'],['s-cs','10. Centro Studi']]:[];

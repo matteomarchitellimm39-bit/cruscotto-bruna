@@ -1,7 +1,7 @@
 /* Accesso alla piattaforma: login, primo accesso su invito, recupero password, caricamento dei dati permessi. */
 (async function(){
   const C=window.CFG||{};const $=id=>document.getElementById(id);
-  const ECO=['s-bil','s-for','s-fon','s-pre','s-car','s-ric','s-ter','s-ev','s-cs'];
+  const ECO=['s-bil','s-for','s-fon','s-pre','s-car','s-ric','s-ter','s-ev','s-cs','v-p27','v-voci'];
   const msg=t=>{$('lmsg').textContent=t||'';};
   const view=v=>{document.querySelectorAll('.lg-v').forEach(x=>x.hidden=x.dataset.v!==v);msg('');};
   $('login').hidden=false;
