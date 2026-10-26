@@ -11,7 +11,7 @@ function testoAI(t){return esc(t).replace(/^(Cosa fare|Cosa evitare|Chi coinvolg
 /* --- riassunto della giornata scritto dall'assistente --- */
 function fattiGiorno(){const me=CTX.user.id,today=todayISO();
   return {oggi:today,giorni_alla_bruna:countdown(),richieste_presidente_da_prendere:RICH.filter(r=>r.stato==='aperta').map(r=>r.titolo),
-    mie_richieste_in_corso:RICH.filter(r=>r.preso_da===me&&r.stato==='presa').map(r=>({titolo:r.titolo,entro:r.entro,in_ritardo:!!(r.entro&&r.entro<today)})),
+    mie_richieste_in_corso:RICH.filter(r=>r.preso_da===me&&['presa','lavorazione','attesa'].includes(r.stato)).map(r=>({titolo:r.titolo,entro:r.entro,in_ritardo:!!(r.entro&&r.entro<today)})),
     cose_da_fare:myTodo().map(c=>({titolo:c.titolo,entro:c.entro})).slice(0,10),inviti_a_riunioni_senza_risposta:INVM.filter(i=>i.user_id===me&&i.stato==='invitato').length,
     prossime_riunioni:RIUN.filter(r=>new Date(r.quando)>new Date()).slice(0,3).map(r=>({titolo:r.titolo,quando:r.quando})),
     documenti_che_ti_chiedono:MYREQ.filter(r=>r.dati.stato!=='Arrivato').map(r=>({documento:r.dati.documento,entro:r.dati.entro})),

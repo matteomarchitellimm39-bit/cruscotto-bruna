@@ -154,7 +154,7 @@ function editorMappa(box,r,o){const P=r.dati;let tool=o.route?'tappa':null,linea
   const mapEl=h('<div class="lmap tall"></div>');box.appendChild(mapEl);if(o.route||o.elem)box.appendChild(fineL);box.appendChild(h(legenda()));
   const m=mkMap(mapEl,o.key);let lay=null,tmp=null;
   const setHint=()=>{hint.textContent=!tool?'':tool==='tappa'?'Tocca la mappa per aggiungere una tappa. Trascina i numeri per spostarli: il percorso si ridisegna sulle strade.':PT[tool][3]?'Tocca la mappa punto per punto lungo le transenne, poi premi «Fine transenne».':'Tocca la mappa dove mettere «'+PT[tool][0]+'». Toccalo di nuovo per scrivere orario, durata, responsabile e note, spostarlo, duplicarlo o eliminarlo.';};
-  const draw=fit=>{if(lay)lay.remove();lay=drawRoute(m,P,{fit,drag:o.route,dragElem:o.elem,onChange:k=>{if(k==='tappe')o.onRoute();else o.onChange();draw(false);},onElem:e=>schedaElemento(P,e,o.elem,()=>{o.onChange();draw(false);})});};
+  const draw=fit=>{if(!document.body.contains(m.getContainer()))return;if(lay)lay.remove();lay=drawRoute(m,P,{fit,drag:o.route,dragElem:o.elem,onChange:k=>{if(k==='tappe')o.onRoute();else o.onChange();draw(false);},onElem:e=>schedaElemento(P,e,o.elem,()=>{o.onChange();draw(false);})});};
   tb.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{tool=b.dataset.tool;lineaTmp=null;if(tmp){tmp.remove();tmp=null;}fineL.hidden=true;tb.querySelectorAll('[data-tool]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));setHint();}));
   m.on('click',e=>{if(!tool)return;const p={lat:e.latlng.lat,lng:e.latlng.lng};
     if(tool==='tappa'){P.tappe=P.tappe||[];P.tappe.push({lat:p.lat,lng:p.lng,n:''});o.onRoute();draw(false);return;}

@@ -22,7 +22,9 @@ function xmlFattura(txt){const doc=new DOMParser().parseFromString(txt,'applicat
   if(!importo){importo=all(body,'DettaglioPagamento').reduce((a,r)=>a+Number(one(r,'ImportoPagamento')||0),0);}
   const ricavo=/bruna/i.test(ced)&&!/bruna/i.test(ces);
   const soggetto=ricavo?ces:ced;
-  return {soggetto,tipo:ricavo?'Ricavo':'Costo',importo:Math.round(importo*100)/100||'',data:one(dg,'Data'),numero:one(dg,'Numero'),scadenza:one(body,'DataScadenzaPagamento'),nota:one(dg,'Causale').slice(0,300),voce:bilDaNome(soggetto),__come:'xml'};}
+  const piva=n=>{const r=doc.getElementsByTagNameNS('*',n)[0];if(!r)return '';const f=r.getElementsByTagNameNS('*','IdFiscaleIVA')[0];return f?(one(f,'IdPaese')+one(f,'IdCodice')):one(r,'CodiceFiscale');};
+  const imponibile=all(body,'DatiRiepilogo').reduce((a,r)=>a+Number(one(r,'ImponibileImporto')||0),0),iva=all(body,'DatiRiepilogo').reduce((a,r)=>a+Number(one(r,'Imposta')||0),0);
+  return {piva:piva(ricavo?'CessionarioCommittente':'CedentePrestatore'),imponibile:Math.round(imponibile*100)/100||'',iva:Math.round(iva*100)/100||'',soggetto,tipo:ricavo?'Ricavo':'Costo',importo:Math.round(importo*100)/100||'',data:one(dg,'Data'),numero:one(dg,'Numero'),scadenza:one(body,'DataScadenzaPagamento'),nota:one(dg,'Causale').slice(0,300),voce:bilDaNome(soggetto),__come:'xml'};}
 function p7mInXml(buf){let b=new Uint8Array(buf);let s='';for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);
   if(/^[A-Za-z0-9+\/=\r\n]+$/.test(s.slice(0,200).trim())&&!s.includes('<')){try{s=atob(s.replace(/[^A-Za-z0-9+\/=]/g,''));}catch(e){}}
   const m=s.match(/<([\w]+:)?FatturaElettronica[\s>]/);if(!m)throw new Error('p7m');const st=s.indexOf(m[0]);const endTag='</'+(m[1]||'')+'FatturaElettronica>';const en=s.indexOf(endTag,st);if(en<0)throw new Error('p7m');
@@ -48,6 +50,9 @@ function leggiTesto(lines){const T=lines.join('\n');const AM=/(\d{1,3}(?:\.\d{3}
   o.soggetto=sog.replace(/\s{2,}/g,' ').replace(/[:;,.\-\s]+$/,'').slice(0,80);
   o.tipo=ci>=0&&/bruna/i.test(lines[ci]+' '+(lines[ci+1]||''))?'Ricavo':'Costo';
   const sc=T.match(/scadenza[^\d]{0,30}(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})/i);if(sc)o.scadenza=isoD(sc[1],sc[2],sc[3]);
+  const pv=T.match(/(?:p\.?\s*iva|partita\s+iva)\s*[:.]?\s*(?:IT)?\s*(\d{11})/gi);if(pv){const all2=pv.map(x=>x.match(/(\d{11})/)[1]);o.piva=all2[0];}
+  const im=T.match(/imponibile[^\d\n]{0,20}(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})/i);if(im)o.imponibile=numIt(im[1]);
+  const iv=T.match(/(?:iva|imposta)[^\d\n]{0,25}(?:\d{1,2}\s*%[^\d\n]{0,10})?(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})/i);if(iv)o.iva=numIt(iv[1]);
   o.voce=bilDaNome(o.soggetto);return o;}
 async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AIFOTO){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
 async function leggiFile0(file){const n=(file.name||'').toLowerCase();

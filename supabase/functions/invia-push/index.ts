@@ -16,8 +16,13 @@ Deno.serve(async () => {
   await admin.from("notifiche").update({ inviata: true }).in("id", N.map((n) => n.id));
   const chi = [...new Set(N.map((n) => n.per))];
   const { data: S } = await admin.from("push_iscrizioni").select("*").in("user_id", chi);
+  const { data: PR } = await admin.from("preferenze").select("user_id,dati").in("user_id", chi);
+  const muti: Record<string, string[]> = {};
+  (PR || []).forEach((p) => { muti[p.user_id] = (p.dati && p.dati.muti) || []; });
+  const categoria = (link: string) => (link === "v-psic" || link === "v-perc" ? "percorsi" : link);
   let ok = 0;
   for (const n of N) {
+    if ((muti[n.per] || []).includes(categoria(n.link || "p-home"))) continue;
     for (const s of (S || []).filter((x) => x.user_id === n.per)) {
       try {
         await webpush.sendNotification(s.dati, JSON.stringify({ titolo: "Bruna27", testo: n.testo, link: n.link || "p-home" }));

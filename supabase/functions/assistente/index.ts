@@ -141,7 +141,7 @@ Deno.serve(async (req) => {
     if (!img || img.length > 4_000_000) return risposta({ error: "immagine" }, 400);
     d = { massimo: 300, json: true, immagine: img, testo:
       "Questa è la foto o la scansione di una fattura o di un preventivo. L'Associazione Maria SS. della Bruna può essere il cliente (allora è un Costo) o chi emette (allora è un Ricavo). " +
-      "Rispondi SOLO con un oggetto JSON con queste chiavi: soggetto (l'altra parte, non l'Associazione), tipo (\"Costo\" o \"Ricavo\"), importo (numero, totale da pagare, con il punto per i decimali), " +
+      "Rispondi SOLO con un oggetto JSON con queste chiavi: soggetto (l'altra parte, non l'Associazione), piva (partita IVA dell'altra parte), tipo (\"Costo\" o \"Ricavo\"), imponibile (numero), iva (numero), importo (numero, totale da pagare, con il punto per i decimali), " +
       "data (AAAA-MM-GG), numero, scadenza (AAAA-MM-GG), nota (in poche parole cosa riguarda). Metti null dove non riesci a leggere con sicurezza. Non inventare." };
   } else if (body.tipo === "preventivi") {
     d = { massimo: 500, testo: "Confronta questi preventivi per la stessa voce del bilancio. Per ognuno hai prezzo, qualità dichiarata, tempi, provenienza, garanzie e note. " +

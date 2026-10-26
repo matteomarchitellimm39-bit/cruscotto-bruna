@@ -688,6 +688,25 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 .pwbox div{display:flex;flex-direction:column}.pwbox span{font-size:13.5px;color:var(--muted)}.pwbox b{font-size:17px;overflow-wrap:anywhere}
 .pwbox .pw{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:1px;color:var(--navy)}
 .acc{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:1px solid #F0F0F3}
+/* ===== completamento del brief ===== */
+.storico2{font-size:14.5px;color:#4B4E5A}.storico2 summary{cursor:pointer;font-weight:700;color:var(--acc);padding:4px 0}
+.sti{padding:6px 0;border-top:1px solid #F0F0F3;line-height:1.45}
+.cmp{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid #F0F0F3}.cmp>b{font-size:16.5px}.cmp.done>b{text-decoration:line-through;color:var(--muted)}
+.cvrow{display:grid;grid-template-columns:1fr auto;gap:2px 12px;width:100%;border:0;background:none;font:inherit;text-align:left;padding:12px 4px;border-top:1px solid #F0F0F3;cursor:pointer;color:#16161D}
+.cvrow .n{font-weight:650}.cvn{display:flex;flex-direction:column;align-items:flex-end}.cvn em{font-style:normal;font-size:13px;color:var(--muted)}.cvi{grid-column:1/-1;font-size:13px;color:var(--acc)}
+.calbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.calnav{display:flex;gap:6px}.calnav button{font:inherit;font-weight:700;border:0;background:#fff;border-radius:16px;min-width:48px;min-height:44px;padding:0 14px;cursor:pointer;box-shadow:var(--shadow)}
+.calm{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.calh{text-align:center;font-size:13px;color:var(--muted);text-transform:capitalize}
+.calc{font:inherit;border:0;background:#fff;border-radius:14px;min-height:62px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:var(--shadow);color:#16161D}
+.calc.fuori{opacity:.45}.calc.oggi{box-shadow:inset 0 0 0 2px var(--navy)}
+.dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;font-size:11px}.dots i{width:7px;height:7px;border-radius:4px;display:block}
+.calit{display:flex;gap:10px;align-items:flex-start;width:100%;border:0;background:#F6F6F8;border-radius:14px;padding:10px 12px;margin:4px 0;font:inherit;text-align:left;cursor:pointer;color:#16161D}
+.calit i{width:8px;align-self:stretch;border-radius:4px;background:var(--c);flex-shrink:0}.calit span{display:flex;flex-direction:column}.calit em{font-style:normal;font-size:13px;color:var(--muted);text-transform:capitalize}
+.calday.oggi{box-shadow:inset 0 0 0 2px var(--navy),var(--shadow)}.cdh{text-transform:capitalize;font-size:16px}
+.wmv{position:absolute;top:10px;right:54px;display:flex;gap:4px}.wmv button{width:32px;height:36px;border-radius:12px;border:0;background:#F6F6F8;cursor:pointer;font-size:15px}
+@media(max-width:520px){.calc{min-height:52px;border-radius:10px}.calm{gap:4px}}
+#p-cal .legend{display:flex;flex-direction:row;flex-wrap:wrap;gap:6px 16px;align-items:center}#p-cal .legend span{display:inline-flex;width:auto;justify-content:flex-start;text-transform:capitalize}#p-cal .legend i{width:14px;height:14px;border-radius:4px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -1609,6 +1628,7 @@ function openSearch(){
   TABS.forEach((t,i)=>IDX.push({k:'Scheda',n:t[4]+'. '+t[1],s:t[2],go:()=>show(t[0])}));
   D.forn.forEach(f=>IDX.push({k:'Fornitore · '+eur(f.v),n:f.n,s:f.att,go:()=>{fq=f.n.toLowerCase();fa=0;show('s-for');}}));
   allEv().forEach(e=>IDX.push({k:'Evento · '+(e.p==='I'?'La Bruna':'Passion Week'),n:e.n,s:e.luogo||'',go:()=>{openState['ev'+e.id]=true;show('s-ev');setTimeout(()=>{const x=document.getElementById('fiche'+e.id);if(x)x.scrollIntoView({block:'start'});},60);}}));
+  extraIDX(IDX);
   PLACES.forEach(p=>IDX.push({k:'Luogo sulla mappa',n:p.n,s:'',go:()=>{mapSel=p.id;show('s-map');}}));
   Object.values(VOCI).forEach(v=>IDX.push({k:'Voce della previsione 2027',n:v.n,s:'',go:()=>show('s-pre')}));
   const draw=()=>{const q=inp.value.trim().toLowerCase();out.innerHTML='';
@@ -1772,9 +1792,9 @@ async function renderAdm(){
 /* ================= Bruna27 · Fase 1: menu a 5 sezioni, Home a riquadri, richieste, il mio spazio ================= */
 const SEZ=[
  {k:'eco',n:'Economia',i:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
-  v:[['s-bil','Bilancio 2026','pie'],['v-p27','Previsione 2027','trend'],['s-pre','Costi','down'],['s-ric','Ricavi','up'],['v-voci','Costi e guadagni per voce','eq'],['v-fatt','Fatture','doc'],['s-car','Carità','heart'],['s-ter','PIL generato','pin'],['s-for','Fornitori 2026','list'],['v-for27','Fornitori 2027','users'],['v-prev','Preventivi','doc']]},
+  v:[['s-bil','Bilancio 2026','pie'],['v-p27','Previsione 2027','trend'],['s-pre','Costi','down'],['s-ric','Ricavi','up'],['v-voci','Costi e guadagni per voce','eq'],['v-fatt','Fatture','doc'],['s-car','Carità','heart'],['v-care','Erogazioni della carità','heart'],['s-ter','PIL generato','pin'],['s-for','Fornitori 2026','list'],['v-for27','Fornitori 2027','users'],['v-cv','Schede delle voci 2027','doc'],['v-prev','Preventivi','doc']]},
  {k:'evt',n:'Eventi',i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  v:[['s-ev','Calendario','cal'],['v-crea','Crea un evento','plus'],['s-cs','Simulazione impatto','flask'],['v-perc','Percorsi','route']]},
+  v:[['v-calu','Calendario','cal'],['s-ev','Programma degli eventi','list'],['v-crea','Crea un evento','plus'],['s-cs','Simulazione impatto','flask'],['v-perc','Percorsi','route']]},
  {k:'com',n:'Commerciale',i:'<path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/>',
   v:[['v-sp26','Sponsor 2026','star'],['v-sp27','Sponsor 2027','star'],['v-altri','Altri sponsor','users'],['v-area','Area commerciale','tag']]},
  {k:'sic',n:'Sicurezza',i:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
@@ -1785,7 +1805,7 @@ const IC2={pie:'<path d="M12 3a9 9 0 1 0 9 9h-9z"/>',trend:'<path d="M3 17l6-6 4
 const svg=(p,s)=>'<svg viewBox="0 0 24 24" width="'+(s||22)+'" height="'+(s||22)+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
 const VOCE={};SEZ.forEach(s=>s.v.forEach(v=>{VOCE[v[0]]={t:v[1],sec:s.k,ic:v[2]};}));
 const SECN={};SEZ.forEach(s=>SECN[s.k]=s);
-const PAGEX={'p-home':'Home','p-me':'Il mio spazio','p-req':'Richieste del Presidente','p-cal':'Riunioni','s-adm':'Utenti e permessi','s-fon':'Fondo dei fornitori'};
+const PAGEX={'p-home':'Home','p-me':'Il mio spazio','p-req':'Richieste del Presidente','p-cal':'Calendario','s-adm':'Utenti e permessi','s-fon':'Fondo dei fornitori'};
 SEZ.forEach(s=>PAGEX['sec-'+s.k]=s.n);
 function pageTitle(id){return (VOCE[id]&&VOCE[id].t)||PAGEX[id]||'Bruna27';}
 function eyb(n){const a=NUM2AREA[n];const v=VOCE[a];return v?SECN[v.sec].n:(a==='s-adm'?'Amministratore':'Bruna27');}
@@ -1812,7 +1832,7 @@ SEZ.forEach(s=>R['sec-'+s.k]=()=>renderSec(s));
 const NAVL=document.getElementById('navlist'),BOT=document.getElementById('botnav');
 function navBtn(id,label,ic,cls){return '<button type="button" class="nv '+(cls||'')+'" data-go="'+id+'">'+svg(ic)+'<span>'+esc(label)+'</span></button>';}
 function buildNav(){
-  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-cal','Riunioni',IC2.cal,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
+  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-cal','Calendario',IC2.cal,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
   BOT.innerHTML=mySez().map(s=>navBtn('sec-'+s.k,s.n==='Amministrazione'?'Ammin.':s.n,s.i)).join('');
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-go]');if(!b)return;e.preventDefault();go(b.dataset.go);});
@@ -1822,7 +1842,7 @@ function go(id){if(!canOpen(id))id='p-home';show(id);window.scrollTo({top:0});
   if(id==='v-crea')setTimeout(()=>{const x=[...document.querySelectorAll('#s-ev h3')].find(e=>/Aggiungi un evento/.test(e.textContent));if(x)x.scrollIntoView({block:'start',behavior:'smooth'});},80);}
 function canOpen(id){if(['p-home','p-me','p-req','p-cal','p-pub'].includes(id))return true;if(id==='s-adm')return CTX.admin;if(id.startsWith('sec-'))return !!mySez().find(s=>'sec-'+s.k===id);return canV(id);}
 show=function(id){
-  if(!canOpen(id))id='p-home';if(id==='v-crea')id='s-ev';cur=id;applyEd();
+  if(!canOpen(id))id='p-home';if(id==='v-crea')id='s-ev';if(id==='v-calu')id='p-cal';cur=id;applyEd();
   document.querySelectorAll('[role=tabpanel]').forEach(p=>{p.hidden=!(p.id===id||(id==='s-car'&&p.id==='s-fon'));});
   markNav(id);
   if(R[id])R[id]();else renderVoce(id);
@@ -1899,7 +1919,7 @@ function renderVoce(id){const el=document.getElementById(id);if(!el)return;el.in
     const chips=E.f.slice(1).filter(f=>f[2]==='s'&&d[f[0]]).map(f=>'<span class="chip2'+(/^(Sì|Confermato|Firmato|Pagato|Ottenuta|Arrivato|Accettato|Venduto)$/.test(d[f[0]])?' ok':/^(No|Negata|Scartato)$/.test(d[f[0]])?' ko':'')+'">'+esc(d[f[0]])+'</span>').join('');
     const facts=E.f.slice(1).filter(f=>f[2]!=='s'&&f[2]!=='f'&&d[f[0]]!==''&&d[f[0]]!=null).map(f=>'<div class="fact2"><span>'+esc(f[1].replace(/ \(.*\)$/,''))+'</span><b>'+(f[2]==='n'?eur(+d[f[0]]):f[2]==='d'?fmtD(d[f[0]]):esc(d[f[0]]))+'</b></div>').join('');
     const c2=h('<article class="card rc"><b class="vn">'+esc(title)+'</b>'+(chips?'<div class="chips">'+chips+'</div>':'')+facts+'</article>');
-    E.f.filter(f=>f[2]==='f'&&d[f[0]]&&d[f[0]].path).forEach(f=>c2.appendChild(fileBtn(d[f[0]])));
+    E.f.filter(f=>f[2]==='f'&&d[f[0]]&&d[f[0]].path).forEach(f=>c2.appendChild(fileBtn(d[f[0]])));const sto=storicoRec(d);if(sto)c2.appendChild(sto);
     if(can)c2.appendChild(rowBtns(id,r));g.appendChild(c2);});
   el.appendChild(g);
   if(!LL.length)el.appendChild(h('<div class="card soon"><p>'+(can?'Ancora vuoto: tocca il pulsante qui sopra per iniziare.':'Ancora vuoto.')+'</p></div>'));}
@@ -1932,6 +1952,7 @@ function editRec(id,r,pre,title){const E=EL[id];const d=r?r.dati:Object.assign({
     if(pre&&pre.__file&&!files.length){const ff=E.f.find(f=>f[2]==='f');if(ff)files.push([ff[0],pre.__file]);}
     for(const [k,fl] of files){dl.querySelector('.smsg').textContent='Carico il file…';o[k]=await carica(fl,id);}
     Object.keys(d).forEach(k=>{if(o[k]===undefined&&k.slice(0,2)!=='__')o[k]=d[k];});
+    if(r){const cambi=E.f.filter(([k,,t])=>t!=='f'&&String(d[k]==null?'':d[k])!==String(o[k]==null?'':o[k])).map(([k,l])=>[l.replace(/ \(.*\)$/,''),d[k]==null?'':d[k],o[k]]);if(cambi.length)o.storico=(d.storico||[]).concat([{quando:new Date().toISOString(),chi:CTX.user.id,cambi}]).slice(-30);}
     const q=r?CTX.sb.from('voci_dati').update({dati:o,aggiornato:new Date().toISOString()}).eq('id',r.id):CTX.sb.from('voci_dati').insert({voce:id,dati:o});
     const {error}=await q;if(error)throw new Error('Non salvato: '+error.message);await loadVD();rerender();stEl.textContent='Salvato. Lo vedono tutti quelli che hanno accesso.';});}
 
@@ -1940,7 +1961,7 @@ async function loadSocial(){if(!CTX.sb)return;
   const [p,n,rq,cp,ri,iv]=await Promise.all([CTX.sb.from('profili').select('id,nome,email,admin,presidente'),CTX.sb.from('notifiche').select('*').order('quando',{ascending:false}).limit(40),CTX.sb.from('richieste').select('*').order('creato',{ascending:false}),CTX.sb.from('compiti').select('*').order('creato',{ascending:false}),CTX.sb.from('riunioni').select('*').order('quando'),CTX.sb.from('inviti_riunione').select('*')]);
   (p.data||[]).forEach(x=>PEOPLE[x.id]=x);NOTI=n.data||[];RICH=rq.data||[];COMP=cp.data||[];RIUN=ri.data||[];INVM=iv.data||[];}
 const isPres=()=>CTX.admin||!!(PEOPLE[CTX.user.id]&&PEOPLE[CTX.user.id].presidente)||!!CTX.prof.presidente;
-function refreshBell(){const n=NOTI.filter(x=>!x.letto).length;const b=document.getElementById('bellN');if(b){b.textContent=n?String(n):'';b.hidden=!n;}}
+function refreshBell(){const n=NOTI.filter(x=>!x.letto&&!mutata(x)).length;const b=document.getElementById('bellN');if(b){b.textContent=n?String(n):'';b.hidden=!n;}}
 document.getElementById('bell').addEventListener('click',()=>{go('p-me');});
 
 /* --- Home a riquadri --- */
@@ -1952,7 +1973,7 @@ function countdown(){const t=new Date('2027-07-02T00:00:00');const n=Math.ceil((
 function myTodo(){const me=CTX.user.id;return COMP.filter(c=>c.per===me&&!c.fatto);}
 function briefing(){const me=CTX.user.id,today=todayISO();const parts=[];
   const ap=RICH.filter(r=>r.stato==='aperta');if(ap.length)parts.push('<b>'+ap.length+' '+(ap.length===1?'richiesta del Presidente':'richieste del Presidente')+'</b> ancora da prendere');
-  const mine=RICH.filter(r=>r.preso_da===me&&r.stato==='presa');const late=mine.filter(r=>r.entro&&r.entro<today);
+  const mine=RICH.filter(r=>r.preso_da===me&&['presa','lavorazione','attesa'].includes(r.stato));const late=mine.filter(r=>r.entro&&r.entro<today);
   if(late.length)parts.push('<b class="neg">'+late.length+' tua'+(late.length>1?'e':'')+' in ritardo</b>');else if(mine.length)parts.push(mine.length+' presa da te: la prossima scade il <b>'+fmtD(mine.map(r=>r.entro).sort()[0])+'</b>');
   if(canV('v-for27')){const pp=prossimi(VD['v-for27']||[],7);if(pp.length)parts.push('<b>'+pp.length+' pagament'+(pp.length===1?'o':'i')+' ai fornitori</b> entro 7 giorni');}
   if(canV('v-fatt')){const sc=(VD['v-fatt']||[]).filter(r=>r.dati.tipo!=='Ricavo'&&r.dati.pagata!=='Sì'&&r.dati.scadenza&&r.dati.scadenza<today).length;if(sc)parts.push('<b class="neg">'+sc+' fattur'+(sc===1?'a scaduta':'e scadute')+'</b> da pagare');}
@@ -1985,7 +2006,7 @@ function renderHome(){const el=document.getElementById('p-home');el.innerHTML=''
   rq.querySelectorAll('[data-take]').forEach(b=>b.addEventListener('click',()=>takeReq(b.dataset.take)));g.appendChild(rq);
   const td=myTodo();const tw=h('<section class="w"><div class="wh"><b>Da fare oggi</b><button type="button" class="lnk2" data-go="p-me">Il mio spazio</button></div>'+(td.length?td.slice(0,5).map(c=>'<label class="todo"><input type="checkbox" data-done="'+c.id+'"><span>'+esc(c.titolo)+(c.entro?' <em>entro il '+fmtD(c.entro)+'</em>':'')+'</span></label>').join(''):'<p class="muted">Niente da fare. Aggiungi un promemoria da Il mio spazio.</p>')+'</section>');
   tw.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));g.appendChild(tw);
-  g.appendChild(h('<section class="w wide"><div class="wh"><b>Questa settimana</b><button type="button" class="lnk2" data-go="p-cal">Riunioni</button></div>'+weekStrip()+'</section>'));
+  g.appendChild(h('<section class="w wide"><div class="wh"><b>Questa settimana</b><button type="button" class="lnk2" data-go="p-cal">Calendario</button></div>'+weekStrip()+'</section>'));
   const pw=pubWidget();if(pw)g.appendChild(pw);
   (PREF.w||[]).forEach(k=>{const w=extraW(k);if(w)g.appendChild(w);});
   const add=h('<button type="button" class="w wadd"><span>+</span><b>Aggiungi un riquadro</b></button>');add.addEventListener('click',pickW);g.appendChild(add);
@@ -1995,7 +2016,10 @@ function extraW(k){const rm='<button type="button" class="wx" aria-label="Togli 
   else if(k==='presenze'){if(!canV('s-map'))return null;const t=PLACES.reduce((a,p)=>a+pVal(p).n,0);html='<section class="w">'+rm+'<span class="wl">Presenze in mappa</span><b class="wbig">≈ '+nf.format(t)+'</b><button type="button" class="bb" data-go="s-map">Apri la mappa</button></section>';}
   else if(k==='sponsor'){if(!canV('v-altri'))return null;const L=(VD['v-altri']||[]).filter(r=>r.dati.contattato!=='Sì');html='<section class="w">'+rm+'<span class="wl">Sponsor da contattare</span><b class="wbig">'+L.length+'</b><button type="button" class="bb" data-go="v-altri">Apri</button></section>';}
   else if(k==='modifiche'){html='<section class="w">'+rm+'<div class="wh"><b>Ultime novità</b></div>'+(NOTI.slice(0,4).map(n=>'<p class="small">· '+esc(n.testo)+'</p>').join('')||'<p class="muted">Nessuna novità.</p>')+'</section>';}
-  if(!html)return null;const w=h(html);w.querySelector('[data-rm]').addEventListener('click',async()=>{PREF.w=PREF.w.filter(x=>x!==k);renderHome();await savePref();});return w;}
+  if(!html)return null;const w=h(html);const mv=h('<div class="wmv"><button type="button" aria-label="Sposta prima">↑</button><button type="button" aria-label="Sposta dopo">↓</button></div>');w.appendChild(mv);
+  mv.children[0].addEventListener('click',async()=>{const i=PREF.w.indexOf(k);if(i>0){[PREF.w[i-1],PREF.w[i]]=[PREF.w[i],PREF.w[i-1]];renderHome();await savePref();}});
+  mv.children[1].addEventListener('click',async()=>{const i=PREF.w.indexOf(k);if(i<PREF.w.length-1){[PREF.w[i+1],PREF.w[i]]=[PREF.w[i],PREF.w[i+1]];renderHome();await savePref();}});
+  w.querySelector('[data-rm]').addEventListener('click',async()=>{PREF.w=PREF.w.filter(x=>x!==k);renderHome();await savePref();});return w;}
 function pickW(){const av=Object.entries(WIDX).filter(([k])=>!(PREF.w||[]).includes(k));
   if(!av.length){stEl.textContent='Hai già tutti i riquadri disponibili.';return;}
   sheet('Aggiungi un riquadro','<div class="sgrid">'+av.map(([k,t])=>'<button type="button" data-w="'+k+'">'+esc(t)+'</button>').join('')+'</div>','Chiudi',async()=>{});
@@ -2046,7 +2070,7 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
   await loadAree();if(cur!=='p-me')return;
   el.appendChild(h('<div class="mehead"><span class="av big">'+iniz(me)+'</span><div><span class="eyb">Il mio spazio</span><h2>'+esc(CTX.prof.nome||CTX.prof.email)+'</h2><span class="muted">'+(CTX.admin?'Amministratore':isPres()?'Presidente':'Collaboratore')+'</span></div></div>'));
   const un=NOTI.filter(n=>!n.letto);
-  const nc=h('<section class="card"><div class="wh"><h3>Notifiche</h3>'+(un.length?'<button type="button" class="lnk2" id="allread">Segna tutte come lette</button>':'')+'</div>'+(NOTI.length?NOTI.slice(0,15).map(n=>'<button type="button" class="noti'+(n.letto?'':' new')+'" data-n="'+n.id+'" data-link="'+esc(n.link||'')+'"><i></i><span>'+esc(n.testo)+'<em>'+new Date(n.quando).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</em></span></button>').join(''):'<p class="muted">Nessuna notifica.</p>')+'</section>');
+  const nc=h('<section class="card"><div class="wh"><h3>Notifiche</h3>'+(un.length?'<button type="button" class="lnk2" id="allread">Segna tutte come lette</button>':'')+'</div>'+(NOTI.filter(n=>!mutata(n)).length?NOTI.filter(n=>!mutata(n)).slice(0,15).map(n=>'<button type="button" class="noti'+(n.letto?'':' new')+'" data-n="'+n.id+'" data-link="'+esc(n.link||'')+'"><i></i><span>'+esc(n.testo)+'<em>'+new Date(n.quando).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</em></span></button>').join(''):'<p class="muted">Nessuna notifica.</p>')+'</section>');
   nc.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('id',+b.dataset.n);const x=NOTI.find(n=>n.id===+b.dataset.n);if(x)x.letto=true;refreshBell();if(b.dataset.link)go(b.dataset.link);else renderMe();}));
   const ar=nc.querySelector('#allread');if(ar)ar.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('per',me).eq('letto',false);NOTI.forEach(n=>n.letto=true);refreshBell();renderMe();});
   el.appendChild(nc);
@@ -2056,18 +2080,10 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
   cc.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));
   cc.querySelector('#pm_ok').addEventListener('click',async()=>{const t=cc.querySelector('#pm_t').value.trim();if(!t)return;const {error}=await CTX.sb.from('compiti').insert({per:me,titolo:t,entro:cc.querySelector('#pm_d').value||null,privato:true});if(error){stEl.textContent=error.message;return;}await loadSocial();renderMe();});
   cc.querySelector('#as_ok').addEventListener('click',()=>{const ppl=Object.values(PEOPLE).filter(p=>p.id!==me);sheet('Assegna un compito','<div class="ctl"><label for="as_p">A chi</label><select id="as_p">'+ppl.map(p=>'<option value="'+p.id+'">'+esc(p.nome||p.email)+'</option>').join('')+'</select></div><div class="ctl"><label for="as_t">Cosa deve fare</label><input type="text" id="as_t"></div><div class="ctl"><label for="as_d">Entro</label><input type="date" id="as_d" min="'+todayISO()+'"></div>','Assegna',async(dl)=>{const t=dl.querySelector('#as_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi cosa deve fare.';return false;}const {error}=await CTX.sb.from('compiti').insert({per:dl.querySelector('#as_p').value,titolo:t,entro:dl.querySelector('#as_d').value||null});if(error)throw new Error(error.message);await loadSocial();renderMe();stEl.textContent='Compito assegnato: riceverà una notifica.';});});
-  el.appendChild(cc);
-  const given=COMP.filter(c=>c.da===me&&c.per!==me);
-  if(given.length)el.appendChild(h('<section class="card"><h3>Compiti che hai assegnato</h3>'+given.map(c=>'<div class="rq"><div><b>'+esc(c.titolo)+'</b><span>'+esc(nome(c.per))+(c.entro?' · entro il '+fmtD(c.entro):'')+'</span></div><span class="chip2 '+(c.fatto?'ok':'')+'">'+(c.fatto?'Fatto':'Da fare')+'</span></div>').join('')+'</section>'));
-  const myA=AREE_P.filter(a=>a.owner===me),oth=AREE_P.filter(a=>a.owner!==me);
-  const ac=h('<section class="card"><div class="wh"><h3>Le mie aree</h3><button type="button" class="bb dark sm" id="na">+ Nuova area</button></div><p class="muted">Pagine tue per appunti e lavori. Scegli se renderle visibili a tutti.'+(CTX.admin?' Come amministratore vedi anche quelle degli altri.':'')+'</p><div class="cgrid"></div></section>');
-  const ag=ac.querySelector('.cgrid');
-  myA.concat(oth).forEach(a=>{const own=a.owner===me;const c=h('<article class="card rc"><div class="chips"><span class="chip2 '+(a.visibile?'ok':'')+'">'+(a.visibile?'Visibile a tutti':'Solo per '+(own?'te':esc(nome(a.owner))))+'</span>'+(own?'':'<span class="chip2">di '+esc(nome(a.owner))+'</span>')+'</div><b class="vn">'+esc(a.titolo)+'</b><p style="white-space:pre-line">'+esc((a.testo||'').slice(0,400))+'</p></article>');
-    if(own){const b=h('<div class="rowb"><button type="button">Modifica</button><button type="button" class="ko">Elimina</button></div>');b.children[0].addEventListener('click',()=>editArea(a));b.children[1].addEventListener('click',()=>ask('Eliminare «'+a.titolo+'»?','Elimina',async()=>{await CTX.sb.from('aree_personali').delete().eq('id',a.id);renderMe();}));c.appendChild(b);}
-    ag.appendChild(c);});
-  ac.querySelector('#na').addEventListener('click',()=>editArea(null));el.appendChild(ac);
+  el.appendChild(compitiCard());
+  el.appendChild(areeCard());
   el.appendChild(h('<section class="card"><h3>Profilo</h3><div class="big-btns"><button type="button" class="bb" id="pw">Cambia password</button><button type="button" class="bb" id="out2">Esci</button></div></section>'));
-  mePush(el);
+  mePush(el);mePrefNoti(el);
   el.querySelector('#out2').addEventListener('click',()=>CTX.logout());
   el.querySelector('#pw').addEventListener('click',()=>sheet('Cambia password','<div class="ctl"><label for="np2">Nuova password (almeno 8 caratteri)</label><input type="password" id="np2" autocomplete="new-password"></div>','Salva',async(dl)=>{const p=dl.querySelector('#np2').value;if(p.length<8){dl.querySelector('.smsg').textContent='Almeno 8 caratteri.';return false;}const {error}=await CTX.sb.auth.updateUser({password:p});if(error)throw new Error(error.message);stEl.textContent='Password cambiata.';}));}
 function editArea(a){sheet(a?'Modifica area':'Nuova area','<div class="ctl"><label for="ap_t">Titolo</label><input type="text" id="ap_t" value="'+esc(a?a.titolo:'')+'"></div><div class="ctl"><label for="ap_x">Contenuto</label><textarea id="ap_x" style="min-height:180px">'+esc(a?a.testo||'':'')+'</textarea></div><label style="display:flex;gap:10px;align-items:center;font-size:17px"><input type="checkbox" id="ap_v"'+(a&&a.visibile?' checked':'')+'> Visibile a tutti</label>','Salva',async(dl)=>{const t=dl.querySelector('#ap_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi un titolo.';return false;}const o={titolo:t,testo:dl.querySelector('#ap_x').value,visibile:dl.querySelector('#ap_v').checked,aggiornato:new Date().toISOString()};const q=a?CTX.sb.from('aree_personali').update(o).eq('id',a.id):CTX.sb.from('aree_personali').insert(o);const {error}=await q;if(error)throw new Error(error.message);renderMe();});}
@@ -2163,7 +2179,9 @@ function xmlFattura(txt){const doc=new DOMParser().parseFromString(txt,'applicat
   if(!importo){importo=all(body,'DettaglioPagamento').reduce((a,r)=>a+Number(one(r,'ImportoPagamento')||0),0);}
   const ricavo=/bruna/i.test(ced)&&!/bruna/i.test(ces);
   const soggetto=ricavo?ces:ced;
-  return {soggetto,tipo:ricavo?'Ricavo':'Costo',importo:Math.round(importo*100)/100||'',data:one(dg,'Data'),numero:one(dg,'Numero'),scadenza:one(body,'DataScadenzaPagamento'),nota:one(dg,'Causale').slice(0,300),voce:bilDaNome(soggetto),__come:'xml'};}
+  const piva=n=>{const r=doc.getElementsByTagNameNS('*',n)[0];if(!r)return '';const f=r.getElementsByTagNameNS('*','IdFiscaleIVA')[0];return f?(one(f,'IdPaese')+one(f,'IdCodice')):one(r,'CodiceFiscale');};
+  const imponibile=all(body,'DatiRiepilogo').reduce((a,r)=>a+Number(one(r,'ImponibileImporto')||0),0),iva=all(body,'DatiRiepilogo').reduce((a,r)=>a+Number(one(r,'Imposta')||0),0);
+  return {piva:piva(ricavo?'CessionarioCommittente':'CedentePrestatore'),imponibile:Math.round(imponibile*100)/100||'',iva:Math.round(iva*100)/100||'',soggetto,tipo:ricavo?'Ricavo':'Costo',importo:Math.round(importo*100)/100||'',data:one(dg,'Data'),numero:one(dg,'Numero'),scadenza:one(body,'DataScadenzaPagamento'),nota:one(dg,'Causale').slice(0,300),voce:bilDaNome(soggetto),__come:'xml'};}
 function p7mInXml(buf){let b=new Uint8Array(buf);let s='';for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);
   if(/^[A-Za-z0-9+\/=\r\n]+$/.test(s.slice(0,200).trim())&&!s.includes('<')){try{s=atob(s.replace(/[^A-Za-z0-9+\/=]/g,''));}catch(e){}}
   const m=s.match(/<([\w]+:)?FatturaElettronica[\s>]/);if(!m)throw new Error('p7m');const st=s.indexOf(m[0]);const endTag='</'+(m[1]||'')+'FatturaElettronica>';const en=s.indexOf(endTag,st);if(en<0)throw new Error('p7m');
@@ -2189,6 +2207,9 @@ function leggiTesto(lines){const T=lines.join('\n');const AM=/(\d{1,3}(?:\.\d{3}
   o.soggetto=sog.replace(/\s{2,}/g,' ').replace(/[:;,.\-\s]+$/,'').slice(0,80);
   o.tipo=ci>=0&&/bruna/i.test(lines[ci]+' '+(lines[ci+1]||''))?'Ricavo':'Costo';
   const sc=T.match(/scadenza[^\d]{0,30}(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})/i);if(sc)o.scadenza=isoD(sc[1],sc[2],sc[3]);
+  const pv=T.match(/(?:p\.?\s*iva|partita\s+iva)\s*[:.]?\s*(?:IT)?\s*(\d{11})/gi);if(pv){const all2=pv.map(x=>x.match(/(\d{11})/)[1]);o.piva=all2[0];}
+  const im=T.match(/imponibile[^\d\n]{0,20}(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})/i);if(im)o.imponibile=numIt(im[1]);
+  const iv=T.match(/(?:iva|imposta)[^\d\n]{0,25}(?:\d{1,2}\s*%[^\d\n]{0,10})?(\d{1,3}(?:\.\d{3})*,\d{2}|\d+,\d{2})/i);if(iv)o.iva=numIt(iv[1]);
   o.voce=bilDaNome(o.soggetto);return o;}
 async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AIFOTO){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
 async function leggiFile0(file){const n=(file.name||'').toLowerCase();
@@ -2480,7 +2501,7 @@ function editorMappa(box,r,o){const P=r.dati;let tool=o.route?'tappa':null,linea
   const mapEl=h('<div class="lmap tall"></div>');box.appendChild(mapEl);if(o.route||o.elem)box.appendChild(fineL);box.appendChild(h(legenda()));
   const m=mkMap(mapEl,o.key);let lay=null,tmp=null;
   const setHint=()=>{hint.textContent=!tool?'':tool==='tappa'?'Tocca la mappa per aggiungere una tappa. Trascina i numeri per spostarli: il percorso si ridisegna sulle strade.':PT[tool][3]?'Tocca la mappa punto per punto lungo le transenne, poi premi «Fine transenne».':'Tocca la mappa dove mettere «'+PT[tool][0]+'». Toccalo di nuovo per scrivere orario, durata, responsabile e note, spostarlo, duplicarlo o eliminarlo.';};
-  const draw=fit=>{if(lay)lay.remove();lay=drawRoute(m,P,{fit,drag:o.route,dragElem:o.elem,onChange:k=>{if(k==='tappe')o.onRoute();else o.onChange();draw(false);},onElem:e=>schedaElemento(P,e,o.elem,()=>{o.onChange();draw(false);})});};
+  const draw=fit=>{if(!document.body.contains(m.getContainer()))return;if(lay)lay.remove();lay=drawRoute(m,P,{fit,drag:o.route,dragElem:o.elem,onChange:k=>{if(k==='tappe')o.onRoute();else o.onChange();draw(false);},onElem:e=>schedaElemento(P,e,o.elem,()=>{o.onChange();draw(false);})});};
   tb.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{tool=b.dataset.tool;lineaTmp=null;if(tmp){tmp.remove();tmp=null;}fineL.hidden=true;tb.querySelectorAll('[data-tool]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));setHint();}));
   m.on('click',e=>{if(!tool)return;const p={lat:e.latlng.lat,lng:e.latlng.lng};
     if(tool==='tappa'){P.tappe=P.tappe||[];P.tappe.push({lat:p.lat,lng:p.lng,n:''});o.onRoute();draw(false);return;}
@@ -2692,7 +2713,7 @@ function testoAI(t){return esc(t).replace(/^(Cosa fare|Cosa evitare|Chi coinvolg
 /* --- riassunto della giornata scritto dall'assistente --- */
 function fattiGiorno(){const me=CTX.user.id,today=todayISO();
   return {oggi:today,giorni_alla_bruna:countdown(),richieste_presidente_da_prendere:RICH.filter(r=>r.stato==='aperta').map(r=>r.titolo),
-    mie_richieste_in_corso:RICH.filter(r=>r.preso_da===me&&r.stato==='presa').map(r=>({titolo:r.titolo,entro:r.entro,in_ritardo:!!(r.entro&&r.entro<today)})),
+    mie_richieste_in_corso:RICH.filter(r=>r.preso_da===me&&['presa','lavorazione','attesa'].includes(r.stato)).map(r=>({titolo:r.titolo,entro:r.entro,in_ritardo:!!(r.entro&&r.entro<today)})),
     cose_da_fare:myTodo().map(c=>({titolo:c.titolo,entro:c.entro})).slice(0,10),inviti_a_riunioni_senza_risposta:INVM.filter(i=>i.user_id===me&&i.stato==='invitato').length,
     prossime_riunioni:RIUN.filter(r=>new Date(r.quando)>new Date()).slice(0,3).map(r=>({titolo:r.titolo,quando:r.quando})),
     documenti_che_ti_chiedono:MYREQ.filter(r=>r.dati.stato!=='Arrivato').map(r=>({documento:r.dati.documento,entro:r.dati.entro})),
@@ -2789,7 +2810,7 @@ async function immagineRidotta(file,isPdf){let blob=file;if(isPdf){const o=await
   const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);g.drawImage(bm,0,0,cv.width,cv.height);return cv.toDataURL('image/jpeg',0.85).split(',')[1];}
 async function leggiConAI(file,isPdf){try{const img=await immagineRidotta(file,isPdf);const r=await ai('fattura',{img});if(r.err||!r.testo)return null;
     const m=r.testo.match(/\{[\s\S]*\}/);if(!m)return null;const j=JSON.parse(m[0]);const o={__come:'ai'};
-    ['soggetto','numero','data','scadenza','nota'].forEach(k=>{if(j[k])o[k]=String(j[k]).slice(0,200);});
+    ['soggetto','numero','data','scadenza','nota','piva'].forEach(k=>{if(j[k])o[k]=String(j[k]).slice(0,200);});['imponibile','iva'].forEach(k=>{if(j[k]!=null&&j[k]!==''){const v=typeof j[k]==='number'?j[k]:numIt(j[k]);if(v)o[k]=Math.round(v*100)/100;}});
     if(j.importo!=null&&j.importo!==''){const v=typeof j.importo==='number'?j.importo:numIt(j.importo);if(v)o.importo=Math.round(v*100)/100;}
     o.tipo=j.tipo==='Ricavo'?'Ricavo':'Costo';['data','scadenza'].forEach(k=>{if(o[k]&&!/^\d{4}-\d{2}-\d{2}$/.test(o[k])){const d=o[k].match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);o[k]=d?isoD(d[1],d[2],d[3]):'';}});
     o.voce=bilDaNome(o.soggetto||'');return o;}catch(e){return null;}}
@@ -2836,6 +2857,233 @@ function accountBox(u,b){const x=UTENTI[u.id]||{};const me=u.id===CTX.user.id;
     const testi={reimposta:['Nuova password temporanea per '+n+'?','La password attuale smette di funzionare. La persona dovrà sceglierne una nuova al primo accesso.','Genera'],disattiva:['Disattivare l’account di '+n+'?','Non potrà più entrare finché non lo riattivi. I suoi dati restano.','Disattiva'],riattiva:['Riattivare l’account di '+n+'?','Potrà di nuovo entrare con la sua password.','Riattiva']}[a];
     sheet(testi[0],'<p style="font-size:17px">'+testi[1]+'</p>',testi[2],async()=>{const r=await fnUtenti({azione:a,id:u.id});if(a==='reimposta')setTimeout(()=>mostraPassword(n,u.email,r.password,()=>renderAdm2()),50);else renderAdm2();});}));
   b.appendChild(box);}
+
+/* ================= Bruna27 · completamento del brief: schede delle voci, carità, sponsor, richieste, compiti, calendario unico, eventi, aree condivise ================= */
+const PRIORITA=['Normale','Alta','Urgente','Bassa'];
+const STATI_SP=['Non ancora contattato','Contattato, non ha risposto','Ha chiesto informazioni','Interessato','Confermato','Rifiutato'];
+const vociTutte=()=>{const a=(D.bil||[]).map(x=>x.n);const b=vociPrev();return [...new Set(['Da scegliere'].concat(a,b))];};
+/* campi aggiornati delle schede (il brief chiede più informazioni) */
+EL['v-fatt'].f=[['soggetto','Fornitore o cliente','t'],['tipo','È un…','s',['Costo','Ricavo']],['piva','Partita IVA','t'],['imponibile','Imponibile (€)','n'],['iva','IVA (€)','n'],['importo','Totale (€)','n'],['data','Data','d'],['numero','Numero','t'],['voce','Voce del bilancio','s',()=>vociTutte().length>1?vociTutte():[]],['scadenza','Da pagare entro','d'],['pagata','Pagata?','s',['No','Sì']],['nota','Descrizione della prestazione','ta'],['file','File della fattura','f']];
+EL['v-sp26']={f:[['nome','Sponsor','t'],['referente','Referente','t'],['contatto','Recapiti (telefono, email)','t'],['importo','Importo 2026 (€)','n'],['pacchetto','Pacchetto acquistato','t'],['conferma','Risposta per il 2027','s',STATI_SP],['nota','Note','ta'],['file','Documento','f']],intro:'Gli sponsor del 2026 e la loro risposta per il 2027. Ogni cambio resta nello storico.',add:'Aggiungi uno sponsor 2026',group:'conferma'};
+EL['v-sp27']={f:[['nome','Sponsor','t'],['referente','Referente','t'],['importo','Importo 2027 (€)','n'],['stato','Stato','s',STATI_SP.concat(['Contratto firmato','Pagato'])],['cosa','Cosa ottiene (banner, ledwall…)','t'],['contatto','Recapiti','t'],['nota','Note','ta'],['file','Contratto o accordo','f']],intro:'Gli sponsor del 2027 e a che punto siamo. Ogni cambio resta nello storico.',add:'Aggiungi uno sponsor 2027',group:'stato'};
+EL['v-altri']={f:[['nome','Azienda','t'],['regione','Regione','s',['Basilicata','Puglia']],['settore','Settore','t'],['citta','Sede','t'],['sito','Sito web','t'],['referente','Referente commerciale','t'],['telefono','Telefono aziendale','t'],['email','Email aziendale','t'],['fonte','Da dove viene il dato','t'],['contattato','Contattata?','s',['No','Sì']],['esito','Esito','s',STATI_SP],['responsabile','Chi la segue','t'],['prossima','Prossima azione','t'],['nota','Note','ta']],intro:'Aziende di Basilicata e Puglia da proporre come sponsor. Usa solo dati aziendali pubblici o forniti dalle aziende, e rispetta le regole sulla privacy e sulle comunicazioni promozionali.',add:'Aggiungi un’azienda',group:'regione'};
+EL['v-area']={f:[['spazio','Spazio','s',['Banner','Programma','Striscioni','Ledwall','Diretta','Social','Comunicazione','Altro']],['descr','Descrizione','t'],['formato','Formato','t'],['visibilita','Visibilità (dove, quanto)','t'],['prezzo','Valore (€)','n'],['condizioni','Condizioni','t'],['stato','Stato','s',['Libero','In trattativa','Opzionato','Venduto']],['interessati','Sponsor interessati','t'],['a','Venduto a','t']],intro:'Gli spazi in vendita: banner, programma, striscioni, ledwall, diretta, social, comunicazione.',add:'Aggiungi uno spazio',group:'spazio'};
+EL['v-prot'].f=[['oggetto','Oggetto','t'],['verso','Entrata o uscita','s',['Entrata','Uscita']],['soggetto','Mittente o destinatario','t'],['tipologia','Tipologia','t'],['data','Data','d'],['numero','Numero di protocollo','t'],['responsabile','Responsabile','t'],['stato','Stato','s',['Da lavorare','In corso','Chiuso']],['scadenza','Scadenza','d'],['file','Documento','f']];
+EL['v-aut'].f=[['cosa','Autorizzazione','t'],['ente','Ente','t'],['responsabile','Responsabile','t'],['stato','Stato','s',['Da chiedere','Chiesta','Ottenuta','Negata']],['chiesta','Chiesta il','d'],['scadenza','Scadenza','d'],['nota','Nota','ta'],['file','Documento','f']];
+EL['v-voci'].f=[['nome','Voce o attività','t'],['anno','Anno','s',['2026','2027']],['costo','Costi diretti (€)','n'],['indiretti','Costi indiretti attribuiti (€)','n'],['ricavo','Ricavi diretti (€)','n'],['verifica','Questi numeri sono…','s',['Una stima','Verificati con documenti']],['nota','Nota','ta'],['doc','Documento di supporto','f']];
+EL['v-care']={f:[['beneficiario','Beneficiario o destinazione','t'],['riservato','Dato riservato?','s',['No','Sì']],['tipo','Movimento','s',['Erogazione','Entrata del fondo','Quota annuale dell’Associazione']],['importo','Importo (€)','n'],['data','Data','d'],['nota','Nota','ta'],['doc','Documento giustificativo','f']],intro:'',add:'Registra un movimento',group:'tipo'};
+EL['v-cv']={f:[['vid','Voce','t']],intro:'',add:'',group:''};
+R['v-voci']=renderAttivita;R['v-care']=renderCarita;R['v-cv']=renderSchede;R['p-req']=renderReq2;R['p-cal']=renderCalU;
+function storicoRec(d){const S2=d.storico||[];if(!S2.length)return null;return h('<details class="storico2"><summary>Storico · '+S2.length+'</summary>'+S2.slice().reverse().map(x=>'<div class="sti"><b>'+esc(nome(x.chi))+'</b> · '+new Date(x.quando).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'<br>'+x.cambi.map(c=>esc(c[0])+': '+esc(String(c[1]||'—'))+' → '+esc(String(c[2]||'—'))).join('<br>')+'</div>').join('')+'</details>');}
+
+/* --- Analisi economica delle attività --- */
+function renderAttivita(){const id='v-voci',el=document.getElementById(id);el.innerHTML='';addBack(id);const L1=VD[id]||[],can=CTX.canEdit(id);const yr=elFilt[id]||'2026';
+  el.appendChild(h('<div class="sh"><span class="eyb">Economia</span><h2>Costi e guadagni per attività</h2><p>Per ogni voce o attività: costi diretti, costi indiretti attribuiti, ricavi, risultato e margine. Le stime sono segnate in modo diverso dai numeri verificati con documenti.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
+  const seg=h('<div class="seg">'+['2026','2027'].map(y=>'<button type="button" aria-pressed="'+(y===yr)+'">'+y+'</button>').join('')+'</div>');seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{elFilt[id]=b.textContent;renderAttivita();}));el.appendChild(seg);
+  const LL=L1.filter(r=>(r.dati.anno||'2026')===yr);const n=x=>+x||0;const co=LL.reduce((a,r)=>a+n(r.dati.costo)+n(r.dati.indiretti),0),ri=LL.reduce((a,r)=>a+n(r.dati.ricavo),0);const ver=LL.filter(r=>r.dati.verifica==='Verificati con documenti').length;
+  el.appendChild(h('<div class="big3"><div class="kpi"><span>Costi totali</span><b>'+eur(co)+'</b></div><div class="kpi"><span>Ricavi</span><b>'+eur(ri)+'</b></div><div class="kpi dark"><span>Risultato</span><b class="'+(ri-co>=0?'pos':'neg')+'">'+(ri-co>=0?'+':'−')+eur(Math.abs(ri-co))+'</b></div></div>'));
+  if(LL.length)el.appendChild(h('<p class="muted small">'+ver+' su '+LL.length+' voci verificate con documenti. Le altre sono stime.</p>'));
+  if(can&&CTX.eco&&!L1.length)el.appendChild(addBtn('Riempi con le 7 aree del bilancio 2026',async()=>{await CTX.sb.from('voci_dati').insert(D.bil.map(a=>({voce:id,dati:{nome:a.n,anno:'2026',costo:Math.round(a.t),indiretti:'',ricavo:'',verifica:'Verificati con documenti',nota:'Dal bilancio 2026'}})));await loadVD();renderAttivita();}));
+  if(can)el.appendChild(addBtn('+ Aggiungi una voce o un’attività',()=>editRec(id,null,{anno:yr,verifica:'Una stima'})));
+  const g=h('<div class="cgrid"></div>');
+  LL.forEach(r=>{const d=r.dati,c1=n(d.costo),c2=n(d.indiretti),rc=n(d.ricavo),tot=c1+c2,ris=rc-tot,mg=rc?Math.round(ris/rc*100):null,mx=Math.max(tot,rc,1);const stima=d.verifica!=='Verificati con documenti';
+    const c=h('<article class="card vc"><div class="chips"><span class="chip2 '+(stima?'':'ok')+'">'+(stima?'Stima':'Verificato')+'</span>'+(stima&&!d.doc?'<span class="chip2 ko">Senza documenti</span>':'')+'</div><b class="vn">'+esc(d.nome||'Senza nome')+'</b><div class="bar2"><div><span>Costi'+(c2?' (di cui indiretti '+eur(c2)+')':'')+'</span><b>'+(d.costo!==''&&d.costo!=null?eur(tot):'da inserire')+'</b></div><i><i style="width:'+(tot/mx*100)+'%;background:#9A9CA6"></i></i><div><span>Ricavi</span><b>'+(d.ricavo!==''&&d.ricavo!=null?eur(rc):'da inserire')+'</b></div><i><i style="width:'+(rc/mx*100)+'%;background:var(--acc)"></i></i></div><div class="res '+(ris>=0?'pos':'neg')+'">Risultato: <b>'+(ris>=0?'+':'−')+eur(Math.abs(ris))+'</b>'+(mg!=null?' · margine '+mg+'%':'')+'</div>'+(d.nota?'<p class="muted small">'+esc(d.nota)+'</p>':'')+'</article>');
+    if(d.doc&&d.doc.path)c.appendChild(fileBtn(d.doc,'Documento di supporto'));const sto=storicoRec(d);if(sto)c.appendChild(sto);if(can)c.appendChild(rowBtns(id,r));g.appendChild(c);});
+  el.appendChild(g);if(!LL.length)el.appendChild(h('<div class="card soon"><p>Nessuna voce per il '+yr+'.</p></div>'));}
+
+/* --- Carità: movimenti, beneficiari riservati, saldo --- */
+function renderCarita(){const id='v-care',el=document.getElementById(id);el.innerHTML='';addBack(id);const L1=VD[id]||[],can=CTX.canEdit(id);const n=x=>+x||0;
+  el.appendChild(h('<div class="sh"><span class="eyb">Economia</span><h2>Erogazioni della carità</h2><p>Entrate del fondo (compresa la quota annuale dell’Associazione) ed erogazioni, con i documenti. I beneficiari segnati come riservati restano nascosti a chi può solo guardare.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
+  const ent=L1.filter(r=>r.dati.tipo!=='Erogazione'),ero=L1.filter(r=>r.dati.tipo==='Erogazione');const E1=ent.reduce((a,r)=>a+n(r.dati.importo),0),E2=ero.reduce((a,r)=>a+n(r.dati.importo),0);
+  el.appendChild(h('<div class="big3"><div class="kpi"><span>Entrate del fondo</span><b>'+eur(E1)+'</b></div><div class="kpi"><span>Erogato</span><b>'+eur(E2)+'</b></div><div class="kpi dark"><span>Saldo</span><b class="'+(E1-E2>=0?'pos':'neg')+'">'+eur(E1-E2)+'</b></div></div>'));
+  if(canV('s-car'))el.appendChild(h('<p class="muted small">Le ipotesi sul fondo (quota alla Curia, fondo dei fornitori) sono nella scheda <button type="button" class="lnk2" data-go="s-car">Carità</button>.</p>'));
+  if(can)el.appendChild(addBtn('+ Registra un movimento',()=>editRec(id,null,{tipo:'Erogazione',riservato:'No'})));
+  const g=h('<div class="cgrid"></div>');L1.slice().sort((a,b)=>String(b.dati.data||'').localeCompare(String(a.dati.data||''))).forEach(r=>{const d=r.dati;const nasc=d.riservato==='Sì'&&!can;
+    const c=h('<article class="card rc"><div class="chips"><span class="chip2 '+(d.tipo==='Erogazione'?'':'ok')+'">'+esc(d.tipo||'')+'</span>'+(d.riservato==='Sì'?'<span class="chip2">Riservato</span>':'')+'</div><b class="vn">'+(nasc?'Beneficiario riservato':esc(d.beneficiario||''))+'</b><b class="amt">'+eur(n(d.importo))+'</b>'+(d.data?'<div class="fact2"><span>Data</span><b>'+fmtD(d.data)+'</b></div>':'')+(d.nota&&!nasc?'<p class="muted small">'+esc(d.nota)+'</p>':'')+'</article>');
+    if(d.doc&&d.doc.path&&!nasc)c.appendChild(fileBtn(d.doc,'Documento'));if(can)c.appendChild(rowBtns(id,r));g.appendChild(c);});el.appendChild(g);
+  if(!L1.length)el.appendChild(h('<div class="card soon"><p>Nessun movimento registrato.</p></div>'));}
+
+/* --- Schede delle voci 2027: previsto, effettivo, fornitore, preventivi, contratto, fatture, pagamenti, documenti --- */
+let CVSEL=null;
+function renderSchede(){const id='v-cv',el=document.getElementById(id);el.innerHTML='';addBack(id);const can=CTX.canEdit(id);
+  if(!CTX.eco||!(D.prev||[]).length){el.appendChild(h('<div class="card soon"><p>Per vedere le schede servono i dati del bilancio (sezione Economia).</p></div>'));return;}
+  const REC={};(VD[id]||[]).forEach(r=>REC[r.dati.vid]=r);const prev=VD['v-prev']||[],for27=VD['v-for27']||[],fatt=VD['v-fatt']||[];
+  const info=v=>{const P2=prev.filter(x=>x.dati.voce===v.n),F=for27.filter(x=>x.dati.voce===v.n),FT=fatt.filter(x=>x.dati.voce===v.n&&x.dati.tipo!=='Ricavo');const r=REC[v.id];
+    const previsto=voceOn(v)?voceV(v):0;const eff=r&&r.dati.effettivo!==''&&r.dati.effettivo!=null?+r.dati.effettivo:(FT.length?FT.reduce((a,x)=>a+(+x.dati.importo||0),0):null);
+    const pag=F.flatMap(x=>x.dati.pagamenti||[]);return {P2,F,FT,r,previsto,eff,pag};};
+  if(CVSEL){const v=Object.values(VOCI).find(x=>x.id===CVSEL);if(v)return schedaVoce(el,v,info(v),can);}
+  el.appendChild(h('<div class="sh"><span class="eyb">Economia</span><h2>Schede delle voci 2027</h2><p>Ogni voce della previsione 2027 con previsto ed effettivo, fornitore, preventivi, contratto, fatture, pagamenti e documenti. L’effettivo si calcola dalle fatture collegate, oppure lo scrivi tu.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
+  let tp=0,te=0,tpe=0,ne=0;D.prev.forEach(a=>a.voci.forEach(v=>{const x=info(v);tp+=x.previsto;if(x.eff!=null){te+=x.eff;tpe+=x.previsto;ne++;}}));const sc=te-tpe;
+  el.appendChild(h('<div class="big3"><div class="kpi"><span>Previsto 2027</span><b>'+eur(tp)+'</b></div><div class="kpi"><span>Effettivo finora</span><b>'+eur(te)+'</b></div><div class="kpi dark"><span>Scostamento'+(ne?' su '+ne+(ne===1?' voce':' voci'):'')+'</span><b class="'+(!ne?'':sc<=0?'pos':'neg')+'">'+(!ne?'—':(sc>=0?'+':'−')+eur(Math.abs(sc)))+'</b></div></div>'));
+  D.prev.forEach(a=>{const sec=h('<details class="area cv"><summary><div class="sumrow"><span class="t">'+esc(a.n)+'</span></div></summary><div class="rows"></div></details>');
+    a.voci.forEach(v=>{const x=info(v);const row=h('<button type="button" class="cvrow"><span class="n">'+esc(v.n)+(voceOn(v)?'':' <span class="chip2">esclusa</span>')+'</span><span class="cvn"><b>'+eur(x.previsto)+'</b><em>'+(x.eff!=null?'effettivo '+eur(x.eff):'effettivo da inserire')+'</em></span><span class="cvi">'+(x.F.length?'fornitore ✓':'')+(x.P2.length?' · '+x.P2.length+' prev.':'')+(x.FT.length?' · '+x.FT.length+' fatt.':'')+'</span></button>');
+      row.addEventListener('click',()=>{CVSEL=v.id;renderSchede();window.scrollTo({top:0});});sec.querySelector('.rows').appendChild(row);});el.appendChild(sec);});}
+function schedaVoce(el,v,x,can){const id='v-cv';const d=x.r?x.r.dati:{vid:v.id,effettivo:'',descr:'',note:'',files:[]};
+  const b=h('<button type="button" class="back">‹ Tutte le voci</button>');b.addEventListener('click',()=>{CVSEL=null;renderSchede();});el.appendChild(b);
+  const scost=x.eff!=null?x.eff-x.previsto:null;
+  el.appendChild(h('<div class="sh"><span class="eyb">Scheda della voce</span><h2>'+esc(v.n)+'</h2></div>'));
+  el.appendChild(h('<div class="big3"><div class="kpi"><span>Previsto 2027</span><b>'+eur(x.previsto)+'</b></div><div class="kpi"><span>Effettivo</span><b>'+(x.eff!=null?eur(x.eff):'—')+'</b></div><div class="kpi dark"><span>Scostamento</span><b class="'+(scost==null?'':scost<=0?'pos':'neg')+'">'+(scost==null?'—':(scost>=0?'+':'−')+eur(Math.abs(scost)))+'</b></div></div>'));
+  const cardF=h('<section class="card"><h3>Fornitore, contratto e pagamenti</h3>'+(x.F.length?x.F.map(f=>'<div class="fact2"><span>Fornitore</span><b>'+esc(f.dati.fornitore)+' · '+eur(+f.dati.importo||0)+'</b></div><div class="fact2"><span>Contratto</span><b>'+(f.dati.contratto?'allegato':'da allegare')+'</b></div>'+(f.dati.pagamenti||[]).map(p=>'<div class="fact2"><span>'+esc(p.n||'Pagamento')+(p.data?' · '+fmtD(p.data):'')+'</span><b>'+eur(+p.importo||0)+(p.pagato?' · pagato':' · da pagare')+'</b></div>').join('')).join(''):'<p class="muted">Nessun fornitore scelto per questa voce.</p>')+(canV('v-for27')?'<button type="button" class="lnk2" data-go="v-for27">Apri Fornitori 2027</button>':'')+'</section>');el.appendChild(cardF);
+  el.appendChild(h('<section class="card"><h3>Preventivi</h3>'+(x.P2.length?x.P2.map(p=>'<div class="rq"><div><b>'+esc(p.dati.fornitore||'da trovare')+'</b><span>'+esc(p.dati.stato||'')+'</span></div><b>'+(+p.dati.importo?eur(+p.dati.importo):'')+'</b></div>').join(''):'<p class="muted">Nessun preventivo.</p>')+(canV('v-prev')?'<button type="button" class="lnk2" data-go="v-prev">Apri i Preventivi</button>':'')+'</section>'));
+  el.appendChild(h('<section class="card"><h3>Fatture collegate</h3>'+(x.FT.length?x.FT.map(f=>'<div class="rq"><div><b>'+esc(f.dati.soggetto||'')+'</b><span>'+(f.dati.data?fmtD(f.dati.data):'')+(f.dati.numero?' · n. '+esc(f.dati.numero):'')+' · '+(f.dati.pagata==='Sì'?'pagata':'da pagare')+'</span></div><b>'+eur(+f.dati.importo||0)+'</b></div>').join(''):'<p class="muted">Nessuna fattura collegata: nelle Fatture scegli questa voce.</p>')+'</section>'));
+  const cd=h('<section class="card"><h3>Descrizione, effettivo e documenti</h3><div class="ctl"><label for="cv_d">Descrizione</label><textarea id="cv_d">'+esc(d.descr||v.nota||'')+'</textarea></div><div class="ctl"><label for="cv_e">Importo effettivo (€) — vuoto = somma delle fatture</label><input type="number" id="cv_e" step="any" inputmode="decimal" value="'+esc(d.effettivo)+'"></div><div class="ctl"><label for="cv_n">Note</label><textarea id="cv_n">'+esc(d.note||'')+'</textarea></div><div class="lab">Documenti</div><div class="cvf"></div>'+(can?'<label class="bb soft sm upl">Allega un documento<input type="file" hidden></label><div class="big-btns"><button type="button" class="bb dark" id="cv_s">Salva</button></div>':'')+'</section>');
+  (d.files||[]).forEach(f=>cd.querySelector('.cvf').appendChild(fileBtn(f)));if(!(d.files||[]).length)cd.querySelector('.cvf').appendChild(h('<p class="muted small">Nessun documento.</p>'));
+  if(!can)cd.querySelectorAll('textarea,input').forEach(i=>i.disabled=true);
+  const salva=async(extra)=>{const o=Object.assign({},d,{descr:cd.querySelector('#cv_d').value.trim(),effettivo:cd.querySelector('#cv_e').value===''?'':+cd.querySelector('#cv_e').value,note:cd.querySelector('#cv_n').value.trim()},extra||{});
+    const cambi=[['Descrizione',d.descr||'',o.descr],['Effettivo',d.effettivo,o.effettivo],['Note',d.note||'',o.note]].filter(c=>String(c[1])!==String(c[2]));if(extra&&extra.files)cambi.push(['Documenti',(d.files||[]).length,o.files.length]);
+    if(cambi.length)o.storico=(d.storico||[]).concat([{quando:new Date().toISOString(),chi:CTX.user.id,cambi}]).slice(-30);
+    const q=x.r?CTX.sb.from('voci_dati').update({dati:o,aggiornato:new Date().toISOString()}).eq('id',x.r.id):CTX.sb.from('voci_dati').insert({voce:id,dati:o});const {error}=await q;if(error){stEl.textContent='Non salvato: '+error.message;return;}await loadVD();renderSchede();stEl.textContent='Salvato.';};
+  if(can){cd.querySelector('#cv_s').addEventListener('click',()=>salva());cd.querySelector('.upl input').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;stEl.textContent='Carico…';try{const k=await carica(f,id);await salva({files:(d.files||[]).concat([k])});}catch(err){stEl.textContent=err.message;}});}
+  el.appendChild(cd);const sto=storicoRec(d);if(sto)el.appendChild(sto);}
+
+/* --- Richieste del Presidente: priorità, area, allegato, stati --- */
+const STR={aperta:['Da prendere','ko'],presa:['Presa in carico',''],lavorazione:['In lavorazione',''],attesa:['In attesa',''],fatta:['Completata','ok']};
+function areaSelect(id,val){return '<select id="'+id+'"><option value="">Nessuna in particolare</option>'+SEZ.map(s=>'<optgroup label="'+esc(s.n)+'">'+s.v.map(v=>'<option value="'+v[0]+'"'+(v[0]===val?' selected':'')+'>'+esc(s.n+' › '+v[1])+'</option>').join('')+'</optgroup>').join('')+'</select>';}
+function renderReq2(){const el=document.getElementById('p-req');el.innerHTML='';const me=CTX.user.id,today=todayISO();
+  el.appendChild(h('<div class="sh"><span class="eyb">Per tutti</span><h2>Richieste del Presidente</h2><p>Le vedono tutti. Chi ne prende una scrive entro quando la consegna, poi aggiorna lo stato fino al completamento.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
+  if(isPres())el.appendChild(addBtn('+ Nuova richiesta',()=>{const d=sheet('Nuova richiesta','<div class="ctl"><label for="rq_t">Oggetto</label><input type="text" id="rq_t"></div><div class="ctl"><label for="rq_x">Descrizione</label><textarea id="rq_x"></textarea></div><div class="when"><div class="ctl"><label for="rq_p">Priorità</label><select id="rq_p">'+PRIORITA.map(p=>'<option>'+p+'</option>').join('')+'</select></div><div class="ctl"><label for="rq_a">Area interessata</label>'+areaSelect('rq_a','')+'</div></div><div class="ctl"><label for="rq_f">Documento allegato (facoltativo)</label><input type="file" id="rq_f"></div>','Invia a tutti',async(dl)=>{
+      const t=dl.querySelector('#rq_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi l’oggetto.';return false;}const f=dl.querySelector('#rq_f').files[0];const al=f?await carica(f,'richieste/'+me):null;
+      const {data:nr,error}=await CTX.sb.from('richieste').insert({titolo:t,testo:dl.querySelector('#rq_x').value.trim()||null,priorita:dl.querySelector('#rq_p').value,area:dl.querySelector('#rq_a').value||null,allegato:al}).select().single();if(error)throw new Error(error.message);if(nr)aiConsigli(nr.id);await loadSocial();renderReq2();stEl.textContent='Richiesta inviata a tutti.';});}));
+  const late=r=>['presa','lavorazione','attesa'].includes(r.stato)&&r.entro&&r.entro<today;
+  const grp=[['Da prendere',r=>r.stato==='aperta'],['In ritardo',late],['In corso',r=>['presa','lavorazione','attesa'].includes(r.stato)&&!late(r)],['Completate',r=>r.stato==='fatta']];
+  const pr=r=>({Urgente:0,Alta:1,Normale:2,Bassa:3}[r.priorita||'Normale']);
+  grp.forEach(([lab,f])=>{const L1=RICH.filter(f).sort((a,b)=>pr(a)-pr(b));if(!L1.length)return;el.appendChild(h('<h3 class="gh">'+lab+' · '+L1.length+'</h3>'));const g=h('<div class="cgrid"></div>');
+    L1.forEach(r=>{const st=STR[r.stato]||STR.aperta;const v=r.area&&VOCE[r.area];
+      const c=h('<article class="card rc'+(r.stato==='aperta'?' hot':'')+'"><div class="chips"><span class="chip2 '+st[1]+'">'+st[0]+'</span>'+(late(r)?'<span class="chip2 ko">In ritardo</span>':'')+(r.priorita&&r.priorita!=='Normale'?'<span class="chip2 '+(r.priorita==='Urgente'||r.priorita==='Alta'?'ko':'')+'">Priorità '+esc(r.priorita.toLowerCase())+'</span>':'')+'</div><b class="vn">'+esc(r.titolo)+'</b>'+(r.testo?'<p>'+esc(r.testo)+'</p>':'')+
+        (v?'<button type="button" class="lnk2" data-go="'+r.area+'">'+esc(SECN[v.sec].n+' › '+v.t)+'</button>':'')+
+        (r.preso_da?'<div class="who"><span class="av">'+iniz(r.preso_da)+'</span><span><b>'+esc(nome(r.preso_da))+'</b> · entro il '+fmtD(r.entro)+(r.presa_il?'<br><span class="muted small">presa il '+new Date(r.presa_il).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span>':'')+'</span></div>':'')+
+        (r.note?'<p class="muted small">Nota: '+esc(r.note)+'</p>':'')+(r.fatta_il?'<p class="muted small">Completata il '+new Date(r.fatta_il).toLocaleDateString('it-IT')+'</p>':'')+'<span class="muted small">Chiesta da '+esc(nome(r.creato_da))+' il '+new Date(r.creato).toLocaleDateString('it-IT')+'</span></article>');
+      if(r.allegato&&r.allegato.path)c.appendChild(fileBtn(r.allegato,'Documento allegato'));
+      consigliBox(r,c);
+      if(r.stato==='aperta'){const b=h('<button type="button" class="bb dark">La prendo io</button>');b.addEventListener('click',()=>takeReq(r.id));c.appendChild(b);}
+      if(['presa','lavorazione','attesa'].includes(r.stato)&&(r.preso_da===me||isPres())){const b=h('<div class="seg wrap">'+[['lavorazione','In lavorazione'],['attesa','In attesa'],['fatta','Completata']].map(([k,l])=>'<button type="button" data-s="'+k+'" aria-pressed="'+(r.stato===k)+'">'+l+'</button>').join('')+'</div>');
+        b.querySelectorAll('[data-s]').forEach(x=>x.addEventListener('click',()=>sheet(x.textContent,'<div class="ctl"><label for="rs_n">Nota (facoltativa)</label><textarea id="rs_n" placeholder="'+(x.dataset.s==='attesa'?'Per esempio: aspetto il preventivo':'')+'"></textarea></div>','Aggiorna',async(dl)=>{const {error}=await CTX.sb.rpc('aggiorna_richiesta',{rid:r.id,nuovo:x.dataset.s,nota:dl.querySelector('#rs_n').value.trim()});if(error)throw new Error(error.message);await loadSocial();renderReq2();})));c.appendChild(b);}
+      if(isPres()){const b=h('<button type="button" class="lnk2 ko">Elimina</button>');b.addEventListener('click',()=>ask('Eliminare la richiesta?','Elimina',async()=>{await CTX.sb.from('richieste').delete().eq('id',r.id);await loadSocial();renderReq2();}));c.appendChild(b);}
+      g.appendChild(c);});el.appendChild(g);});
+  if(!RICH.length)el.appendChild(h('<div class="card soon"><p>Ancora nessuna richiesta.'+(isPres()?'':' Le richieste le crea il Presidente.')+'</p></div>'));}
+
+/* --- Compiti: area collegata, priorità, allegato, presa in carico con data, riassegnazione, storico --- */
+function assegnaCompito(pre){const ppl=Object.values(PEOPLE);pre=pre||{};
+  sheet('Assegna un compito','<div class="ctl"><label for="ac_t">Cosa va fatto</label><input type="text" id="ac_t" value="'+esc(pre.titolo||'')+'"></div><div class="ctl"><label for="ac_a">Area e scheda collegata</label>'+areaSelect('ac_a',pre.area||'')+'</div><div class="lab">A chi (puoi sceglierne più di uno)</div><div class="checks">'+ppl.map(p=>'<label><input type="checkbox" value="'+p.id+'"> '+esc(p.nome||p.email)+(p.id===CTX.user.id?' (io)':'')+'</label>').join('')+'</div><div class="when"><div class="ctl"><label for="ac_p">Priorità</label><select id="ac_p">'+PRIORITA.map(p=>'<option>'+p+'</option>').join('')+'</select></div><div class="ctl"><label for="ac_d">Entro (facoltativo)</label><input type="date" id="ac_d" min="'+todayISO()+'"></div></div><label class="ck"><input type="checkbox" id="ac_c"> Chiedi a chi lo riceve di prenderlo in carico indicando la data</label><div class="ctl"><label for="ac_f">Allegato (facoltativo)</label><input type="file" id="ac_f"></div>','Assegna',async(dl)=>{
+    const t=dl.querySelector('#ac_t').value.trim();const chi=[...dl.querySelectorAll('.checks input:checked')].map(x=>x.value);if(!t||!chi.length){dl.querySelector('.smsg').textContent='Scrivi cosa va fatto e scegli almeno una persona.';return false;}
+    const f=dl.querySelector('#ac_f').files[0];const al=f?await carica(f,'compiti/'+CTX.user.id):null;const chiede=dl.querySelector('#ac_c').checked;
+    const rows=chi.map(p=>({per:p,titolo:t,entro:chiede?null:(dl.querySelector('#ac_d').value||null),area:dl.querySelector('#ac_a').value||null,priorita:dl.querySelector('#ac_p').value,allegato:al,chiede_data:chiede,stato:'assegnato',storico:[{quando:new Date().toISOString(),chi:CTX.user.id,cosa:'Assegnato a '+nome(p)}]}));
+    const {error}=await CTX.sb.from('compiti').insert(rows);if(error)throw new Error(error.message);await loadSocial();rerender();stEl.textContent='Compito assegnato: '+chi.length+(chi.length===1?' persona riceve':' persone ricevono')+' una notifica.';});}
+async function aggiornaCompito(c,campi,cosa){const st=(c.storico||[]).concat([{quando:new Date().toISOString(),chi:CTX.user.id,cosa}]).slice(-30);const {error}=await CTX.sb.from('compiti').update(Object.assign({},campi,{storico:st})).eq('id',c.id);if(error){stEl.textContent=error.message;return;}await loadSocial();rerender();}
+function rigaCompito(c,mio){const v=c.area&&VOCE[c.area];const late=!c.fatto&&c.entro&&c.entro<todayISO();
+  const row=h('<div class="cmp'+(c.fatto?' done':'')+'"><div class="chips">'+(c.priorita&&c.priorita!=='Normale'?'<span class="chip2 '+(c.priorita==='Urgente'||c.priorita==='Alta'?'ko':'')+'">'+esc(c.priorita)+'</span>':'')+(late?'<span class="chip2 ko">In ritardo</span>':'')+(c.chiede_data&&c.stato==='assegnato'&&!c.fatto?'<span class="chip2">Da prendere in carico</span>':'')+(c.privato?'<span class="chip2">Promemoria</span>':'')+'</div><b>'+esc(c.titolo)+'</b><span class="muted small">'+(mio?(c.da&&c.da!==CTX.user.id?'Da '+esc(nome(c.da)):''):'A '+esc(nome(c.per)))+(c.entro?' · entro il '+fmtD(c.entro):'')+(c.fatto?' · fatto':'')+'</span></div>');
+  if(v)row.appendChild(h('<button type="button" class="lnk2" data-go="'+c.area+'">Apri '+esc(SECN[v.sec].n+' › '+v.t)+'</button>'));
+  if(c.allegato&&c.allegato.path)row.appendChild(fileBtn(c.allegato,'Allegato'));
+  const bt=h('<div class="rowb"></div>');
+  if(mio&&!c.fatto&&c.chiede_data&&c.stato==='assegnato'){const b=h('<button type="button" class="okb">Lo prendo in carico</button>');b.addEventListener('click',()=>sheet('Entro quando lo fai?','<div class="ctl"><label for="cp_d">Data</label><input type="date" id="cp_d" min="'+todayISO()+'"></div>','Conferma',async(dl)=>{const d=dl.querySelector('#cp_d').value;if(!d){dl.querySelector('.smsg').textContent='Senza data non si può confermare.';return false;}await aggiornaCompito(c,{stato:'preso',entro:d},'Preso in carico entro il '+fmtD(d));}));bt.appendChild(b);}
+  else if(mio&&!c.fatto){const b=h('<button type="button" class="okb">Fatto</button>');b.addEventListener('click',()=>aggiornaCompito(c,{fatto:true,stato:'fatto'},'Segnato come fatto'));bt.appendChild(b);}
+  if(!mio&&!c.fatto){const b=h('<button type="button">Riassegna</button>');b.addEventListener('click',()=>{const ppl=Object.values(PEOPLE).filter(p=>p.id!==c.per);sheet('Riassegna «'+c.titolo+'»','<div class="ctl"><label for="ra_p">A chi</label><select id="ra_p">'+ppl.map(p=>'<option value="'+p.id+'">'+esc(p.nome||p.email)+'</option>').join('')+'</select></div>','Riassegna',async(dl)=>{const p=dl.querySelector('#ra_p').value;await aggiornaCompito(c,{per:p,stato:'assegnato'},'Riassegnato da '+nome(c.per)+' a '+nome(p));});});bt.appendChild(b);
+    const x=h('<button type="button" class="ko">Elimina</button>');x.addEventListener('click',()=>ask('Eliminare il compito?','Elimina',async()=>{await CTX.sb.from('compiti').delete().eq('id',c.id);await loadSocial();rerender();}));bt.appendChild(x);}
+  if(bt.children.length)row.appendChild(bt);
+  if((c.storico||[]).length){row.appendChild(h('<details class="storico2"><summary>Storico · '+c.storico.length+'</summary>'+c.storico.slice().reverse().map(s=>'<div class="sti">'+esc(s.cosa)+' · <span class="muted">'+esc(nome(s.chi))+', '+new Date(s.quando).toLocaleDateString('it-IT')+'</span></div>').join('')+'</details>'));}
+  return row;}
+function compitiCard(){const me=CTX.user.id;const mine=COMP.filter(c=>c.per===me),given=COMP.filter(c=>c.da===me&&c.per!==me);const aperti=mine.filter(c=>!c.fatto),fatti=mine.filter(c=>c.fatto);
+  const c=h('<section class="card"><div class="wh"><h3>I miei compiti e promemoria</h3><span class="muted">'+fatti.length+' su '+mine.length+' fatti</span></div><div class="clist2"></div><div class="when"><div class="ctl" style="flex:3 1 220px"><label for="pm_t">Nuovo promemoria</label><input type="text" id="pm_t" placeholder="Scrivi qui…"></div><div class="ctl"><label for="pm_d">Entro</label><input type="date" id="pm_d"></div></div><div class="big-btns"><button type="button" class="bb dark" id="pm_ok">Salva promemoria</button><button type="button" class="bb" id="as_ok">Assegna un compito</button></div>'+(given.length?'<h3 style="margin-top:12px">Compiti che hai assegnato</h3><div class="glist"></div>':'')+'</section>');
+  const cl=c.querySelector('.clist2');aperti.forEach(x=>cl.appendChild(rigaCompito(x,true)));if(!aperti.length)cl.appendChild(h('<p class="muted">Niente da fare.</p>'));
+  if(fatti.length){const d=h('<details class="storico2"><summary>Fatti · '+fatti.length+'</summary></details>');fatti.slice(0,20).forEach(x=>d.appendChild(rigaCompito(x,true)));cl.appendChild(d);}
+  const gl=c.querySelector('.glist');if(gl)given.forEach(x=>gl.appendChild(rigaCompito(x,false)));
+  c.querySelector('#pm_ok').addEventListener('click',async()=>{const t=c.querySelector('#pm_t').value.trim();if(!t)return;const {error}=await CTX.sb.from('compiti').insert({per:me,titolo:t,entro:c.querySelector('#pm_d').value||null,privato:true});if(error){stEl.textContent=error.message;return;}await loadSocial();rerender();});
+  c.querySelector('#as_ok').addEventListener('click',()=>assegnaCompito());return c;}
+
+/* --- Aree personali: private, condivise con persone scelte, visibili a tutti; con documenti --- */
+function areeCard(){const me=CTX.user.id;const myA=AREE_P.filter(a=>a.owner===me),oth=AREE_P.filter(a=>a.owner!==me);
+  const ac=h('<section class="card"><div class="wh"><h3>Le mie aree</h3><button type="button" class="bb dark sm" id="na">+ Nuova area</button></div><p class="muted">Pagine tue per appunti, liste e documenti. Puoi tenerle private, condividerle con persone scelte o renderle visibili a tutti.'+(CTX.admin?' Come amministratore vedi anche quelle degli altri.':'')+'</p><div class="cgrid"></div></section>');
+  const ag=ac.querySelector('.cgrid');
+  myA.concat(oth).forEach(a=>{const own=a.owner===me;const cc=(a.condivisa_con||[]);const vis=a.visibile?'<span class="chip2 ok">Visibile a tutti</span>':cc.length?'<span class="chip2">Condivisa con '+esc(cc.map(nome).join(', '))+'</span>':'<span class="chip2">Privata</span>';
+    const c=h('<article class="card rc"><div class="chips">'+vis+(own?'':'<span class="chip2">di '+esc(nome(a.owner))+'</span>')+'</div><b class="vn">'+esc(a.titolo)+'</b><p style="white-space:pre-line">'+esc((a.testo||'').slice(0,600))+'</p></article>');
+    (a.allegati||[]).forEach(f=>c.appendChild(fileBtn(f)));
+    if(own){const b=h('<div class="rowb"><button type="button">Modifica</button><button type="button" class="ko">Elimina</button></div>');b.children[0].addEventListener('click',()=>editArea2(a));b.children[1].addEventListener('click',()=>ask('Eliminare «'+a.titolo+'»?','Elimina',async()=>{await CTX.sb.from('aree_personali').delete().eq('id',a.id);renderMe();}));c.appendChild(b);}
+    ag.appendChild(c);});
+  ac.querySelector('#na').addEventListener('click',()=>editArea2(null));return ac;}
+function editArea2(a){const ppl=Object.values(PEOPLE).filter(p=>p.id!==CTX.user.id);const cc=(a&&a.condivisa_con)||[];const vis=a?(a.visibile?'tutti':cc.length?'scelte':'privata'):'privata';
+  const d=sheet(a?'Modifica area':'Nuova area','<div class="ctl"><label for="ap_t">Titolo</label><input type="text" id="ap_t" value="'+esc(a?a.titolo:'')+'"></div><div class="ctl"><label for="ap_x">Contenuto (appunti, liste: una riga per punto)</label><textarea id="ap_x" style="min-height:180px">'+esc(a?a.testo||'':'')+'</textarea></div><div class="lab">Chi la vede</div><div class="seg wrap" id="ap_v">'+[['privata','Solo io'],['scelte','Persone scelte'],['tutti','Tutti']].map(([k,l])=>'<button type="button" data-v="'+k+'" aria-pressed="'+(k===vis)+'">'+l+'</button>').join('')+'</div><div class="checks" id="ap_p"'+(vis==='scelte'?'':' hidden')+'>'+ppl.map(p=>'<label><input type="checkbox" value="'+p.id+'"'+(cc.includes(p.id)?' checked':'')+'> '+esc(p.nome||p.email)+'</label>').join('')+'</div><div class="ctl"><label for="ap_f">Aggiungi un documento</label><input type="file" id="ap_f"></div>','Salva',async(dl)=>{
+    const t=dl.querySelector('#ap_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi un titolo.';return false;}const v=dl.querySelector('#ap_v [aria-pressed="true"]').dataset.v;
+    const f=dl.querySelector('#ap_f').files[0];const al=(a&&a.allegati)||[];const nuovi=f?al.concat([await carica(f,'personali/'+CTX.user.id)]):al;
+    const o={titolo:t,testo:dl.querySelector('#ap_x').value,visibile:v==='tutti',condivisa_con:v==='scelte'?[...dl.querySelectorAll('#ap_p input:checked')].map(x=>x.value):[],allegati:nuovi,aggiornato:new Date().toISOString()};
+    const q=a?CTX.sb.from('aree_personali').update(o).eq('id',a.id):CTX.sb.from('aree_personali').insert(o);const {error}=await q;if(error)throw new Error(error.message);
+    const nuoviC=o.condivisa_con.filter(x=>!cc.includes(x));for(const p of nuoviC)await avvisaUtente(p,nome(CTX.user.id)+' ha condiviso con te l’area «'+t+'»','p-me');renderMe();});
+  d.querySelectorAll('#ap_v button').forEach(b=>b.addEventListener('click',()=>{d.querySelectorAll('#ap_v button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));d.querySelector('#ap_p').hidden=b.dataset.v!=='scelte';}));}
+
+/* --- Notifiche: scegli quali ricevere --- */
+const CATN=[['p-req','Richieste del Presidente'],['p-me','Compiti, documenti e aree condivise'],['p-home','Inviti alle riunioni'],['percorsi','Percorsi e Sicurezza'],['v-req','Documenti richiesti e arrivati'],['p-pub','Percorsi pubblicati']];
+const catDi=n=>['v-psic','v-perc'].includes(n.link)?'percorsi':n.link;
+function mutata(n){return !!(PREF.muti&&PREF.muti.includes(catDi(n)));}
+function mePrefNoti(el){const muti=PREF.muti||[];const c=h('<section class="card"><h3>Quali notifiche ricevere</h3><p class="muted small">Togli la spunta a quelle che non ti servono: non arrivano né qui né sul telefono.</p><div class="checks">'+CATN.map(([k,l])=>'<label><input type="checkbox" value="'+k+'"'+(muti.includes(k)?'':' checked')+'> '+esc(l)+'</label>').join('')+'</div></section>');
+  c.querySelectorAll('input').forEach(i=>i.addEventListener('change',async()=>{PREF.muti=[...c.querySelectorAll('input')].filter(x=>!x.checked).map(x=>x.value);refreshBell();await savePref();stEl.textContent='Preferenze salvate.';}));
+  el.insertBefore(c,[...el.children].pop());}
+
+/* --- Calendario unico: eventi, riunioni, sopralluoghi, appuntamenti, percorsi, scadenze --- */
+let CALV='mese',CALD=null;const TIPOR=['Riunione','Sopralluogo','Appuntamento'];
+const COLC={evento:'#24478F',riunione:'#2A8C6F',sopralluogo:'#D9822B',appuntamento:'#7A4FB5',percorso:'#0B2147',scadenza:'#C0392B'};
+function voceCal(){const me=CTX.user.id,out=[];const add=(data,ora,titolo,tipo,go,extra)=>{if(data)out.push(Object.assign({data:String(data).slice(0,10),ora:ora||'',titolo,tipo,go},extra||{}));};
+  if(canV('s-ev')&&typeof allEv==='function')allEv().forEach(e=>{try{(evDays(e)||[]).forEach(d=>add(d,e.ora||'',e.n,'evento','s-ev',{ev:e}));}catch(x){}});
+  RIUN.forEach(r=>{const d=new Date(r.quando);const dd=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');add(dd,d.toTimeString().slice(0,5),r.titolo+(r.luogo?' · '+r.luogo:''),(r.tipo||'Riunione').toLowerCase(),'p-cal',{riu:r});});
+  vperc().forEach(r=>{if(r.dati.data)add(r.dati.data,r.dati.ora,'Percorso: '+r.dati.nome,'percorso',r.dati.stato==='Pubblicato'?'p-pub':'v-perc');});
+  RICH.filter(r=>r.entro&&r.stato!=='fatta'&&(r.preso_da===me||isPres())).forEach(r=>add(r.entro,'','Scade: '+r.titolo,'scadenza','p-req'));
+  COMP.filter(c=>c.per===me&&!c.fatto&&c.entro).forEach(c=>add(c.entro,'','Da fare: '+c.titolo,'scadenza','p-me'));
+  (VD['v-fatt']||[]).filter(r=>r.dati.tipo!=='Ricavo'&&r.dati.pagata!=='Sì'&&r.dati.scadenza).forEach(r=>add(r.dati.scadenza,'','Fattura da pagare: '+(r.dati.soggetto||''),'scadenza','v-fatt'));
+  (VD['v-for27']||[]).forEach(r=>(r.dati.pagamenti||[]).filter(p=>!p.pagato&&p.data).forEach(p=>add(p.data,'','Pagamento a '+r.dati.fornitore+' · '+eur(+p.importo||0),'scadenza','v-for27')));
+  (VD['v-aut']||[]).filter(r=>r.dati.scadenza).forEach(r=>add(r.dati.scadenza,'','Scade l’autorizzazione: '+r.dati.cosa,'scadenza','v-aut'));
+  (VD['v-req']||[]).filter(r=>r.dati.entro&&r.dati.stato!=='Arrivato').forEach(r=>add(r.dati.entro,'','Documento atteso: '+r.dati.documento,'scadenza','v-req'));
+  return out.sort((a,b)=>(a.data+a.ora).localeCompare(b.data+b.ora));}
+function renderCalU(){const el=document.getElementById('p-cal');el.innerHTML='';const me=CTX.user.id;const base=CALD?new Date(CALD+'T12:00:00'):new Date();const ISO=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  el.appendChild(h('<div class="sh"><span class="eyb">Per tutti</span><h2>Calendario</h2><p>Eventi, riunioni, sopralluoghi, appuntamenti, percorsi e scadenze in un solo posto. Ognuno vede quello che gli compete.</p></div>'));
+  const bar=h('<div class="calbar"><div class="seg">'+[['giorno','Giorno'],['settimana','Settimana'],['mese','Mese']].map(([k,l])=>'<button type="button" data-v="'+k+'" aria-pressed="'+(k===CALV)+'">'+l+'</button>').join('')+'</div><div class="calnav"><button type="button" data-n="-1" aria-label="Indietro">‹</button><button type="button" data-n="0">Oggi</button><button type="button" data-n="1" aria-label="Avanti">›</button></div></div>');
+  bar.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{CALV=b.dataset.v;renderCalU();}));
+  bar.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{const n=+b.dataset.n;if(!n){CALD=null;}else{const d=new Date(base);if(CALV==='mese')d.setMonth(d.getMonth()+n,1);else d.setDate(d.getDate()+n*(CALV==='settimana'?7:1));CALD=ISO(d);}renderCalU();}));
+  el.appendChild(bar);
+  el.appendChild(addBtn('+ Nuova riunione, sopralluogo o appuntamento',nuovaRiunione));
+  const items=voceCal();const byD={};items.forEach(x=>(byD[x.data]=byD[x.data]||[]).push(x));
+  const voce=x=>{const b=h('<button type="button" class="calit" style="--c:'+COLC[x.tipo]+'"><i></i><span><b>'+(x.ora?esc(x.ora)+' ':'')+esc(x.titolo)+'</b><em>'+esc(x.tipo)+'</em></span></button>');b.addEventListener('click',()=>{if(x.riu)return schedaRiunione(x.riu);if(x.ev)return schedaEvento(x.ev);go(x.go);});return b;};
+  const tit=h('<h3 class="gh"></h3>');el.appendChild(tit);
+  if(CALV==='mese'){tit.textContent=base.toLocaleDateString('it-IT',{month:'long',year:'numeric'});const f=new Date(base.getFullYear(),base.getMonth(),1);const start=new Date(f);start.setDate(1-((f.getDay()+6)%7));
+    const g=h('<div class="calm">'+['lun','mar','mer','gio','ven','sab','dom'].map(d=>'<span class="calh">'+d+'</span>').join('')+'</div>');
+    for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=ISO(d);const L1=byD[k]||[];const cell=h('<button type="button" class="calc'+(d.getMonth()!==base.getMonth()?' fuori':'')+(k===todayISO()?' oggi':'')+'"><b>'+d.getDate()+'</b><span class="dots">'+L1.slice(0,4).map(x=>'<i style="background:'+COLC[x.tipo]+'"></i>').join('')+(L1.length>4?'+':'')+'</span></button>');cell.addEventListener('click',()=>{CALD=k;CALV='giorno';renderCalU();});g.appendChild(cell);}
+    el.appendChild(g);const mm=items.filter(x=>x.data.slice(0,7)===ISO(base).slice(0,7));const lst=h('<section class="card"></section>');mm.forEach(x=>{lst.appendChild(h('<span class="muted small">'+fmtD(x.data)+'</span>'));lst.appendChild(voce(x));});if(!mm.length)lst.appendChild(h('<p class="muted">Niente in questo mese.</p>'));el.appendChild(lst);}
+  else{const days=CALV==='giorno'?1:7;const s0=new Date(base);if(CALV==='settimana')s0.setDate(s0.getDate()-((s0.getDay()+6)%7));
+    tit.textContent=CALV==='giorno'?s0.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'Settimana dal '+s0.toLocaleDateString('it-IT',{day:'numeric',month:'long'});
+    for(let i=0;i<days;i++){const d=new Date(s0);d.setDate(s0.getDate()+i);const k=ISO(d);const L1=byD[k]||[];const c=h('<section class="card calday'+(k===todayISO()?' oggi':'')+'"><b class="cdh">'+d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})+'</b></section>');L1.forEach(x=>c.appendChild(voce(x)));if(!L1.length)c.appendChild(h('<p class="muted small">Niente in programma.</p>'));el.appendChild(c);}}
+  el.appendChild(h('<div class="legend">'+Object.entries(COLC).map(([k,c])=>'<span><i style="background:'+c+'"></i>'+k+'</span>').join('')+'</div>'));}
+function nuovaRiunione(){const me=CTX.user.id;const ppl=Object.values(PEOPLE).filter(p=>p.id!==me);
+  sheet('Nuovo appuntamento','<div class="ctl"><label for="ri_k">Tipo</label><select id="ri_k">'+TIPOR.map(t=>'<option>'+t+'</option>').join('')+'</select></div><div class="ctl"><label for="ri_t">Oggetto</label><input type="text" id="ri_t" placeholder="Riunione del direttivo"></div><div class="when"><div class="ctl"><label for="ri_d">Giorno</label><input type="date" id="ri_d" min="'+todayISO()+'"></div><div class="ctl"><label for="ri_o">Ora</label><input type="time" id="ri_o" value="18:30"></div></div><div class="ctl"><label for="ri_l">Luogo</label><input type="text" id="ri_l"></div><div class="lab">Chi inviti (lo vedono solo gli invitati)</div><div class="checks">'+ppl.map(p=>'<label><input type="checkbox" value="'+p.id+'"> '+esc(p.nome||p.email)+'</label>').join('')+'</div><div class="ctl"><label for="ri_f">Documento (ordine del giorno…)</label><input type="file" id="ri_f"></div>','Crea e invita',async(dl)=>{
+    const t=dl.querySelector('#ri_t').value.trim(),d=dl.querySelector('#ri_d').value,o=dl.querySelector('#ri_o').value||'18:00';if(!t||!d){dl.querySelector('.smsg').textContent='Scrivi oggetto e giorno.';return false;}
+    const f=dl.querySelector('#ri_f').files[0];const al=f?[await carica(f,'riunioni/'+me)]:[];
+    const {data,error}=await CTX.sb.from('riunioni').insert({titolo:t,tipo:dl.querySelector('#ri_k').value,quando:new Date(d+'T'+o).toISOString(),luogo:dl.querySelector('#ri_l').value.trim()||null,allegati:al}).select().single();if(error)throw new Error(error.message);
+    const inv=[...dl.querySelectorAll('.checks input:checked')].map(x=>({riunione_id:data.id,user_id:x.value}));if(inv.length){const r2=await CTX.sb.from('inviti_riunione').insert(inv);if(r2.error)throw new Error(r2.error.message);}
+    await loadSocial();renderCalU();stEl.textContent='Creato. Gli invitati ricevono una notifica.';});}
+function schedaRiunione(r){const me=CTX.user.id;const my=INVM.find(i=>i.riunione_id===r.id&&i.user_id===me);const inv=INVM.filter(i=>i.riunione_id===r.id);
+  const d=sheet((r.tipo||'Riunione')+': '+r.titolo,'<div class="fact2"><span>Quando</span><b>'+new Date(r.quando).toLocaleString('it-IT',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})+'</b></div>'+(r.luogo?'<div class="fact2"><span>Dove</span><b>'+esc(r.luogo)+'</b></div>':'')+'<div class="fact2"><span>Organizza</span><b>'+esc(nome(r.creato_da))+'</b></div><div class="chips">'+inv.map(i=>'<span class="chip2 '+(i.stato==='accetta'?'ok':i.stato==='rifiuta'?'ko':'')+'">'+esc(nome(i.user_id))+'</span>').join('')+'</div><div class="ral"></div>'+(my&&my.stato==='invitato'?'<div class="rowb"><button type="button" class="okb" data-r="accetta">Ci sarò</button><button type="button" class="ko" data-r="rifiuta">Non posso</button></div>':'')+(r.creato_da===me?'<button type="button" class="lnk2 ko" id="rdel">Annulla</button>':''),'Chiudi',async()=>{});
+  (r.allegati||[]).forEach(f=>d.querySelector('.ral').appendChild(fileBtn(f)));
+  d.querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',async()=>{await answer(r.id,b.dataset.r);d.remove();renderCalU();}));
+  const x=d.querySelector('#rdel');if(x)x.addEventListener('click',()=>{d.remove();ask('Annullare «'+r.titolo+'»?','Annulla',async()=>{await CTX.sb.from('riunioni').delete().eq('id',r.id);await loadSocial();renderCalU();});});}
+
+/* --- Scheda evento completa (si apre dal calendario) --- */
+const EVSTATI=['Idea','In preparazione','Confermato','Fatto','Annullato'];
+function schedaEvento(e){const L1=VD['s-ev']||[];const r=L1.find(x=>x.dati.evid===String(e.id));const d=r?r.dati:{evid:String(e.id)};const can=CTX.canEdit('s-ev');const ppl=Object.values(PEOPLE);
+  const perc=vperc();const att=(d.attivita||[]).map(a=>a.cosa+(a.chi?' — '+nome(a.chi):'')).join('\n');
+  const body='<p class="muted">'+esc(e.luogo||'')+(e.ora?' · ore '+esc(e.ora):'')+'</p><div class="ctl"><label for="sx_d">Descrizione</label><textarea id="sx_d">'+esc(d.descr||e.desc||'')+'</textarea></div><div class="when"><div class="ctl"><label for="sx_r">Responsabile</label><select id="sx_r"><option value="">Nessuno</option>'+ppl.map(p=>'<option value="'+p.id+'"'+(p.id===d.resp?' selected':'')+'>'+esc(p.nome||p.email)+'</option>').join('')+'</select></div><div class="ctl"><label for="sx_s">Stato</label><select id="sx_s">'+EVSTATI.map(s=>'<option'+(s===(d.stato||'Idea')?' selected':'')+'>'+s+'</option>').join('')+'</select></div></div>'+
+    '<div class="ctl"><label for="sx_pa">Partecipanti e invitati</label><textarea id="sx_pa">'+esc(d.partecipanti||'')+'</textarea></div><div class="ctl"><label for="sx_pr">Programma</label><textarea id="sx_pr">'+esc(d.programma||'')+'</textarea></div><div class="when"><div class="ctl"><label for="sx_c">Costi stimati (€)</label><input type="number" id="sx_c" value="'+esc(d.costi||e.costo||'')+'"></div><div class="ctl"><label for="sx_ri">Ricavi stimati (€)</label><input type="number" id="sx_ri" value="'+esc(d.ricavi||'')+'"></div></div>'+
+    '<div class="ctl"><label for="sx_pe">Percorso collegato</label><select id="sx_pe"><option value="">Nessuno</option>'+perc.map(p=>'<option value="'+p.id+'"'+(p.id===d.percorso?' selected':'')+'>'+esc(p.dati.nome)+'</option>').join('')+'</select></div><div class="ctl"><label for="sx_at">Chi fa cosa (una riga per attività: «cosa — persona»)</label><textarea id="sx_at">'+esc(att)+'</textarea></div><div class="ral"></div>'+(can?'<div class="ctl"><label for="sx_f">Aggiungi un documento</label><input type="file" id="sx_f"></div><button type="button" class="lnk2" id="sx_fo">Servono fornitori? Crea le richieste di preventivo</button>':'');
+  const dl=sheet('Scheda: '+e.n,body,can?'Salva':'Chiudi',async(x)=>{if(!can)return;const f=x.querySelector('#sx_f').files[0];const files=(d.files||[]).concat(f?[await carica(f,'s-ev')]:[]);
+    const att2=x.querySelector('#sx_at').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{const [cosa,chiN]=s.split(/\s+—\s+|\s+-\s+/);const p=chiN&&ppl.find(q=>(q.nome||q.email).toLowerCase()===chiN.trim().toLowerCase());return {cosa,chi:p?p.id:'',chiTesto:chiN||''};});
+    const o=Object.assign({},d,{nome:e.n,descr:x.querySelector('#sx_d').value.trim(),resp:x.querySelector('#sx_r').value,stato:x.querySelector('#sx_s').value,partecipanti:x.querySelector('#sx_pa').value.trim(),programma:x.querySelector('#sx_pr').value.trim(),costi:x.querySelector('#sx_c').value,ricavi:x.querySelector('#sx_ri').value,percorso:x.querySelector('#sx_pe').value,attivita:att2,files});
+    if(o.resp&&o.resp!==d.resp&&o.resp!==CTX.user.id)avvisaUtente(o.resp,'Sei responsabile dell’evento «'+e.n+'»','p-cal');
+    for(const a of att2)if(a.chi&&a.chi!==CTX.user.id&&!(d.attivita||[]).some(b=>b.chi===a.chi&&b.cosa===a.cosa))await CTX.sb.from('compiti').insert({per:a.chi,titolo:a.cosa+' (evento «'+e.n+'»)',area:'s-ev'});
+    const q=r?CTX.sb.from('voci_dati').update({dati:o,aggiornato:new Date().toISOString()}).eq('id',r.id):CTX.sb.from('voci_dati').insert({voce:'s-ev',dati:o});const {error}=await q;if(error)throw new Error(error.message);await Promise.all([loadVD(),loadSocial()]);stEl.textContent='Scheda salvata.';});
+  (d.files||[]).forEach(f=>dl.querySelector('.ral').appendChild(fileBtn(f)));if(!can)dl.querySelectorAll('input,textarea,select').forEach(i=>i.disabled=true);
+  const fo=dl.querySelector('#sx_fo');if(fo)fo.addEventListener('click',()=>{dl.remove();chiediFornEvento(e);});}
+const _extraVD=extraVD;extraVD=function(){return _extraVD().concat(canV('s-ev')?['s-ev']:[]);};
+
+/* --- ricerca anche nei dati nuovi --- */
+function extraIDX(IDX){Object.entries(VD).forEach(([k,L1])=>{const v=VOCE[k];if(!v)return;(L1||[]).forEach(r=>{const d=r.dati||{};const t=d.nome||d.soggetto||d.fornitore||d.oggetto||d.cosa||d.documento||d.voce||d.beneficiario||d.spazio||'';if(!t)return;IDX.push({k:v.t,n:t,s:[d.stato,d.tipo,d.regione,d.data].filter(Boolean).join(' · '),go:()=>go(k)});});});
+  RICH.forEach(r=>IDX.push({k:'Richiesta del Presidente',n:r.titolo,s:(STR[r.stato]||STR.aperta)[0],go:()=>go('p-req')}));
+  COMP.filter(c=>c.per===CTX.user.id).forEach(c=>IDX.push({k:'Compito',n:c.titolo,s:c.entro?'entro il '+fmtD(c.entro):'',go:()=>go('p-me')}));
+  RIUN.forEach(r=>IDX.push({k:r.tipo||'Riunione',n:r.titolo,s:new Date(r.quando).toLocaleDateString('it-IT'),go:()=>go('p-cal')}));}
 
 /* ---------- avvio ---------- */
 autoLeve();

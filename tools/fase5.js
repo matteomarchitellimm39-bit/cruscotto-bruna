@@ -5,7 +5,7 @@ async function immagineRidotta(file,isPdf){let blob=file;if(isPdf){const o=await
   const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);g.drawImage(bm,0,0,cv.width,cv.height);return cv.toDataURL('image/jpeg',0.85).split(',')[1];}
 async function leggiConAI(file,isPdf){try{const img=await immagineRidotta(file,isPdf);const r=await ai('fattura',{img});if(r.err||!r.testo)return null;
     const m=r.testo.match(/\{[\s\S]*\}/);if(!m)return null;const j=JSON.parse(m[0]);const o={__come:'ai'};
-    ['soggetto','numero','data','scadenza','nota'].forEach(k=>{if(j[k])o[k]=String(j[k]).slice(0,200);});
+    ['soggetto','numero','data','scadenza','nota','piva'].forEach(k=>{if(j[k])o[k]=String(j[k]).slice(0,200);});['imponibile','iva'].forEach(k=>{if(j[k]!=null&&j[k]!==''){const v=typeof j[k]==='number'?j[k]:numIt(j[k]);if(v)o[k]=Math.round(v*100)/100;}});
     if(j.importo!=null&&j.importo!==''){const v=typeof j.importo==='number'?j.importo:numIt(j.importo);if(v)o.importo=Math.round(v*100)/100;}
     o.tipo=j.tipo==='Ricavo'?'Ricavo':'Costo';['data','scadenza'].forEach(k=>{if(o[k]&&!/^\d{4}-\d{2}-\d{2}$/.test(o[k])){const d=o[k].match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);o[k]=d?isoD(d[1],d[2],d[3]):'';}});
     o.voce=bilDaNome(o.soggetto||'');return o;}catch(e){return null;}}

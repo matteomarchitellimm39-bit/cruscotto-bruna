@@ -13,7 +13,7 @@ rep('<script>\nconst D = __DATA__;\n</script>\n<script>\n(function(){\n"use stri
     '<script>\nwindow.APP=function(D,CTX){\n"use strict";')
 i = T.index('/* ---------- salvataggio ---------- */'); j = T.index('</script>', i)
 SAVE = open(os.path.join(R, 'salvataggio.js'), encoding='utf-8').read()
-F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase5.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase6.js'), encoding='utf-8').read()
+F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase5.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase6.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase7.js'), encoding='utf-8').read()
 assert SAVE.count('/* ---------- avvio ---------- */') == 1 and SAVE.count('\nshow(cur);\n') == 1
 SAVE = SAVE.replace('/* ---------- avvio ---------- */', F1 + '\n/* ---------- avvio ---------- */').replace('\nshow(cur);\n', '\navviaF1();\n')
 T = T[:i] + SAVE + '\n};\n' + T[j:]
@@ -64,10 +64,11 @@ T = T[:i] + ('  <div class="topbar"><button type="button" class="b27logo m" data
   '<button type="button" class="round" id="sbs" aria-label="Cerca"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>'
   '<button type="button" class="round" id="bell" aria-label="Notifiche"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span id="bellN" hidden></span></button>'
   '<button type="button" class="round av" id="avt" data-go="p-me" aria-label="Il mio spazio">·</button><button type="button" id="esci" hidden>Esci</button></div></div>\n') + T[j:]
+rep("  PLACES.forEach(p=>IDX.push({k:'Luogo sulla mappa'","  extraIDX(IDX);\n  PLACES.forEach(p=>IDX.push({k:'Luogo sulla mappa'")
 rep('<span class="eyb">Scheda \'+n+\'</span>', '<span class="eyb">\'+eyb(n)+\'</span>')
 rep("const tab=TABS.find(t=>t[0]===cur);", "const tab=[cur,pageTitle(cur)];")
 rep('<title>Cruscotto Festa della Bruna</title>', '<title>Bruna27</title>')
-CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase3.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase4.css'), encoding='utf-8').read()
+CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase3.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase4.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase7.css'), encoding='utf-8').read()
 k = T.index('</style>'); T = T[:k] + CSS1 + T[k:]
 # login: pagina completa
 LOGIN = open(os.path.join(R, 'login.html'), encoding='utf-8').read()

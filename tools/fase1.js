@@ -1,9 +1,9 @@
 /* ================= Bruna27 · Fase 1: menu a 5 sezioni, Home a riquadri, richieste, il mio spazio ================= */
 const SEZ=[
  {k:'eco',n:'Economia',i:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
-  v:[['s-bil','Bilancio 2026','pie'],['v-p27','Previsione 2027','trend'],['s-pre','Costi','down'],['s-ric','Ricavi','up'],['v-voci','Costi e guadagni per voce','eq'],['v-fatt','Fatture','doc'],['s-car','Carità','heart'],['s-ter','PIL generato','pin'],['s-for','Fornitori 2026','list'],['v-for27','Fornitori 2027','users'],['v-prev','Preventivi','doc']]},
+  v:[['s-bil','Bilancio 2026','pie'],['v-p27','Previsione 2027','trend'],['s-pre','Costi','down'],['s-ric','Ricavi','up'],['v-voci','Costi e guadagni per voce','eq'],['v-fatt','Fatture','doc'],['s-car','Carità','heart'],['v-care','Erogazioni della carità','heart'],['s-ter','PIL generato','pin'],['s-for','Fornitori 2026','list'],['v-for27','Fornitori 2027','users'],['v-cv','Schede delle voci 2027','doc'],['v-prev','Preventivi','doc']]},
  {k:'evt',n:'Eventi',i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  v:[['s-ev','Calendario','cal'],['v-crea','Crea un evento','plus'],['s-cs','Simulazione impatto','flask'],['v-perc','Percorsi','route']]},
+  v:[['v-calu','Calendario','cal'],['s-ev','Programma degli eventi','list'],['v-crea','Crea un evento','plus'],['s-cs','Simulazione impatto','flask'],['v-perc','Percorsi','route']]},
  {k:'com',n:'Commerciale',i:'<path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/>',
   v:[['v-sp26','Sponsor 2026','star'],['v-sp27','Sponsor 2027','star'],['v-altri','Altri sponsor','users'],['v-area','Area commerciale','tag']]},
  {k:'sic',n:'Sicurezza',i:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
@@ -14,7 +14,7 @@ const IC2={pie:'<path d="M12 3a9 9 0 1 0 9 9h-9z"/>',trend:'<path d="M3 17l6-6 4
 const svg=(p,s)=>'<svg viewBox="0 0 24 24" width="'+(s||22)+'" height="'+(s||22)+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
 const VOCE={};SEZ.forEach(s=>s.v.forEach(v=>{VOCE[v[0]]={t:v[1],sec:s.k,ic:v[2]};}));
 const SECN={};SEZ.forEach(s=>SECN[s.k]=s);
-const PAGEX={'p-home':'Home','p-me':'Il mio spazio','p-req':'Richieste del Presidente','p-cal':'Riunioni','s-adm':'Utenti e permessi','s-fon':'Fondo dei fornitori'};
+const PAGEX={'p-home':'Home','p-me':'Il mio spazio','p-req':'Richieste del Presidente','p-cal':'Calendario','s-adm':'Utenti e permessi','s-fon':'Fondo dei fornitori'};
 SEZ.forEach(s=>PAGEX['sec-'+s.k]=s.n);
 function pageTitle(id){return (VOCE[id]&&VOCE[id].t)||PAGEX[id]||'Bruna27';}
 function eyb(n){const a=NUM2AREA[n];const v=VOCE[a];return v?SECN[v.sec].n:(a==='s-adm'?'Amministratore':'Bruna27');}
@@ -41,7 +41,7 @@ SEZ.forEach(s=>R['sec-'+s.k]=()=>renderSec(s));
 const NAVL=document.getElementById('navlist'),BOT=document.getElementById('botnav');
 function navBtn(id,label,ic,cls){return '<button type="button" class="nv '+(cls||'')+'" data-go="'+id+'">'+svg(ic)+'<span>'+esc(label)+'</span></button>';}
 function buildNav(){
-  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-cal','Riunioni',IC2.cal,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
+  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-cal','Calendario',IC2.cal,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
   BOT.innerHTML=mySez().map(s=>navBtn('sec-'+s.k,s.n==='Amministrazione'?'Ammin.':s.n,s.i)).join('');
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-go]');if(!b)return;e.preventDefault();go(b.dataset.go);});
@@ -51,7 +51,7 @@ function go(id){if(!canOpen(id))id='p-home';show(id);window.scrollTo({top:0});
   if(id==='v-crea')setTimeout(()=>{const x=[...document.querySelectorAll('#s-ev h3')].find(e=>/Aggiungi un evento/.test(e.textContent));if(x)x.scrollIntoView({block:'start',behavior:'smooth'});},80);}
 function canOpen(id){if(['p-home','p-me','p-req','p-cal','p-pub'].includes(id))return true;if(id==='s-adm')return CTX.admin;if(id.startsWith('sec-'))return !!mySez().find(s=>'sec-'+s.k===id);return canV(id);}
 show=function(id){
-  if(!canOpen(id))id='p-home';if(id==='v-crea')id='s-ev';cur=id;applyEd();
+  if(!canOpen(id))id='p-home';if(id==='v-crea')id='s-ev';if(id==='v-calu')id='p-cal';cur=id;applyEd();
   document.querySelectorAll('[role=tabpanel]').forEach(p=>{p.hidden=!(p.id===id||(id==='s-car'&&p.id==='s-fon'));});
   markNav(id);
   if(R[id])R[id]();else renderVoce(id);
@@ -128,7 +128,7 @@ function renderVoce(id){const el=document.getElementById(id);if(!el)return;el.in
     const chips=E.f.slice(1).filter(f=>f[2]==='s'&&d[f[0]]).map(f=>'<span class="chip2'+(/^(Sì|Confermato|Firmato|Pagato|Ottenuta|Arrivato|Accettato|Venduto)$/.test(d[f[0]])?' ok':/^(No|Negata|Scartato)$/.test(d[f[0]])?' ko':'')+'">'+esc(d[f[0]])+'</span>').join('');
     const facts=E.f.slice(1).filter(f=>f[2]!=='s'&&f[2]!=='f'&&d[f[0]]!==''&&d[f[0]]!=null).map(f=>'<div class="fact2"><span>'+esc(f[1].replace(/ \(.*\)$/,''))+'</span><b>'+(f[2]==='n'?eur(+d[f[0]]):f[2]==='d'?fmtD(d[f[0]]):esc(d[f[0]]))+'</b></div>').join('');
     const c2=h('<article class="card rc"><b class="vn">'+esc(title)+'</b>'+(chips?'<div class="chips">'+chips+'</div>':'')+facts+'</article>');
-    E.f.filter(f=>f[2]==='f'&&d[f[0]]&&d[f[0]].path).forEach(f=>c2.appendChild(fileBtn(d[f[0]])));
+    E.f.filter(f=>f[2]==='f'&&d[f[0]]&&d[f[0]].path).forEach(f=>c2.appendChild(fileBtn(d[f[0]])));const sto=storicoRec(d);if(sto)c2.appendChild(sto);
     if(can)c2.appendChild(rowBtns(id,r));g.appendChild(c2);});
   el.appendChild(g);
   if(!LL.length)el.appendChild(h('<div class="card soon"><p>'+(can?'Ancora vuoto: tocca il pulsante qui sopra per iniziare.':'Ancora vuoto.')+'</p></div>'));}
@@ -161,6 +161,7 @@ function editRec(id,r,pre,title){const E=EL[id];const d=r?r.dati:Object.assign({
     if(pre&&pre.__file&&!files.length){const ff=E.f.find(f=>f[2]==='f');if(ff)files.push([ff[0],pre.__file]);}
     for(const [k,fl] of files){dl.querySelector('.smsg').textContent='Carico il file…';o[k]=await carica(fl,id);}
     Object.keys(d).forEach(k=>{if(o[k]===undefined&&k.slice(0,2)!=='__')o[k]=d[k];});
+    if(r){const cambi=E.f.filter(([k,,t])=>t!=='f'&&String(d[k]==null?'':d[k])!==String(o[k]==null?'':o[k])).map(([k,l])=>[l.replace(/ \(.*\)$/,''),d[k]==null?'':d[k],o[k]]);if(cambi.length)o.storico=(d.storico||[]).concat([{quando:new Date().toISOString(),chi:CTX.user.id,cambi}]).slice(-30);}
     const q=r?CTX.sb.from('voci_dati').update({dati:o,aggiornato:new Date().toISOString()}).eq('id',r.id):CTX.sb.from('voci_dati').insert({voce:id,dati:o});
     const {error}=await q;if(error)throw new Error('Non salvato: '+error.message);await loadVD();rerender();stEl.textContent='Salvato. Lo vedono tutti quelli che hanno accesso.';});}
 
@@ -169,7 +170,7 @@ async function loadSocial(){if(!CTX.sb)return;
   const [p,n,rq,cp,ri,iv]=await Promise.all([CTX.sb.from('profili').select('id,nome,email,admin,presidente'),CTX.sb.from('notifiche').select('*').order('quando',{ascending:false}).limit(40),CTX.sb.from('richieste').select('*').order('creato',{ascending:false}),CTX.sb.from('compiti').select('*').order('creato',{ascending:false}),CTX.sb.from('riunioni').select('*').order('quando'),CTX.sb.from('inviti_riunione').select('*')]);
   (p.data||[]).forEach(x=>PEOPLE[x.id]=x);NOTI=n.data||[];RICH=rq.data||[];COMP=cp.data||[];RIUN=ri.data||[];INVM=iv.data||[];}
 const isPres=()=>CTX.admin||!!(PEOPLE[CTX.user.id]&&PEOPLE[CTX.user.id].presidente)||!!CTX.prof.presidente;
-function refreshBell(){const n=NOTI.filter(x=>!x.letto).length;const b=document.getElementById('bellN');if(b){b.textContent=n?String(n):'';b.hidden=!n;}}
+function refreshBell(){const n=NOTI.filter(x=>!x.letto&&!mutata(x)).length;const b=document.getElementById('bellN');if(b){b.textContent=n?String(n):'';b.hidden=!n;}}
 document.getElementById('bell').addEventListener('click',()=>{go('p-me');});
 
 /* --- Home a riquadri --- */
@@ -181,7 +182,7 @@ function countdown(){const t=new Date('2027-07-02T00:00:00');const n=Math.ceil((
 function myTodo(){const me=CTX.user.id;return COMP.filter(c=>c.per===me&&!c.fatto);}
 function briefing(){const me=CTX.user.id,today=todayISO();const parts=[];
   const ap=RICH.filter(r=>r.stato==='aperta');if(ap.length)parts.push('<b>'+ap.length+' '+(ap.length===1?'richiesta del Presidente':'richieste del Presidente')+'</b> ancora da prendere');
-  const mine=RICH.filter(r=>r.preso_da===me&&r.stato==='presa');const late=mine.filter(r=>r.entro&&r.entro<today);
+  const mine=RICH.filter(r=>r.preso_da===me&&['presa','lavorazione','attesa'].includes(r.stato));const late=mine.filter(r=>r.entro&&r.entro<today);
   if(late.length)parts.push('<b class="neg">'+late.length+' tua'+(late.length>1?'e':'')+' in ritardo</b>');else if(mine.length)parts.push(mine.length+' presa da te: la prossima scade il <b>'+fmtD(mine.map(r=>r.entro).sort()[0])+'</b>');
   if(canV('v-for27')){const pp=prossimi(VD['v-for27']||[],7);if(pp.length)parts.push('<b>'+pp.length+' pagament'+(pp.length===1?'o':'i')+' ai fornitori</b> entro 7 giorni');}
   if(canV('v-fatt')){const sc=(VD['v-fatt']||[]).filter(r=>r.dati.tipo!=='Ricavo'&&r.dati.pagata!=='Sì'&&r.dati.scadenza&&r.dati.scadenza<today).length;if(sc)parts.push('<b class="neg">'+sc+' fattur'+(sc===1?'a scaduta':'e scadute')+'</b> da pagare');}
@@ -214,7 +215,7 @@ function renderHome(){const el=document.getElementById('p-home');el.innerHTML=''
   rq.querySelectorAll('[data-take]').forEach(b=>b.addEventListener('click',()=>takeReq(b.dataset.take)));g.appendChild(rq);
   const td=myTodo();const tw=h('<section class="w"><div class="wh"><b>Da fare oggi</b><button type="button" class="lnk2" data-go="p-me">Il mio spazio</button></div>'+(td.length?td.slice(0,5).map(c=>'<label class="todo"><input type="checkbox" data-done="'+c.id+'"><span>'+esc(c.titolo)+(c.entro?' <em>entro il '+fmtD(c.entro)+'</em>':'')+'</span></label>').join(''):'<p class="muted">Niente da fare. Aggiungi un promemoria da Il mio spazio.</p>')+'</section>');
   tw.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));g.appendChild(tw);
-  g.appendChild(h('<section class="w wide"><div class="wh"><b>Questa settimana</b><button type="button" class="lnk2" data-go="p-cal">Riunioni</button></div>'+weekStrip()+'</section>'));
+  g.appendChild(h('<section class="w wide"><div class="wh"><b>Questa settimana</b><button type="button" class="lnk2" data-go="p-cal">Calendario</button></div>'+weekStrip()+'</section>'));
   const pw=pubWidget();if(pw)g.appendChild(pw);
   (PREF.w||[]).forEach(k=>{const w=extraW(k);if(w)g.appendChild(w);});
   const add=h('<button type="button" class="w wadd"><span>+</span><b>Aggiungi un riquadro</b></button>');add.addEventListener('click',pickW);g.appendChild(add);
@@ -224,7 +225,10 @@ function extraW(k){const rm='<button type="button" class="wx" aria-label="Togli 
   else if(k==='presenze'){if(!canV('s-map'))return null;const t=PLACES.reduce((a,p)=>a+pVal(p).n,0);html='<section class="w">'+rm+'<span class="wl">Presenze in mappa</span><b class="wbig">≈ '+nf.format(t)+'</b><button type="button" class="bb" data-go="s-map">Apri la mappa</button></section>';}
   else if(k==='sponsor'){if(!canV('v-altri'))return null;const L=(VD['v-altri']||[]).filter(r=>r.dati.contattato!=='Sì');html='<section class="w">'+rm+'<span class="wl">Sponsor da contattare</span><b class="wbig">'+L.length+'</b><button type="button" class="bb" data-go="v-altri">Apri</button></section>';}
   else if(k==='modifiche'){html='<section class="w">'+rm+'<div class="wh"><b>Ultime novità</b></div>'+(NOTI.slice(0,4).map(n=>'<p class="small">· '+esc(n.testo)+'</p>').join('')||'<p class="muted">Nessuna novità.</p>')+'</section>';}
-  if(!html)return null;const w=h(html);w.querySelector('[data-rm]').addEventListener('click',async()=>{PREF.w=PREF.w.filter(x=>x!==k);renderHome();await savePref();});return w;}
+  if(!html)return null;const w=h(html);const mv=h('<div class="wmv"><button type="button" aria-label="Sposta prima">↑</button><button type="button" aria-label="Sposta dopo">↓</button></div>');w.appendChild(mv);
+  mv.children[0].addEventListener('click',async()=>{const i=PREF.w.indexOf(k);if(i>0){[PREF.w[i-1],PREF.w[i]]=[PREF.w[i],PREF.w[i-1]];renderHome();await savePref();}});
+  mv.children[1].addEventListener('click',async()=>{const i=PREF.w.indexOf(k);if(i<PREF.w.length-1){[PREF.w[i+1],PREF.w[i]]=[PREF.w[i],PREF.w[i+1]];renderHome();await savePref();}});
+  w.querySelector('[data-rm]').addEventListener('click',async()=>{PREF.w=PREF.w.filter(x=>x!==k);renderHome();await savePref();});return w;}
 function pickW(){const av=Object.entries(WIDX).filter(([k])=>!(PREF.w||[]).includes(k));
   if(!av.length){stEl.textContent='Hai già tutti i riquadri disponibili.';return;}
   sheet('Aggiungi un riquadro','<div class="sgrid">'+av.map(([k,t])=>'<button type="button" data-w="'+k+'">'+esc(t)+'</button>').join('')+'</div>','Chiudi',async()=>{});
@@ -275,7 +279,7 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
   await loadAree();if(cur!=='p-me')return;
   el.appendChild(h('<div class="mehead"><span class="av big">'+iniz(me)+'</span><div><span class="eyb">Il mio spazio</span><h2>'+esc(CTX.prof.nome||CTX.prof.email)+'</h2><span class="muted">'+(CTX.admin?'Amministratore':isPres()?'Presidente':'Collaboratore')+'</span></div></div>'));
   const un=NOTI.filter(n=>!n.letto);
-  const nc=h('<section class="card"><div class="wh"><h3>Notifiche</h3>'+(un.length?'<button type="button" class="lnk2" id="allread">Segna tutte come lette</button>':'')+'</div>'+(NOTI.length?NOTI.slice(0,15).map(n=>'<button type="button" class="noti'+(n.letto?'':' new')+'" data-n="'+n.id+'" data-link="'+esc(n.link||'')+'"><i></i><span>'+esc(n.testo)+'<em>'+new Date(n.quando).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</em></span></button>').join(''):'<p class="muted">Nessuna notifica.</p>')+'</section>');
+  const nc=h('<section class="card"><div class="wh"><h3>Notifiche</h3>'+(un.length?'<button type="button" class="lnk2" id="allread">Segna tutte come lette</button>':'')+'</div>'+(NOTI.filter(n=>!mutata(n)).length?NOTI.filter(n=>!mutata(n)).slice(0,15).map(n=>'<button type="button" class="noti'+(n.letto?'':' new')+'" data-n="'+n.id+'" data-link="'+esc(n.link||'')+'"><i></i><span>'+esc(n.testo)+'<em>'+new Date(n.quando).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</em></span></button>').join(''):'<p class="muted">Nessuna notifica.</p>')+'</section>');
   nc.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('id',+b.dataset.n);const x=NOTI.find(n=>n.id===+b.dataset.n);if(x)x.letto=true;refreshBell();if(b.dataset.link)go(b.dataset.link);else renderMe();}));
   const ar=nc.querySelector('#allread');if(ar)ar.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('per',me).eq('letto',false);NOTI.forEach(n=>n.letto=true);refreshBell();renderMe();});
   el.appendChild(nc);
@@ -285,18 +289,10 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
   cc.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));
   cc.querySelector('#pm_ok').addEventListener('click',async()=>{const t=cc.querySelector('#pm_t').value.trim();if(!t)return;const {error}=await CTX.sb.from('compiti').insert({per:me,titolo:t,entro:cc.querySelector('#pm_d').value||null,privato:true});if(error){stEl.textContent=error.message;return;}await loadSocial();renderMe();});
   cc.querySelector('#as_ok').addEventListener('click',()=>{const ppl=Object.values(PEOPLE).filter(p=>p.id!==me);sheet('Assegna un compito','<div class="ctl"><label for="as_p">A chi</label><select id="as_p">'+ppl.map(p=>'<option value="'+p.id+'">'+esc(p.nome||p.email)+'</option>').join('')+'</select></div><div class="ctl"><label for="as_t">Cosa deve fare</label><input type="text" id="as_t"></div><div class="ctl"><label for="as_d">Entro</label><input type="date" id="as_d" min="'+todayISO()+'"></div>','Assegna',async(dl)=>{const t=dl.querySelector('#as_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi cosa deve fare.';return false;}const {error}=await CTX.sb.from('compiti').insert({per:dl.querySelector('#as_p').value,titolo:t,entro:dl.querySelector('#as_d').value||null});if(error)throw new Error(error.message);await loadSocial();renderMe();stEl.textContent='Compito assegnato: riceverà una notifica.';});});
-  el.appendChild(cc);
-  const given=COMP.filter(c=>c.da===me&&c.per!==me);
-  if(given.length)el.appendChild(h('<section class="card"><h3>Compiti che hai assegnato</h3>'+given.map(c=>'<div class="rq"><div><b>'+esc(c.titolo)+'</b><span>'+esc(nome(c.per))+(c.entro?' · entro il '+fmtD(c.entro):'')+'</span></div><span class="chip2 '+(c.fatto?'ok':'')+'">'+(c.fatto?'Fatto':'Da fare')+'</span></div>').join('')+'</section>'));
-  const myA=AREE_P.filter(a=>a.owner===me),oth=AREE_P.filter(a=>a.owner!==me);
-  const ac=h('<section class="card"><div class="wh"><h3>Le mie aree</h3><button type="button" class="bb dark sm" id="na">+ Nuova area</button></div><p class="muted">Pagine tue per appunti e lavori. Scegli se renderle visibili a tutti.'+(CTX.admin?' Come amministratore vedi anche quelle degli altri.':'')+'</p><div class="cgrid"></div></section>');
-  const ag=ac.querySelector('.cgrid');
-  myA.concat(oth).forEach(a=>{const own=a.owner===me;const c=h('<article class="card rc"><div class="chips"><span class="chip2 '+(a.visibile?'ok':'')+'">'+(a.visibile?'Visibile a tutti':'Solo per '+(own?'te':esc(nome(a.owner))))+'</span>'+(own?'':'<span class="chip2">di '+esc(nome(a.owner))+'</span>')+'</div><b class="vn">'+esc(a.titolo)+'</b><p style="white-space:pre-line">'+esc((a.testo||'').slice(0,400))+'</p></article>');
-    if(own){const b=h('<div class="rowb"><button type="button">Modifica</button><button type="button" class="ko">Elimina</button></div>');b.children[0].addEventListener('click',()=>editArea(a));b.children[1].addEventListener('click',()=>ask('Eliminare «'+a.titolo+'»?','Elimina',async()=>{await CTX.sb.from('aree_personali').delete().eq('id',a.id);renderMe();}));c.appendChild(b);}
-    ag.appendChild(c);});
-  ac.querySelector('#na').addEventListener('click',()=>editArea(null));el.appendChild(ac);
+  el.appendChild(compitiCard());
+  el.appendChild(areeCard());
   el.appendChild(h('<section class="card"><h3>Profilo</h3><div class="big-btns"><button type="button" class="bb" id="pw">Cambia password</button><button type="button" class="bb" id="out2">Esci</button></div></section>'));
-  mePush(el);
+  mePush(el);mePrefNoti(el);
   el.querySelector('#out2').addEventListener('click',()=>CTX.logout());
   el.querySelector('#pw').addEventListener('click',()=>sheet('Cambia password','<div class="ctl"><label for="np2">Nuova password (almeno 8 caratteri)</label><input type="password" id="np2" autocomplete="new-password"></div>','Salva',async(dl)=>{const p=dl.querySelector('#np2').value;if(p.length<8){dl.querySelector('.smsg').textContent='Almeno 8 caratteri.';return false;}const {error}=await CTX.sb.auth.updateUser({password:p});if(error)throw new Error(error.message);stEl.textContent='Password cambiata.';}));}
 function editArea(a){sheet(a?'Modifica area':'Nuova area','<div class="ctl"><label for="ap_t">Titolo</label><input type="text" id="ap_t" value="'+esc(a?a.titolo:'')+'"></div><div class="ctl"><label for="ap_x">Contenuto</label><textarea id="ap_x" style="min-height:180px">'+esc(a?a.testo||'':'')+'</textarea></div><label style="display:flex;gap:10px;align-items:center;font-size:17px"><input type="checkbox" id="ap_v"'+(a&&a.visibile?' checked':'')+'> Visibile a tutti</label>','Salva',async(dl)=>{const t=dl.querySelector('#ap_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi un titolo.';return false;}const o={titolo:t,testo:dl.querySelector('#ap_x').value,visibile:dl.querySelector('#ap_v').checked,aggiornato:new Date().toISOString()};const q=a?CTX.sb.from('aree_personali').update(o).eq('id',a.id):CTX.sb.from('aree_personali').insert(o);const {error}=await q;if(error)throw new Error(error.message);renderMe();});}
