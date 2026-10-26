@@ -13,10 +13,21 @@ rep('<script>\nconst D = __DATA__;\n</script>\n<script>\n(function(){\n"use stri
     '<script>\nwindow.APP=function(D,CTX){\n"use strict";')
 i = T.index('/* ---------- salvataggio ---------- */'); j = T.index('</script>', i)
 SAVE = open(os.path.join(R, 'salvataggio.js'), encoding='utf-8').read()
-F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read()
+F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read()
 assert SAVE.count('/* ---------- avvio ---------- */') == 1 and SAVE.count('\nshow(cur);\n') == 1
 SAVE = SAVE.replace('/* ---------- avvio ---------- */', F1 + '\n/* ---------- avvio ---------- */').replace('\nshow(cur);\n', '\navviaF1();\n')
 T = T[:i] + SAVE + '\n};\n' + T[j:]
+
+# --- Fase 2: bilancio 2026 con voci eliminabili e aggiungibili
+rep("ed:{},cs:{p:{}", "ed:{},bilx:{del:{},add:[]},cs:{p:{}")
+rep("  D.bil.forEach(a=>{a.t=a.voci.reduce((s,v)=>s+(Number(v.v)||0),0);});",
+    "  D.bil.forEach(a=>{a.voci=a.voci.filter(v=>!v._add);a.voci.forEach((v,i)=>{v.x=!!(S.bilx&&S.bilx.del&&S.bilx.del[a.id+'.'+i]);});});\n  ((S.bilx&&S.bilx.add)||[]).forEach(x=>{const A=D.bil.find(a=>a.id===x.a);if(A)A.voci.push({n:x.n,v:Number(x.v)||0,_add:x.id});});\n  D.bil.forEach(a=>{a.t=a.voci.reduce((s,v)=>s+(v.x?0:(Number(v.v)||0)),0);});")
+rep("const voci=[];D.bil.forEach(a=>a.voci.forEach(", "const voci=[];D.bil.forEach(a=>a.voci.filter(v=>!v.x).forEach(")
+rep("const vmax=Math.max(...a.voci.map(v=>v.v));", "const vmax=Math.max(1,...a.voci.filter(v=>!v.x).map(v=>v.v));")
+rep("""a.voci.forEach((v,vi)=>{body+='<div class="row" data-ed="bilV:'+a.id+'.'+vi+'"><span class="n">'+esc(v.n)+'</span><span class="num">'+eur(v.v)+'</span><div class="d">'+bar(v.v,vmax)+'</div></div>';});""",
+    """a.voci.forEach((v,vi)=>{if(v.x)return;body+='<div class="row"'+(v._add?'':' data-ed="bilV:'+a.id+'.'+vi+'"')+'><span class="n">'+esc(v.n)+(v._add?' <span class="badge">aggiunta</span>':'')+'</span><span class="num">'+eur(v.v)+'</span><div class="d">'+bar(v.v,vmax)+(CTX.canEdit('s-bil')?'<span class="bxw">'+(v._add?'<button type="button" data-baded="'+v._add+'">Modifica</button>':'')+'<button type="button" class="ko" data-bdel="'+(v._add?'n:'+v._add:a.id+'.'+vi)+'">Elimina</button></span>':'')+'</div></div>';});""")
+rep("""body+='</div><div class="sub-h">Fornitori ('""", """body+='</div>';if(CTX.canEdit('s-bil'))body+='<div class="bxw"><button type="button" data-badd="'+a.id+'">+ Aggiungi una voce</button>'+(a.voci.some(v=>v.x)?'<button type="button" data-bres="'+a.id+'">Rimetti le voci eliminate</button>':'')+'</div>';body+='<div class="sub-h">Fornitori ('""")
+rep("""pct(a.t/D.tot26*100)+' del totale · '+a.voci.length+' voci""", """pct(a.t/D.tot26*100)+' del totale · '+a.voci.filter(v=>!v.x).length+' voci""")
 
 # --- schede visibili secondo i permessi, scheda amministratore
 rep("['s-cs','Centro Studi','ricadute e simulatore','lab']];",
@@ -56,7 +67,7 @@ T = T[:i] + ('  <div class="topbar"><button type="button" class="b27logo m" data
 rep('<span class="eyb">Scheda \'+n+\'</span>', '<span class="eyb">\'+eyb(n)+\'</span>')
 rep("const tab=TABS.find(t=>t[0]===cur);", "const tab=[cur,pageTitle(cur)];")
 rep('<title>Cruscotto Festa della Bruna</title>', '<title>Bruna27</title>')
-CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read()
+CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read()
 k = T.index('</style>'); T = T[:k] + CSS1 + T[k:]
 # login: pagina completa
 LOGIN = open(os.path.join(R, 'login.html'), encoding='utf-8').read()

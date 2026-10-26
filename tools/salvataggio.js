@@ -1,6 +1,6 @@
 /* ---------- salvataggio su Supabase, permessi e tempo reale ---------- */
 const stEl=document.getElementById('status');let timer=null,saving=false,pending=false;
-const KEYAREA={vo:'s-pre',so:'s-pre',progetto:'s-pre',risp:'s-pre',rp:'s-pre',fondo:'s-fon',ro:'s-ric',crescita:'s-ric',leve:'s-ric',target:'s-ric',leveInPrev:'s-ric',rc:'s-ter',carPct:'s-car',al:'s-car',ev:'s-ev',evc:'s-ev',cs:'s-cs'};
+const KEYAREA={bilx:'s-bil',vo:'s-pre',so:'s-pre',progetto:'s-pre',risp:'s-pre',rp:'s-pre',fondo:'s-fon',ro:'s-ric',crescita:'s-ric',leve:'s-ric',target:'s-ric',leveInPrev:'s-ric',rc:'s-ter',carPct:'s-car',al:'s-car',ev:'s-ev',evc:'s-ev',cs:'s-cs'};
 const NUM2AREA=['','s-bil','s-for','s-fon','s-pre','s-car','s-ric','s-ter','s-ev','s-map','s-cs','s-adm'];
 const EDK2A={forn:'s-for',bilA:'s-bil',bilV:'s-bil',prevA:'s-pre',voce:'s-pre',sub:'s-pre',ric:'s-ric',leva:'s-ric',alloc:'s-car',bene:'s-car',ev:'s-ev',place:'s-map'};
 function edArea(k){const kind=k.slice(0,k.indexOf(':')),id=k.slice(k.indexOf(':')+1);return kind==='tx'?(NUM2AREA[+id]||'s-bil'):(EDK2A[kind]||'s-bil');}

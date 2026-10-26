@@ -1,7 +1,7 @@
 /* ================= Bruna27 · Fase 1: menu a 5 sezioni, Home a riquadri, richieste, il mio spazio ================= */
 const SEZ=[
  {k:'eco',n:'Economia',i:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
-  v:[['s-bil','Bilancio 2026','pie'],['v-p27','Previsione 2027','trend'],['s-pre','Costi','down'],['s-ric','Ricavi','up'],['v-voci','Costi e guadagni per voce','eq'],['v-fatt','Fatture','doc'],['s-car','Carità','heart'],['s-ter','PIL generato','pin'],['s-for','Fornitori','list'],['v-prev','Preventivi','doc']]},
+  v:[['s-bil','Bilancio 2026','pie'],['v-p27','Previsione 2027','trend'],['s-pre','Costi','down'],['s-ric','Ricavi','up'],['v-voci','Costi e guadagni per voce','eq'],['v-fatt','Fatture','doc'],['s-car','Carità','heart'],['s-ter','PIL generato','pin'],['s-for','Fornitori 2026','list'],['v-for27','Fornitori 2027','users'],['v-prev','Preventivi','doc']]},
  {k:'evt',n:'Eventi',i:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   v:[['s-ev','Calendario','cal'],['v-crea','Crea un evento','plus'],['s-cs','Simulazione impatto','flask'],['v-perc','Percorsi','route']]},
  {k:'com',n:'Commerciale',i:'<path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/>',
@@ -46,7 +46,7 @@ function buildNav(){
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-go]');if(!b)return;e.preventDefault();go(b.dataset.go);});
 function secOf(id){if(id.startsWith('sec-'))return id.slice(4);if(VOCE[id])return VOCE[id].sec;if(id==='s-fon')return 'eco';return null;}
-function markNav(id){const s=secOf(id);document.querySelectorAll('.nv').forEach(b=>{const g=b.dataset.go;b.setAttribute('aria-current',String(g===id||(s&&g==='sec-'+s)));});}
+function markNav(id){const s=secOf(id);document.querySelectorAll('.nv').forEach(b=>{const g=b.dataset.go;b.setAttribute('aria-current',String(g===id||!!(s&&g==='sec-'+s)));});}
 function go(id){if(!canOpen(id))id='p-home';show(id);window.scrollTo({top:0});
   if(id==='v-crea')setTimeout(()=>{const x=[...document.querySelectorAll('#s-ev h3')].find(e=>/Aggiungi un evento/.test(e.textContent));if(x)x.scrollIntoView({block:'start',behavior:'smooth'});},80);}
 function canOpen(id){if(['p-home','p-me','p-req','p-cal'].includes(id))return true;if(id==='s-adm')return CTX.admin;if(id.startsWith('sec-'))return !!mySez().find(s=>'sec-'+s.k===id);return canV(id);}
@@ -91,9 +91,9 @@ const EL={
  'v-sp27':{f:[['nome','Sponsor','t'],['importo','Importo 2027 (€)','n'],['stato','Stato','s',['Proposta inviata','Confermato','Firmato','Pagato']],['cosa','Cosa ottiene (banner, ledwall…)','t'],['contatto','Contatto','t']],intro:'Gli sponsor del 2027 e a che punto siamo.',add:'Aggiungi uno sponsor',group:'stato'},
  'v-altri':{f:[['nome','Azienda','t'],['regione','Regione','s',['Basilicata','Puglia']],['settore','Settore','t'],['citta','Città','t'],['telefono','Telefono','t'],['email','Email','t'],['contattato','Contattata?','s',['No','Sì']],['nota','Nota','ta']],intro:'Aziende di Basilicata e Puglia da proporre come sponsor.',add:'Aggiungi un’azienda',group:'regione'},
  'v-area':{f:[['spazio','Spazio','s',['Banner','Programma','Striscioni','Ledwall','Diretta','Social','Comunicazione']],['descr','Descrizione','t'],['prezzo','Prezzo (€)','n'],['stato','Stato','s',['Libero','Opzionato','Venduto']],['a','Venduto a','t']],intro:'Gli spazi in vendita: banner, programma, striscioni, ledwall, diretta, social, comunicazione.',add:'Aggiungi uno spazio',group:'spazio'},
- 'v-prot':{f:[['oggetto','Oggetto','t'],['verso','Entrata o uscita','s',['Entrata','Uscita']],['soggetto','Da / a chi','t'],['data','Data','d'],['numero','Numero di protocollo','t']],intro:'Il registro di protocollo dell’Associazione.',add:'Protocolla',group:'verso'},
- 'v-aut':{f:[['cosa','Autorizzazione','t'],['ente','Ente','t'],['stato','Stato','s',['Da chiedere','Chiesta','Ottenuta','Negata']],['chiesta','Chiesta il','d'],['scadenza','Scadenza','d'],['nota','Nota','ta']],intro:'Permessi e autorizzazioni per la Festa, con lo stato di ognuno.',add:'Aggiungi un’autorizzazione',group:'stato'},
- 'v-req':{f:[['documento','Documento richiesto','t'],['a','A chi','t'],['entro','Entro il','d'],['stato','Stato','s',['Richiesto','Arrivato']],['nota','Nota','ta']],intro:'I documenti chiesti alle persone e quelli già arrivati.',add:'Chiedi un documento',group:'stato'}};
+ 'v-prot':{f:[['oggetto','Oggetto','t'],['verso','Entrata o uscita','s',['Entrata','Uscita']],['soggetto','Da / a chi','t'],['data','Data','d'],['numero','Numero di protocollo','t'],['file','Documento','f']],intro:'Il registro di protocollo dell’Associazione.',add:'Protocolla',group:'verso'},
+ 'v-aut':{f:[['cosa','Autorizzazione','t'],['ente','Ente','t'],['stato','Stato','s',['Da chiedere','Chiesta','Ottenuta','Negata']],['chiesta','Chiesta il','d'],['scadenza','Scadenza','d'],['nota','Nota','ta'],['file','Documento','f']],intro:'Permessi e autorizzazioni per la Festa, con lo stato di ognuno.',add:'Aggiungi un’autorizzazione',group:'stato'},
+ 'v-req':{f:[['documento','Documento richiesto','t'],['a','A chi','t'],['entro','Entro il','d'],['stato','Stato','s',['Richiesto','Arrivato']],['nota','Nota','ta'],['file','Documento arrivato','f']],intro:'I documenti chiesti alle persone e quelli già arrivati.',add:'Chiedi un documento',group:'stato'}};
 const COMING={'v-perc':'Disegnerai il percorso delle processioni sulla mappa di Matera: tappe, ordine del corteo, soste, lunghezza. Poi passa alla Sicurezza e ai fornitori.','v-psic':'Qui arriveranno i percorsi da convalidare, con uscite, bagni e soccorsi da aggiungere sulla mappa.','v-msic':'Qui potrai caricare i PDF delle mappe degli ingegneri: la piattaforma li ricostruirà in digitale.'};
 const VD={};
 async function loadVD(){if(!CTX.sb)return;const keys=Object.keys(EL).filter(canV);if(!keys.length)return;const {data}=await CTX.sb.from('voci_dati').select('*').in('voce',keys).order('creato');keys.forEach(k=>VD[k]=[]);(data||[]).forEach(r=>{(VD[r.voce]=VD[r.voce]||[]).push(r);});}
@@ -126,11 +126,18 @@ function renderVoce(id){const el=document.getElementById(id);if(!el)return;el.in
   const g=h('<div class="cgrid"></div>');
   LL.slice().reverse().forEach(r=>{const d=r.dati;const title=d[E.f[0][0]]||'Senza titolo';
     const chips=E.f.slice(1).filter(f=>f[2]==='s'&&d[f[0]]).map(f=>'<span class="chip2'+(/^(Sì|Confermato|Firmato|Pagato|Ottenuta|Arrivato|Accettato|Venduto)$/.test(d[f[0]])?' ok':/^(No|Negata|Scartato)$/.test(d[f[0]])?' ko':'')+'">'+esc(d[f[0]])+'</span>').join('');
-    const facts=E.f.slice(1).filter(f=>f[2]!=='s'&&d[f[0]]!==''&&d[f[0]]!=null).map(f=>'<div class="fact2"><span>'+esc(f[1].replace(/ \(.*\)$/,''))+'</span><b>'+(f[2]==='n'?eur(+d[f[0]]):f[2]==='d'?fmtD(d[f[0]]):esc(d[f[0]]))+'</b></div>').join('');
+    const facts=E.f.slice(1).filter(f=>f[2]!=='s'&&f[2]!=='f'&&d[f[0]]!==''&&d[f[0]]!=null).map(f=>'<div class="fact2"><span>'+esc(f[1].replace(/ \(.*\)$/,''))+'</span><b>'+(f[2]==='n'?eur(+d[f[0]]):f[2]==='d'?fmtD(d[f[0]]):esc(d[f[0]]))+'</b></div>').join('');
     const c2=h('<article class="card rc"><b class="vn">'+esc(title)+'</b>'+(chips?'<div class="chips">'+chips+'</div>':'')+facts+'</article>');
+    E.f.filter(f=>f[2]==='f'&&d[f[0]]&&d[f[0]].path).forEach(f=>c2.appendChild(fileBtn(d[f[0]])));
     if(can)c2.appendChild(rowBtns(id,r));g.appendChild(c2);});
   el.appendChild(g);
   if(!LL.length)el.appendChild(h('<div class="card soon"><p>'+(can?'Ancora vuoto: tocca il pulsante qui sopra per iniziare.':'Ancora vuoto.')+'</p></div>'));}
+async function carica(file,dir){if(file.size>45*1024*1024)throw new Error('Il file è troppo grande (massimo 45 MB).');
+  const safe=(file.name||'file').normalize('NFD').replace(/[^\w.\-]+/g,'_').slice(-80);const path=dir+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,7)+'-'+safe;
+  const {error}=await CTX.sb.storage.from('documenti').upload(path,file,{upsert:false,contentType:file.type||undefined});if(error)throw new Error('File non caricato: '+error.message);return {path,nome:file.name||safe};}
+async function apriFile(f){const w=window.open('','_blank');const {data,error}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,900);
+  if(error||!data){if(w)w.close();stEl.textContent='Non riesco ad aprire il file'+(error?': '+error.message:'');return;}if(w)w.location.href=data.signedUrl;else location.href=data.signedUrl;}
+function fileBtn(f,label){const b=h('<button type="button" class="filebtn">'+svg(IC2.doc,18)+'<span>'+esc(label||'Apri il documento')+'<em>'+esc(f.nome||'')+'</em></span></button>');b.addEventListener('click',()=>apriFile(f));return b;}
 function addBtn(t,fn){const b=h('<button type="button" class="bigadd">'+esc(t)+'</button>');b.addEventListener('click',fn);return b;}
 function rowBtns(id,r){const b=h('<div class="rowb"><button type="button">Modifica</button><button type="button" class="ko">Elimina</button></div>');
   b.children[0].addEventListener('click',()=>editRec(id,r));
@@ -140,13 +147,19 @@ function sheet(title,body,okLabel,onOk){const d=h('<div class="sdlg" role="dialo
   d.querySelector('[data-ok]').addEventListener('click',async()=>{const m=d.querySelector('.smsg');m.textContent='Salvo…';try{const r=await onOk(d);if(r===false){return;}close();}catch(e){m.textContent=e.message||String(e);}});
   setTimeout(()=>{const f=d.querySelector('input,textarea,select');if(f)f.focus();},40);return d;}
 function ask(q,ok,fn){sheet(q,'<p style="font-size:17px">L’operazione non si può annullare.</p>',ok,async()=>{await fn();});}
-function fieldHtml(f,v){const [k,l,t,o]=f;const val=v==null?'':v;
+function fieldHtml(f,v){const [k,l,t,o0]=f;const val=v==null?'':v;let o=typeof o0==='function'?o0():o0;
+  if(t==='f')return '<div class="ctl"><label for="fx_'+k+'">'+esc(l)+'</label>'+(val&&val.nome?'<span class="muted small">Già allegato: '+esc(val.nome)+' (scegline un altro solo per sostituirlo)</span>':'')+'<input id="fx_'+k+'" type="file" accept=".pdf,.xml,.p7m,.doc,.docx,.xls,.xlsx,image/*"></div>';
+  if(t==='s'&&(!o||!o.length))return '<div class="ctl"><label for="fx_'+k+'">'+esc(l)+'</label><input id="fx_'+k+'" type="text" value="'+esc(val)+'"></div>';
+  if(t==='s'&&val&&!o.includes(val))o=[val].concat(o);
   if(t==='s')return '<div class="ctl"><label for="fx_'+k+'">'+esc(l)+'</label><select id="fx_'+k+'">'+o.map(x=>'<option'+(x===val?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select></div>';
   if(t==='ta')return '<div class="ctl"><label for="fx_'+k+'">'+esc(l)+'</label><textarea id="fx_'+k+'">'+esc(val)+'</textarea></div>';
   return '<div class="ctl"><label for="fx_'+k+'">'+esc(l)+'</label><input id="fx_'+k+'" type="'+(t==='n'?'number':t==='d'?'date':'text')+'" value="'+esc(val)+'"'+(t==='n'?' step="any" inputmode="decimal"':'')+'></div>';}
-function editRec(id,r){const E=EL[id];const d=r?r.dati:{};if(id==='v-voci'&&!r)d.anno=elFilt[id]||'2026';
-  sheet((r?'Modifica':E.add),E.f.map(f=>fieldHtml(f,d[f[0]])).join(''),'Salva',async(dl)=>{const o={};E.f.forEach(([k,,t])=>{let v=dl.querySelector('#fx_'+k).value;if(t==='n')v=v===''?'':Number(String(v).replace(',','.'));o[k]=typeof v==='string'?v.trim():v;});
+function editRec(id,r,pre,title){const E=EL[id];const d=r?r.dati:Object.assign({},pre||{});if(id==='v-voci'&&!r)d.anno=elFilt[id]||'2026';
+  sheet(title||(r?'Modifica':E.add),E.f.map(f=>fieldHtml(f,d[f[0]])).join(''),'Salva',async(dl)=>{const o={};const files=[];E.f.forEach(([k,,t])=>{const x=dl.querySelector('#fx_'+k);if(t==='f'){if(x.files&&x.files[0])files.push([k,x.files[0]]);else if(d[k])o[k]=d[k];return;}let v=x.value;if(t==='n')v=v===''?'':Number(String(v).replace(',','.'));o[k]=typeof v==='string'?v.trim():v;});
     if(!o[E.f[0][0]]){dl.querySelector('.smsg').textContent='Scrivi almeno «'+E.f[0][1]+'».';return false;}
+    if(pre&&pre.__file&&!files.length){const ff=E.f.find(f=>f[2]==='f');if(ff)files.push([ff[0],pre.__file]);}
+    for(const [k,fl] of files){dl.querySelector('.smsg').textContent='Carico il file…';o[k]=await carica(fl,id);}
+    Object.keys(d).forEach(k=>{if(o[k]===undefined&&k.slice(0,2)!=='__')o[k]=d[k];});
     const q=r?CTX.sb.from('voci_dati').update({dati:o,aggiornato:new Date().toISOString()}).eq('id',r.id):CTX.sb.from('voci_dati').insert({voce:id,dati:o});
     const {error}=await q;if(error)throw new Error('Non salvato: '+error.message);await loadVD();rerender();stEl.textContent='Salvato. Lo vedono tutti quelli che hanno accesso.';});}
 
@@ -169,6 +182,8 @@ function briefing(){const me=CTX.user.id,today=todayISO();const parts=[];
   const ap=RICH.filter(r=>r.stato==='aperta');if(ap.length)parts.push('<b>'+ap.length+' '+(ap.length===1?'richiesta del Presidente':'richieste del Presidente')+'</b> ancora da prendere');
   const mine=RICH.filter(r=>r.preso_da===me&&r.stato==='presa');const late=mine.filter(r=>r.entro&&r.entro<today);
   if(late.length)parts.push('<b class="neg">'+late.length+' tua'+(late.length>1?'e':'')+' in ritardo</b>');else if(mine.length)parts.push(mine.length+' presa da te: la prossima scade il <b>'+fmtD(mine.map(r=>r.entro).sort()[0])+'</b>');
+  if(canV('v-for27')){const pp=prossimi(VD['v-for27']||[],7);if(pp.length)parts.push('<b>'+pp.length+' pagament'+(pp.length===1?'o':'i')+' ai fornitori</b> entro 7 giorni');}
+  if(canV('v-fatt')){const sc=(VD['v-fatt']||[]).filter(r=>r.dati.tipo!=='Ricavo'&&r.dati.pagata!=='Sì'&&r.dati.scadenza&&r.dati.scadenza<today).length;if(sc)parts.push('<b class="neg">'+sc+' fattur'+(sc===1?'a scaduta':'e scadute')+'</b> da pagare');}
   const td=myTodo();if(td.length)parts.push('<b>'+td.length+' cos'+(td.length===1?'a':'e')+' da fare</b>');
   const inv=INVM.filter(i=>i.user_id===me&&i.stato==='invitato');if(inv.length)parts.push('<b>'+inv.length+' invit'+(inv.length===1?'o':'i')+'</b> a cui rispondere');
   const nx=RIUN.filter(r=>new Date(r.quando)>new Date()&&(r.creato_da===me||INVM.some(i=>i.riunione_id===r.id&&i.user_id===me&&i.stato!=='rifiuta')))[0];
