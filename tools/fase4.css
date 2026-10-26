@@ -1,0 +1,8 @@
+/* ===== Bruna27 · Fase 4-5 ===== */
+.aibox{background:#F4F3FC;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:15.5px;line-height:1.5}
+.aibox p{margin:0}.aibox .wh b{font-size:15.5px}
+.aisig{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.fbw{display:flex;flex-direction:column;gap:8px}
+.filebtn.soft{background:#fff;box-shadow:inset 0 0 0 1.5px #E2E1F6;color:var(--acc);font-weight:700;font-size:15.5px}
+.riass{font-size:17px;line-height:1.55;margin:0}
+.pstate{margin:0}

@@ -137,7 +137,8 @@ async function carica(file,dir){if(file.size>45*1024*1024)throw new Error('Il fi
   const {error}=await CTX.sb.storage.from('documenti').upload(path,file,{upsert:false,contentType:file.type||undefined});if(error)throw new Error('File non caricato: '+error.message);return {path,nome:file.name||safe};}
 async function apriFile(f){const w=window.open('','_blank');const {data,error}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,900);
   if(error||!data){if(w)w.close();stEl.textContent='Non riesco ad aprire il file'+(error?': '+error.message:'');return;}if(w)w.location.href=data.signedUrl;else location.href=data.signedUrl;}
-function fileBtn(f,label){const b=h('<button type="button" class="filebtn">'+svg(IC2.doc,18)+'<span>'+esc(label||'Apri il documento')+'<em>'+esc(f.nome||'')+'</em></span></button>');b.addEventListener('click',()=>apriFile(f));return b;}
+function fileBtn(f,label){const b=h('<button type="button" class="filebtn">'+svg(IC2.doc,18)+'<span>'+esc(label||'Apri il documento')+'<em>'+esc(f.nome||'')+'</em></span></button>');b.addEventListener('click',()=>apriFile(f));
+  if(AION&&/\.pdf$/i.test(f.nome||'')){const w=h('<div class="fbw"></div>');w.appendChild(b);w.appendChild(riassBtn(f));return w;}return b;}
 function addBtn(t,fn){const b=h('<button type="button" class="bigadd">'+esc(t)+'</button>');b.addEventListener('click',fn);return b;}
 function rowBtns(id,r){const b=h('<div class="rowb"><button type="button">Modifica</button><button type="button" class="ko">Elimina</button></div>');
   b.children[0].addEventListener('click',()=>editRec(id,r));
@@ -184,6 +185,7 @@ function briefing(){const me=CTX.user.id,today=todayISO();const parts=[];
   if(late.length)parts.push('<b class="neg">'+late.length+' tua'+(late.length>1?'e':'')+' in ritardo</b>');else if(mine.length)parts.push(mine.length+' presa da te: la prossima scade il <b>'+fmtD(mine.map(r=>r.entro).sort()[0])+'</b>');
   if(canV('v-for27')){const pp=prossimi(VD['v-for27']||[],7);if(pp.length)parts.push('<b>'+pp.length+' pagament'+(pp.length===1?'o':'i')+' ai fornitori</b> entro 7 giorni');}
   if(canV('v-fatt')){const sc=(VD['v-fatt']||[]).filter(r=>r.dati.tipo!=='Ricavo'&&r.dati.pagata!=='Sì'&&r.dati.scadenza&&r.dati.scadenza<today).length;if(sc)parts.push('<b class="neg">'+sc+' fattur'+(sc===1?'a scaduta':'e scadute')+'</b> da pagare');}
+  const dq=MYREQ.filter(r=>r.dati.stato!=='Arrivato').length;if(dq)parts.push('<b>'+dq+' document'+(dq===1?'o':'i')+'</b> che ti chiedono');
   const td=myTodo();if(td.length)parts.push('<b>'+td.length+' cos'+(td.length===1?'a':'e')+' da fare</b>');
   const inv=INVM.filter(i=>i.user_id===me&&i.stato==='invitato');if(inv.length)parts.push('<b>'+inv.length+' invit'+(inv.length===1?'o':'i')+'</b> a cui rispondere');
   const nx=RIUN.filter(r=>new Date(r.quando)>new Date()&&(r.creato_da===me||INVM.some(i=>i.riunione_id===r.id&&i.user_id===me&&i.stato!=='rifiuta')))[0];
@@ -216,7 +218,7 @@ function renderHome(){const el=document.getElementById('p-home');el.innerHTML=''
   const pw=pubWidget();if(pw)g.appendChild(pw);
   (PREF.w||[]).forEach(k=>{const w=extraW(k);if(w)g.appendChild(w);});
   const add=h('<button type="button" class="w wadd"><span>+</span><b>Aggiungi un riquadro</b></button>');add.addEventListener('click',pickW);g.appendChild(add);
-  el.appendChild(g);}
+  el.appendChild(g);aiBriefing();}
 function extraW(k){const rm='<button type="button" class="wx" aria-label="Togli riquadro" data-rm="'+k+'">×</button>';let html='';
   if(k==='promemoria'){const L=COMP.filter(c=>c.per===CTX.user.id&&c.privato&&!c.fatto);html='<section class="w">'+rm+'<div class="wh"><b>I miei promemoria</b></div>'+(L.length?L.slice(0,4).map(c=>'<p>· '+esc(c.titolo)+'</p>').join(''):'<p class="muted">Nessun promemoria.</p>')+'</section>';}
   else if(k==='presenze'){if(!canV('s-map'))return null;const t=PLACES.reduce((a,p)=>a+pVal(p).n,0);html='<section class="w">'+rm+'<span class="wl">Presenze in mappa</span><b class="wbig">≈ '+nf.format(t)+'</b><button type="button" class="bb" data-go="s-map">Apri la mappa</button></section>';}
@@ -234,11 +236,12 @@ function takeReq(id){const r=RICH.find(x=>x.id===id);if(!r)return;
     const {error}=await CTX.sb.rpc('prendi_richiesta',{rid:id,data_entro:d});if(error)throw new Error(error.message);await loadSocial();rerender();stEl.textContent='Presa in carico. Il Presidente è stato avvisato.';});}
 function renderReq(){const el=document.getElementById('p-req');el.innerHTML='';const me=CTX.user.id;
   el.appendChild(h('<div class="sh"><span class="eyb">Per tutti</span><h2>Richieste del Presidente</h2><p>Le vedono tutti. Chi ne prende una scrive entro quando la consegna.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
-  if(isPres())el.appendChild(addBtn('+ Nuova richiesta',()=>sheet('Nuova richiesta','<div class="ctl"><label for="rq_t">Cosa serve</label><input type="text" id="rq_t"></div><div class="ctl"><label for="rq_x">Dettagli</label><textarea id="rq_x"></textarea></div>','Invia a tutti',async(dl)=>{const t=dl.querySelector('#rq_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi cosa serve.';return false;}const {error}=await CTX.sb.from('richieste').insert({titolo:t,testo:dl.querySelector('#rq_x').value.trim()||null});if(error)throw new Error(error.message);await loadSocial();renderReq();stEl.textContent='Richiesta inviata a tutti.';})));
+  if(isPres())el.appendChild(addBtn('+ Nuova richiesta',()=>sheet('Nuova richiesta','<div class="ctl"><label for="rq_t">Cosa serve</label><input type="text" id="rq_t"></div><div class="ctl"><label for="rq_x">Dettagli</label><textarea id="rq_x"></textarea></div>','Invia a tutti',async(dl)=>{const t=dl.querySelector('#rq_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi cosa serve.';return false;}const {data:nr,error}=await CTX.sb.from('richieste').insert({titolo:t,testo:dl.querySelector('#rq_x').value.trim()||null}).select().single();if(error)throw new Error(error.message);if(nr)aiConsigli(nr.id);await loadSocial();renderReq();stEl.textContent='Richiesta inviata a tutti.';})));
   const grp=[['aperta','Da prendere'],['presa','In lavorazione'],['fatta','Completate']];
   grp.forEach(([st,lab])=>{const L=RICH.filter(r=>r.stato===st);if(!L.length)return;el.appendChild(h('<h3 class="gh">'+lab+' · '+L.length+'</h3>'));const g=h('<div class="cgrid"></div>');
     L.forEach(r=>{const late=st==='presa'&&r.entro&&r.entro<todayISO();
       const c=h('<article class="card rc'+(st==='aperta'?' hot':'')+'"><div class="chips"><span class="chip2 '+(st==='aperta'?'ko':st==='fatta'?'ok':'')+'">'+lab+'</span>'+(late?'<span class="chip2 ko">In ritardo</span>':'')+'</div><b class="vn">'+esc(r.titolo)+'</b>'+(r.testo?'<p>'+esc(r.testo)+'</p>':'')+(r.preso_da?'<div class="who"><span class="av">'+iniz(r.preso_da)+'</span><span><b>'+esc(nome(r.preso_da))+'</b> · entro il '+fmtD(r.entro)+'</span></div>':'')+'<span class="muted small">Chiesta da '+esc(nome(r.creato_da))+' il '+new Date(r.creato).toLocaleDateString('it-IT')+'</span></article>');
+      consigliBox(r,c);
       if(st==='aperta'){const b=h('<button type="button" class="bb dark">La prendo io</button>');b.addEventListener('click',()=>takeReq(r.id));c.appendChild(b);}
       if(st==='presa'&&(r.preso_da===me||isPres())){const b=h('<button type="button" class="bb">Segna come fatta</button>');b.addEventListener('click',async()=>{const {error}=await CTX.sb.rpc('chiudi_richiesta',{rid:r.id});if(error){stEl.textContent=error.message;return;}await loadSocial();renderReq();});c.appendChild(b);}
       if(isPres()){const b=h('<button type="button" class="lnk2 ko">Elimina</button>');b.addEventListener('click',()=>ask('Eliminare la richiesta?','Elimina',async()=>{await CTX.sb.from('richieste').delete().eq('id',r.id);await loadSocial();renderReq();}));c.appendChild(b);}
@@ -276,6 +279,7 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
   nc.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('id',+b.dataset.n);const x=NOTI.find(n=>n.id===+b.dataset.n);if(x)x.letto=true;refreshBell();if(b.dataset.link)go(b.dataset.link);else renderMe();}));
   const ar=nc.querySelector('#allread');if(ar)ar.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('per',me).eq('letto',false);NOTI.forEach(n=>n.letto=true);refreshBell();renderMe();});
   el.appendChild(nc);
+  await meDocs(el);if(cur!=='p-me')return;
   const mine=COMP.filter(c=>c.per===me);const fatti=mine.filter(c=>c.fatto).length;
   const cc=h('<section class="card"><div class="wh"><h3>I miei compiti e promemoria</h3><span class="muted">'+fatti+' su '+mine.length+' fatti</span></div><div class="gauge sm"><i style="display:block;height:100%;width:'+(mine.length?fatti/mine.length*100:0)+'%;background:var(--good)"></i></div>'+mine.filter(c=>!c.fatto).map(c=>'<label class="todo"><input type="checkbox" data-done="'+c.id+'"><span>'+esc(c.titolo)+(c.entro?' <em>entro il '+fmtD(c.entro)+'</em>':'')+(c.da!==me?' <em>da '+esc(nome(c.da))+'</em>':'')+'</span></label>').join('')+'<div class="when"><div class="ctl" style="flex:3 1 220px"><label for="pm_t">Nuovo promemoria</label><input type="text" id="pm_t" placeholder="Scrivi qui…"></div><div class="ctl"><label for="pm_d">Entro</label><input type="date" id="pm_d"></div></div><div class="big-btns"><button type="button" class="bb dark" id="pm_ok">Salva promemoria</button><button type="button" class="bb" id="as_ok">Assegna un compito a un collega</button></div></section>');
   cc.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));
@@ -292,6 +296,7 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
     ag.appendChild(c);});
   ac.querySelector('#na').addEventListener('click',()=>editArea(null));el.appendChild(ac);
   el.appendChild(h('<section class="card"><h3>Profilo</h3><div class="big-btns"><button type="button" class="bb" id="pw">Cambia password</button><button type="button" class="bb" id="out2">Esci</button></div></section>'));
+  mePush(el);
   el.querySelector('#out2').addEventListener('click',()=>CTX.logout());
   el.querySelector('#pw').addEventListener('click',()=>sheet('Cambia password','<div class="ctl"><label for="np2">Nuova password (almeno 8 caratteri)</label><input type="password" id="np2" autocomplete="new-password"></div>','Salva',async(dl)=>{const p=dl.querySelector('#np2').value;if(p.length<8){dl.querySelector('.smsg').textContent='Almeno 8 caratteri.';return false;}const {error}=await CTX.sb.auth.updateUser({password:p});if(error)throw new Error(error.message);stEl.textContent='Password cambiata.';}));}
 function editArea(a){sheet(a?'Modifica area':'Nuova area','<div class="ctl"><label for="ap_t">Titolo</label><input type="text" id="ap_t" value="'+esc(a?a.titolo:'')+'"></div><div class="ctl"><label for="ap_x">Contenuto</label><textarea id="ap_x" style="min-height:180px">'+esc(a?a.testo||'':'')+'</textarea></div><label style="display:flex;gap:10px;align-items:center;font-size:17px"><input type="checkbox" id="ap_v"'+(a&&a.visibile?' checked':'')+'> Visibile a tutti</label>','Salva',async(dl)=>{const t=dl.querySelector('#ap_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi un titolo.';return false;}const o={titolo:t,testo:dl.querySelector('#ap_x').value,visibile:dl.querySelector('#ap_v').checked,aggiornato:new Date().toISOString()};const q=a?CTX.sb.from('aree_personali').update(o).eq('id',a.id):CTX.sb.from('aree_personali').insert(o);const {error}=await q;if(error)throw new Error(error.message);renderMe();});}
@@ -357,5 +362,5 @@ function liveF1(){if(!CTX.sb)return;
    .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifiche'},async p=>{const n=p.new;if(!n||n.per!==CTX.user.id)return;NOTI.unshift(n);refreshBell();stEl.textContent=n.testo;avviso(n.testo);await loadSocial();if(cur==='p-home'||cur==='p-me'||cur==='p-cal')rerender();})
    .subscribe();}
 async function avviaF1(){document.getElementById('avt').textContent=((CTX.prof.nome||CTX.prof.email||'?').trim().charAt(0)||'?').toUpperCase();buildNav();show('p-home');
-  try{await Promise.all([loadSocial(),loadVD(),loadPref()]);}catch(e){}
-  rerender();refreshBell();liveF1();}
+  try{await Promise.all([loadSocial(),loadVD(),loadPref(),extraLoad()]);}catch(e){}
+  rerender();refreshBell();liveF1();dopoAvvio();}

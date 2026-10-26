@@ -13,7 +13,7 @@ rep('<script>\nconst D = __DATA__;\n</script>\n<script>\n(function(){\n"use stri
     '<script>\nwindow.APP=function(D,CTX){\n"use strict";')
 i = T.index('/* ---------- salvataggio ---------- */'); j = T.index('</script>', i)
 SAVE = open(os.path.join(R, 'salvataggio.js'), encoding='utf-8').read()
-F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read()
+F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read()
 assert SAVE.count('/* ---------- avvio ---------- */') == 1 and SAVE.count('\nshow(cur);\n') == 1
 SAVE = SAVE.replace('/* ---------- avvio ---------- */', F1 + '\n/* ---------- avvio ---------- */').replace('\nshow(cur);\n', '\navviaF1();\n')
 T = T[:i] + SAVE + '\n};\n' + T[j:]
@@ -67,7 +67,7 @@ T = T[:i] + ('  <div class="topbar"><button type="button" class="b27logo m" data
 rep('<span class="eyb">Scheda \'+n+\'</span>', '<span class="eyb">\'+eyb(n)+\'</span>')
 rep("const tab=TABS.find(t=>t[0]===cur);", "const tab=[cur,pageTitle(cur)];")
 rep('<title>Cruscotto Festa della Bruna</title>', '<title>Bruna27</title>')
-CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase3.css'), encoding='utf-8').read()
+CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase3.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase4.css'), encoding='utf-8').read()
 k = T.index('</style>'); T = T[:k] + CSS1 + T[k:]
 # login: pagina completa
 LOGIN = open(os.path.join(R, 'login.html'), encoding='utf-8').read()
@@ -77,6 +77,8 @@ rep('<div class="sticky" id="sticky" hidden><div class="in" id="stickyIn"></div>
     '<div class="sticky" id="sticky" hidden><div class="in" id="stickyIn"></div></div>\n</div>')
 HEAD = ('<!doctype html>\n<html lang="it" data-theme="light">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
         '<meta name="robots" content="noindex,nofollow">\n<meta name="theme-color" content="#F6F6F8">\n'
+        '<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icona-180.png"><link rel="icon" href="icona-192.png">\n'
+        '<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Bruna27"><meta name="apple-mobile-web-app-status-bar-style" content="default">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">\n')
 T = T.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', '')
 k = T.index('<style>')

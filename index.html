@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#F6F6F8">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icona-180.png"><link rel="icon" href="icona-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Bruna27"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <title>Bruna27</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -653,6 +655,14 @@ body.editing .bxw{display:flex}
 .bb.ko{color:var(--bad)}
 .pdfing .leaflet-control-zoom{display:none}
 @media(max-width:700px){.big3.mini{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.big3.mini .kpi{padding:12px;border-radius:18px}.big3.mini .kpi span{font-size:12.5px}.big3.mini .kpi b{font-size:17px;letter-spacing:-.2px}}
+/* ===== Bruna27 · Fase 4-5 ===== */
+.aibox{background:#F4F3FC;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;font-size:15.5px;line-height:1.5}
+.aibox p{margin:0}.aibox .wh b{font-size:15.5px}
+.aisig{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.fbw{display:flex;flex-direction:column;gap:8px}
+.filebtn.soft{background:#fff;box-shadow:inset 0 0 0 1.5px #E2E1F6;color:var(--acc);font-weight:700;font-size:15.5px}
+.riass{font-size:17px;line-height:1.55;margin:0}
+.pstate{margin:0}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -1857,7 +1867,8 @@ async function carica(file,dir){if(file.size>45*1024*1024)throw new Error('Il fi
   const {error}=await CTX.sb.storage.from('documenti').upload(path,file,{upsert:false,contentType:file.type||undefined});if(error)throw new Error('File non caricato: '+error.message);return {path,nome:file.name||safe};}
 async function apriFile(f){const w=window.open('','_blank');const {data,error}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,900);
   if(error||!data){if(w)w.close();stEl.textContent='Non riesco ad aprire il file'+(error?': '+error.message:'');return;}if(w)w.location.href=data.signedUrl;else location.href=data.signedUrl;}
-function fileBtn(f,label){const b=h('<button type="button" class="filebtn">'+svg(IC2.doc,18)+'<span>'+esc(label||'Apri il documento')+'<em>'+esc(f.nome||'')+'</em></span></button>');b.addEventListener('click',()=>apriFile(f));return b;}
+function fileBtn(f,label){const b=h('<button type="button" class="filebtn">'+svg(IC2.doc,18)+'<span>'+esc(label||'Apri il documento')+'<em>'+esc(f.nome||'')+'</em></span></button>');b.addEventListener('click',()=>apriFile(f));
+  if(AION&&/\.pdf$/i.test(f.nome||'')){const w=h('<div class="fbw"></div>');w.appendChild(b);w.appendChild(riassBtn(f));return w;}return b;}
 function addBtn(t,fn){const b=h('<button type="button" class="bigadd">'+esc(t)+'</button>');b.addEventListener('click',fn);return b;}
 function rowBtns(id,r){const b=h('<div class="rowb"><button type="button">Modifica</button><button type="button" class="ko">Elimina</button></div>');
   b.children[0].addEventListener('click',()=>editRec(id,r));
@@ -1904,6 +1915,7 @@ function briefing(){const me=CTX.user.id,today=todayISO();const parts=[];
   if(late.length)parts.push('<b class="neg">'+late.length+' tua'+(late.length>1?'e':'')+' in ritardo</b>');else if(mine.length)parts.push(mine.length+' presa da te: la prossima scade il <b>'+fmtD(mine.map(r=>r.entro).sort()[0])+'</b>');
   if(canV('v-for27')){const pp=prossimi(VD['v-for27']||[],7);if(pp.length)parts.push('<b>'+pp.length+' pagament'+(pp.length===1?'o':'i')+' ai fornitori</b> entro 7 giorni');}
   if(canV('v-fatt')){const sc=(VD['v-fatt']||[]).filter(r=>r.dati.tipo!=='Ricavo'&&r.dati.pagata!=='Sì'&&r.dati.scadenza&&r.dati.scadenza<today).length;if(sc)parts.push('<b class="neg">'+sc+' fattur'+(sc===1?'a scaduta':'e scadute')+'</b> da pagare');}
+  const dq=MYREQ.filter(r=>r.dati.stato!=='Arrivato').length;if(dq)parts.push('<b>'+dq+' document'+(dq===1?'o':'i')+'</b> che ti chiedono');
   const td=myTodo();if(td.length)parts.push('<b>'+td.length+' cos'+(td.length===1?'a':'e')+' da fare</b>');
   const inv=INVM.filter(i=>i.user_id===me&&i.stato==='invitato');if(inv.length)parts.push('<b>'+inv.length+' invit'+(inv.length===1?'o':'i')+'</b> a cui rispondere');
   const nx=RIUN.filter(r=>new Date(r.quando)>new Date()&&(r.creato_da===me||INVM.some(i=>i.riunione_id===r.id&&i.user_id===me&&i.stato!=='rifiuta')))[0];
@@ -1936,7 +1948,7 @@ function renderHome(){const el=document.getElementById('p-home');el.innerHTML=''
   const pw=pubWidget();if(pw)g.appendChild(pw);
   (PREF.w||[]).forEach(k=>{const w=extraW(k);if(w)g.appendChild(w);});
   const add=h('<button type="button" class="w wadd"><span>+</span><b>Aggiungi un riquadro</b></button>');add.addEventListener('click',pickW);g.appendChild(add);
-  el.appendChild(g);}
+  el.appendChild(g);aiBriefing();}
 function extraW(k){const rm='<button type="button" class="wx" aria-label="Togli riquadro" data-rm="'+k+'">×</button>';let html='';
   if(k==='promemoria'){const L=COMP.filter(c=>c.per===CTX.user.id&&c.privato&&!c.fatto);html='<section class="w">'+rm+'<div class="wh"><b>I miei promemoria</b></div>'+(L.length?L.slice(0,4).map(c=>'<p>· '+esc(c.titolo)+'</p>').join(''):'<p class="muted">Nessun promemoria.</p>')+'</section>';}
   else if(k==='presenze'){if(!canV('s-map'))return null;const t=PLACES.reduce((a,p)=>a+pVal(p).n,0);html='<section class="w">'+rm+'<span class="wl">Presenze in mappa</span><b class="wbig">≈ '+nf.format(t)+'</b><button type="button" class="bb" data-go="s-map">Apri la mappa</button></section>';}
@@ -1954,11 +1966,12 @@ function takeReq(id){const r=RICH.find(x=>x.id===id);if(!r)return;
     const {error}=await CTX.sb.rpc('prendi_richiesta',{rid:id,data_entro:d});if(error)throw new Error(error.message);await loadSocial();rerender();stEl.textContent='Presa in carico. Il Presidente è stato avvisato.';});}
 function renderReq(){const el=document.getElementById('p-req');el.innerHTML='';const me=CTX.user.id;
   el.appendChild(h('<div class="sh"><span class="eyb">Per tutti</span><h2>Richieste del Presidente</h2><p>Le vedono tutti. Chi ne prende una scrive entro quando la consegna.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
-  if(isPres())el.appendChild(addBtn('+ Nuova richiesta',()=>sheet('Nuova richiesta','<div class="ctl"><label for="rq_t">Cosa serve</label><input type="text" id="rq_t"></div><div class="ctl"><label for="rq_x">Dettagli</label><textarea id="rq_x"></textarea></div>','Invia a tutti',async(dl)=>{const t=dl.querySelector('#rq_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi cosa serve.';return false;}const {error}=await CTX.sb.from('richieste').insert({titolo:t,testo:dl.querySelector('#rq_x').value.trim()||null});if(error)throw new Error(error.message);await loadSocial();renderReq();stEl.textContent='Richiesta inviata a tutti.';})));
+  if(isPres())el.appendChild(addBtn('+ Nuova richiesta',()=>sheet('Nuova richiesta','<div class="ctl"><label for="rq_t">Cosa serve</label><input type="text" id="rq_t"></div><div class="ctl"><label for="rq_x">Dettagli</label><textarea id="rq_x"></textarea></div>','Invia a tutti',async(dl)=>{const t=dl.querySelector('#rq_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi cosa serve.';return false;}const {data:nr,error}=await CTX.sb.from('richieste').insert({titolo:t,testo:dl.querySelector('#rq_x').value.trim()||null}).select().single();if(error)throw new Error(error.message);if(nr)aiConsigli(nr.id);await loadSocial();renderReq();stEl.textContent='Richiesta inviata a tutti.';})));
   const grp=[['aperta','Da prendere'],['presa','In lavorazione'],['fatta','Completate']];
   grp.forEach(([st,lab])=>{const L=RICH.filter(r=>r.stato===st);if(!L.length)return;el.appendChild(h('<h3 class="gh">'+lab+' · '+L.length+'</h3>'));const g=h('<div class="cgrid"></div>');
     L.forEach(r=>{const late=st==='presa'&&r.entro&&r.entro<todayISO();
       const c=h('<article class="card rc'+(st==='aperta'?' hot':'')+'"><div class="chips"><span class="chip2 '+(st==='aperta'?'ko':st==='fatta'?'ok':'')+'">'+lab+'</span>'+(late?'<span class="chip2 ko">In ritardo</span>':'')+'</div><b class="vn">'+esc(r.titolo)+'</b>'+(r.testo?'<p>'+esc(r.testo)+'</p>':'')+(r.preso_da?'<div class="who"><span class="av">'+iniz(r.preso_da)+'</span><span><b>'+esc(nome(r.preso_da))+'</b> · entro il '+fmtD(r.entro)+'</span></div>':'')+'<span class="muted small">Chiesta da '+esc(nome(r.creato_da))+' il '+new Date(r.creato).toLocaleDateString('it-IT')+'</span></article>');
+      consigliBox(r,c);
       if(st==='aperta'){const b=h('<button type="button" class="bb dark">La prendo io</button>');b.addEventListener('click',()=>takeReq(r.id));c.appendChild(b);}
       if(st==='presa'&&(r.preso_da===me||isPres())){const b=h('<button type="button" class="bb">Segna come fatta</button>');b.addEventListener('click',async()=>{const {error}=await CTX.sb.rpc('chiudi_richiesta',{rid:r.id});if(error){stEl.textContent=error.message;return;}await loadSocial();renderReq();});c.appendChild(b);}
       if(isPres()){const b=h('<button type="button" class="lnk2 ko">Elimina</button>');b.addEventListener('click',()=>ask('Eliminare la richiesta?','Elimina',async()=>{await CTX.sb.from('richieste').delete().eq('id',r.id);await loadSocial();renderReq();}));c.appendChild(b);}
@@ -1996,6 +2009,7 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
   nc.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('id',+b.dataset.n);const x=NOTI.find(n=>n.id===+b.dataset.n);if(x)x.letto=true;refreshBell();if(b.dataset.link)go(b.dataset.link);else renderMe();}));
   const ar=nc.querySelector('#allread');if(ar)ar.addEventListener('click',async()=>{await CTX.sb.from('notifiche').update({letto:true}).eq('per',me).eq('letto',false);NOTI.forEach(n=>n.letto=true);refreshBell();renderMe();});
   el.appendChild(nc);
+  await meDocs(el);if(cur!=='p-me')return;
   const mine=COMP.filter(c=>c.per===me);const fatti=mine.filter(c=>c.fatto).length;
   const cc=h('<section class="card"><div class="wh"><h3>I miei compiti e promemoria</h3><span class="muted">'+fatti+' su '+mine.length+' fatti</span></div><div class="gauge sm"><i style="display:block;height:100%;width:'+(mine.length?fatti/mine.length*100:0)+'%;background:var(--good)"></i></div>'+mine.filter(c=>!c.fatto).map(c=>'<label class="todo"><input type="checkbox" data-done="'+c.id+'"><span>'+esc(c.titolo)+(c.entro?' <em>entro il '+fmtD(c.entro)+'</em>':'')+(c.da!==me?' <em>da '+esc(nome(c.da))+'</em>':'')+'</span></label>').join('')+'<div class="when"><div class="ctl" style="flex:3 1 220px"><label for="pm_t">Nuovo promemoria</label><input type="text" id="pm_t" placeholder="Scrivi qui…"></div><div class="ctl"><label for="pm_d">Entro</label><input type="date" id="pm_d"></div></div><div class="big-btns"><button type="button" class="bb dark" id="pm_ok">Salva promemoria</button><button type="button" class="bb" id="as_ok">Assegna un compito a un collega</button></div></section>');
   cc.querySelectorAll('[data-done]').forEach(x=>x.addEventListener('change',()=>doneTask(x.dataset.done)));
@@ -2012,6 +2026,7 @@ async function renderMe(){const el=document.getElementById('p-me');el.innerHTML=
     ag.appendChild(c);});
   ac.querySelector('#na').addEventListener('click',()=>editArea(null));el.appendChild(ac);
   el.appendChild(h('<section class="card"><h3>Profilo</h3><div class="big-btns"><button type="button" class="bb" id="pw">Cambia password</button><button type="button" class="bb" id="out2">Esci</button></div></section>'));
+  mePush(el);
   el.querySelector('#out2').addEventListener('click',()=>CTX.logout());
   el.querySelector('#pw').addEventListener('click',()=>sheet('Cambia password','<div class="ctl"><label for="np2">Nuova password (almeno 8 caratteri)</label><input type="password" id="np2" autocomplete="new-password"></div>','Salva',async(dl)=>{const p=dl.querySelector('#np2').value;if(p.length<8){dl.querySelector('.smsg').textContent='Almeno 8 caratteri.';return false;}const {error}=await CTX.sb.auth.updateUser({password:p});if(error)throw new Error(error.message);stEl.textContent='Password cambiata.';}));}
 function editArea(a){sheet(a?'Modifica area':'Nuova area','<div class="ctl"><label for="ap_t">Titolo</label><input type="text" id="ap_t" value="'+esc(a?a.titolo:'')+'"></div><div class="ctl"><label for="ap_x">Contenuto</label><textarea id="ap_x" style="min-height:180px">'+esc(a?a.testo||'':'')+'</textarea></div><label style="display:flex;gap:10px;align-items:center;font-size:17px"><input type="checkbox" id="ap_v"'+(a&&a.visibile?' checked':'')+'> Visibile a tutti</label>','Salva',async(dl)=>{const t=dl.querySelector('#ap_t').value.trim();if(!t){dl.querySelector('.smsg').textContent='Scrivi un titolo.';return false;}const o={titolo:t,testo:dl.querySelector('#ap_x').value,visibile:dl.querySelector('#ap_v').checked,aggiornato:new Date().toISOString()};const q=a?CTX.sb.from('aree_personali').update(o).eq('id',a.id):CTX.sb.from('aree_personali').insert(o);const {error}=await q;if(error)throw new Error(error.message);renderMe();});}
@@ -2077,8 +2092,8 @@ function liveF1(){if(!CTX.sb)return;
    .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifiche'},async p=>{const n=p.new;if(!n||n.per!==CTX.user.id)return;NOTI.unshift(n);refreshBell();stEl.textContent=n.testo;avviso(n.testo);await loadSocial();if(cur==='p-home'||cur==='p-me'||cur==='p-cal')rerender();})
    .subscribe();}
 async function avviaF1(){document.getElementById('avt').textContent=((CTX.prof.nome||CTX.prof.email||'?').trim().charAt(0)||'?').toUpperCase();buildNav();show('p-home');
-  try{await Promise.all([loadSocial(),loadVD(),loadPref()]);}catch(e){}
-  rerender();refreshBell();liveF1();}
+  try{await Promise.all([loadSocial(),loadVD(),loadPref(),extraLoad()]);}catch(e){}
+  rerender();refreshBell();liveF1();dopoAvvio();}
 
 /* ================= Bruna27 · Fase 2: fatture lette dal file, preventivi a confronto, fornitori 2027, bilancio modificabile ================= */
 const vociBil=()=>(D.bil||[]).map(a=>a.n);
@@ -2484,6 +2499,96 @@ async function renderPub(){const el=document.getElementById('p-pub');el.innerHTM
   await leaflet();if(cur!=='p-pub')return;const m=mkMap(mc.querySelector('#pubmap'),'pub');drawRoute(m,P,{});}
 function pubWidget(){const L1=vperc().filter(r=>r.dati.stato==='Pubblicato');const mine=CTX.canEdit('v-psic')?vperc().filter(r=>r.dati.stato==='Alla Sicurezza'):[];if(!L1.length&&!mine.length)return null;
   return h('<section class="w"><div class="wh"><b>Percorsi</b><button type="button" class="lnk2" data-go="p-pub">Tutti</button></div>'+(mine.length?'<div class="rq"><div><b>'+mine.length+' da convalidare</b><span class="neg">aspettano la Sicurezza</span></div><button type="button" class="bb dark sm" data-go="v-psic">Apri</button></div>':'')+L1.slice(0,3).map(r=>'<div class="rq"><div><b>'+esc(r.dati.nome)+'</b><span>'+(r.dati.data?fmtD(r.dati.data):'')+(r.dati.ora?' · ore '+esc(r.dati.ora):'')+' · '+fmtM(lung(r.dati.tappe||[]))+'</span></div></div>').join('')+'</section>');}
+
+/* ================= Bruna27 · Fase 4-5: assistente, notifiche sul telefono, richieste di documenti ================= */
+let AION=false,MYREQ=[];
+async function aiStato(){if(!CTX.sb||!CTX.sb.functions)return;try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:{tipo:'stato'}});AION=!error&&!!(data&&data.attivo);}catch(e){AION=false;}}
+async function ai(tipo,payload){try{const {data,error}=await CTX.sb.functions.invoke('assistente',{body:Object.assign({tipo},payload||{})});
+    if(error)return {err:'L’assistente non risponde. Riprova tra poco.'};if(data&&data.error)return {err:data.error==='limite'?'Hai usato l’assistente molte volte oggi: riprova domani.':data.error==='chiave'?'L’assistente non è ancora attivo.':'L’assistente ha avuto un problema: '+(data.dettaglio||data.error)};
+    return {testo:(data&&data.testo)||''};}catch(e){return {err:'L’assistente non risponde.'};}}
+const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
+function hashS(s){let x=0;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))|0;return String(x>>>0);}
+function testoAI(t){return esc(t).replace(/^(Cosa fare|Cosa evitare|Chi coinvolgere|Primo passo)\s*:?/gm,'<b>$1</b><br>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');}
+
+/* --- riassunto della giornata scritto dall'assistente --- */
+function fattiGiorno(){const me=CTX.user.id,today=todayISO();
+  return {oggi:today,giorni_alla_bruna:countdown(),richieste_presidente_da_prendere:RICH.filter(r=>r.stato==='aperta').map(r=>r.titolo),
+    mie_richieste_in_corso:RICH.filter(r=>r.preso_da===me&&r.stato==='presa').map(r=>({titolo:r.titolo,entro:r.entro,in_ritardo:!!(r.entro&&r.entro<today)})),
+    cose_da_fare:myTodo().map(c=>({titolo:c.titolo,entro:c.entro})).slice(0,10),inviti_a_riunioni_senza_risposta:INVM.filter(i=>i.user_id===me&&i.stato==='invitato').length,
+    prossime_riunioni:RIUN.filter(r=>new Date(r.quando)>new Date()).slice(0,3).map(r=>({titolo:r.titolo,quando:r.quando})),
+    documenti_che_ti_chiedono:MYREQ.filter(r=>r.dati.stato!=='Arrivato').map(r=>({documento:r.dati.documento,entro:r.dati.entro})),
+    pagamenti_fornitori_7_giorni:canV('v-for27')?prossimi(VD['v-for27']||[],7).map(x=>({fornitore:x.r.dati.fornitore,importo:x.p.importo,data:x.p.data})):undefined,
+    percorsi_da_convalidare:CTX.canEdit('v-psic')?vperc().filter(r=>r.dati.stato==='Alla Sicurezza').map(r=>r.dati.nome):undefined};}
+async function aiBriefing(){if(!AION)return;const box=document.querySelector('#p-home .brief');if(!box)return;const f=fattiGiorno();const k='b27brief:'+CTX.user.id+':'+hashS(JSON.stringify(f));
+  const put=t=>{const b=document.querySelector('#p-home .brief');if(b){b.innerHTML=testoAI(t);if(!b.nextElementSibling||!b.nextElementSibling.classList.contains('aisig'))b.insertAdjacentHTML('afterend','<span class="aisig">Scritto dall’assistente con i dati della piattaforma</span>');}};
+  const c=lsGet(k);if(c){put(c);return;}const r=await ai('briefing',{fatti:f});if(r.testo){lsSet(k,r.testo);put(r.testo);}}
+
+/* --- consigli per le richieste del Presidente --- */
+function consigliBox(r,c){if(r.consigli){c.appendChild(h('<div class="aibox"><div class="wh"><span class="orb sm"></span><b>L’assistente consiglia</b></div><p>'+testoAI(r.consigli)+'</p></div>'));}
+  if(AION&&r.stato!=='fatta'){const b=h('<button type="button" class="lnk2">'+(r.consigli?'Aggiorna i consigli':'Chiedi consiglio all’assistente')+'</button>');b.addEventListener('click',async()=>{b.disabled=true;b.textContent='L’assistente sta pensando…';const x=await ai('richiesta',{id:r.id});if(x.err){b.textContent=x.err;return;}await loadSocial();rerender();});c.appendChild(b);}}
+function aiConsigli(id){if(AION)ai('richiesta',{id}).then(async x=>{if(!x.err){await loadSocial();if(cur==='p-req')rerender();}});}
+
+/* --- riassunto dei documenti --- */
+function riassBtn(f){const b=h('<button type="button" class="filebtn soft">'+'<span class="orb sm"></span><span>Riassumi con l’assistente</span></button>');
+  b.addEventListener('click',async()=>{const d=sheet('Riassunto di «'+(f.nome||'documento')+'»','<p class="riass">Leggo il documento…</p><p class="muted small">Il testo del documento viene mandato al servizio di intelligenza artificiale solo per fare il riassunto.</p>','Chiudi',async()=>{});const out=d.querySelector('.riass');
+    try{const {data}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,600);if(!data)throw new Error('');const bl=await (await fetch(data.signedUrl)).blob();const L1=await pdfTesto(new File([bl],f.nome||'doc.pdf',{type:'application/pdf'}));const t=L1.join('\n').trim();
+      if(t.length<40){out.textContent='Questo PDF è una scansione senza testo: non riesco a leggerlo.';return;}out.textContent='L’assistente sta scrivendo il riassunto…';
+      const k='b27riass:'+f.path;const c=lsGet(k);if(c){out.innerHTML=testoAI(c);return;}const r=await ai('riassunto',{nome:f.nome,testo:t});if(r.err){out.textContent=r.err;return;}lsSet(k,r.testo);out.innerHTML=testoAI(r.testo);}
+    catch(e){out.textContent='Non riesco a leggere il documento.';}});return b;}
+
+/* --- richieste di documenti a una persona --- */
+async function loadMyReq(){if(!CTX.sb)return;const {data}=await CTX.sb.from('voci_dati').select('*').eq('voce','v-req');MYREQ=(data||[]).filter(r=>r.dati&&r.dati.a_uid===CTX.user.id);}
+R['v-req']=renderDocReq;
+function renderDocReq(){const id='v-req',el=document.getElementById(id);el.innerHTML='';addBack(id);const can=CTX.canEdit(id);const L1=VD[id]||[];const today=todayISO();
+  el.appendChild(h('<div class="sh"><span class="eyb">Amministrazione</span><h2>Richieste di documenti</h2><p>Chiedi un documento a una persona: se usa la piattaforma riceve una notifica e risponde allegando il file. Poi puoi aprirlo'+(AION?' e fartelo riassumere dall’assistente':'')+'.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
+  if(can){const b=h('<div class="big-btns"><button type="button" class="bb dark">Chiedi un documento</button></div>');b.firstChild.addEventListener('click',chiediDoc);el.appendChild(b);}
+  const att=L1.filter(r=>r.dati.stato!=='Arrivato'),arr=L1.filter(r=>r.dati.stato==='Arrivato');
+  [['In attesa',att],['Arrivati',arr]].forEach(([lab,LL])=>{if(!LL.length)return;el.appendChild(h('<h3 class="gh">'+lab+' · '+LL.length+'</h3>'));const g=h('<div class="cgrid"></div>');
+    LL.slice().reverse().forEach(r=>{const d=r.dati;const late=d.stato!=='Arrivato'&&d.entro&&d.entro<today;
+      const c=h('<article class="card rc"><div class="chips"><span class="chip2 '+(d.stato==='Arrivato'?'ok':late?'ko':'')+'">'+(d.stato==='Arrivato'?'Arrivato':late?'In ritardo':'Richiesto')+'</span>'+(d.a_uid?'<span class="chip2">Sulla piattaforma</span>':'')+'</div><b class="vn">'+esc(d.documento||'')+'</b><div class="fact2"><span>A chi</span><b>'+esc(d.a_uid?nome(d.a_uid):(d.a||'—'))+'</b></div>'+(d.entro?'<div class="fact2"><span>Entro il</span><b>'+fmtD(d.entro)+'</b></div>':'')+(d.da?'<div class="fact2"><span>Chiesto da</span><b>'+esc(nome(d.da))+'</b></div>':'')+(d.nota?'<p class="muted small">'+esc(d.nota)+'</p>':'')+'</article>');
+      if(d.file&&d.file.path)c.appendChild(fileBtn(d.file,'Apri il documento'));
+      if(can&&d.stato!=='Arrivato'){const u=h('<label class="bb sm upl">È arrivato: allega il file<input type="file" hidden></label>');u.querySelector('input').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;stEl.textContent='Carico…';try{const k=await carica(f,id);await CTX.sb.from('voci_dati').update({dati:Object.assign({},d,{file:k,stato:'Arrivato'}),aggiornato:new Date().toISOString()}).eq('id',r.id);await loadVD();renderDocReq();stEl.textContent='Documento allegato.';}catch(err){stEl.textContent=err.message;}});c.appendChild(u);}
+      if(can)c.appendChild(rowBtns(id,r));g.appendChild(c);});el.appendChild(g);});
+  if(!L1.length)el.appendChild(h('<div class="card soon"><p>Nessuna richiesta di documenti.</p></div>'));}
+function chiediDoc(){const ppl=Object.values(PEOPLE).filter(p=>p.id!==CTX.user.id);
+  const d=sheet('Chiedi un documento','<div class="ctl"><label for="dq_d">Quale documento</label><input type="text" id="dq_d" placeholder="Per esempio: preventivo firmato delle luminarie"></div><div class="ctl"><label for="dq_p">A chi</label><select id="dq_p">'+ppl.map(p=>'<option value="'+p.id+'">'+esc(p.nome||p.email)+'</option>').join('')+'<option value="">Una persona esterna (scrivo il nome)</option></select></div><div class="ctl" id="dq_xw" hidden><label for="dq_x">Nome della persona esterna</label><input type="text" id="dq_x"></div><div class="ctl"><label for="dq_e">Entro quando</label><input type="date" id="dq_e" min="'+todayISO()+'"></div><div class="ctl"><label for="dq_n">Nota</label><textarea id="dq_n"></textarea></div>','Chiedi',async(dl)=>{
+    const doc=dl.querySelector('#dq_d').value.trim();if(!doc){dl.querySelector('.smsg').textContent='Scrivi quale documento.';return false;}
+    const uid=dl.querySelector('#dq_p').value,ext=dl.querySelector('#dq_x').value.trim();if(!uid&&!ext){dl.querySelector('.smsg').textContent='Scrivi il nome della persona.';return false;}
+    const o={documento:doc,a_uid:uid||'',a:uid?nome(uid):ext,entro:dl.querySelector('#dq_e').value,stato:'Richiesto',nota:dl.querySelector('#dq_n').value.trim(),da:CTX.user.id};
+    const {error}=await CTX.sb.from('voci_dati').insert({voce:'v-req',dati:o});if(error)throw new Error(error.message);
+    if(uid)await avvisaUtente(uid,nome(CTX.user.id)+' ti chiede un documento: «'+doc+'»'+(o.entro?' entro il '+fmtD(o.entro):''),'p-me');
+    await loadVD();renderDocReq();stEl.textContent=uid?'Richiesta inviata: riceve una notifica.':'Richiesta salvata.';});
+  const sel=d.querySelector('#dq_p');const tg=()=>{d.querySelector('#dq_xw').hidden=!!sel.value;};sel.addEventListener('change',tg);tg();}
+async function meDocs(el){await loadMyReq();if(!MYREQ.length)return;const me=CTX.user.id;
+  const c=h('<section class="card"><h3>Documenti che ti chiedono</h3></section>');
+  MYREQ.slice().reverse().forEach(r=>{const d=r.dati;const row=h('<div class="rq"><div><b>'+esc(d.documento)+'</b><span>Te lo chiede '+esc(nome(d.da))+(d.entro?' · entro il '+fmtD(d.entro):'')+(d.nota?' · '+esc(d.nota):'')+'</span></div>'+(d.stato==='Arrivato'?'<span class="chip2 ok">Inviato</span>':'<label class="bb dark sm upl">Rispondi con il file<input type="file" hidden></label>')+'</div>');
+    const inp=row.querySelector('input');if(inp)inp.addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;stEl.textContent='Carico il file…';try{const k=await carica(f,'risposte/'+me);const {error}=await CTX.sb.rpc('rispondi_documento',{rid:r.id,f:k});if(error)throw new Error(error.message);await loadMyReq();renderMe();stEl.textContent='Documento inviato. '+nome(d.da)+' riceve una notifica.';}catch(err){stEl.textContent=err.message;}});
+    c.appendChild(row);});el.appendChild(c);}
+
+/* --- notifiche sul telefono (anche a sito chiuso) --- */
+const SW_OK=('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const standalone=()=>window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+function b64u(s){const p='='.repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0));}
+async function swReg(){if(!SW_OK)return null;try{return await navigator.serviceWorker.register('sw.js');}catch(e){return null;}}
+async function pushAttiva(){if(!SW_OK||Notification.permission!=='granted')return false;const r=await navigator.serviceWorker.getRegistration();if(!r)return false;return !!(await r.pushManager.getSubscription());}
+async function attivaPush(){if(!window.CFG||!CFG.vapid)throw new Error('Le notifiche non sono ancora configurate dall’amministratore.');
+  if(!SW_OK)throw new Error(isIOS?'Su iPhone prima aggiungi Bruna27 alla schermata Home (vedi sotto), poi aprilo dall’icona.':'Questo browser non supporta le notifiche.');
+  const reg=await swReg();if(!reg)throw new Error('Non riesco a preparare le notifiche su questo dispositivo.');
+  const perm=await Notification.requestPermission();if(perm!=='granted')throw new Error('Hai rifiutato le notifiche: si possono riattivare dalle impostazioni del telefono.');
+  await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(CFG.vapid)});
+  const {error}=await CTX.sb.from('push_iscrizioni').upsert({endpoint:sub.endpoint,dati:sub.toJSON(),user_id:CTX.user.id,dispositivo:navigator.userAgent.slice(0,120)},{onConflict:'endpoint'});if(error)throw new Error('Non salvato: '+error.message);}
+async function mePush(el){const on=await pushAttiva();
+  const c=h('<section class="card"><h3>Notifiche sul telefono e sul computer</h3><p class="pstate">'+(on?'<span class="chip2 ok">Attive su questo dispositivo</span>':'Ricevi le notifiche come su WhatsApp, anche con il sito chiuso.')+'</p>'+
+    (isIOS&&!standalone()?'<div class="aibox"><b>Su iPhone, una volta sola:</b><p>In Safari tocca il pulsante Condividi (il quadrato con la freccia), poi «Aggiungi alla schermata Home». Apri Bruna27 dall’icona e torna qui per attivarle.</p></div>':'')+
+    '<div class="big-btns">'+(on?'<button type="button" class="bb" id="ptest">Mandami una notifica di prova</button>':'<button type="button" class="bb dark" id="pon">Attiva le notifiche</button>')+'</div><p class="smsg" id="pmsg"></p></section>');
+  const m=c.querySelector('#pmsg');
+  const pon=c.querySelector('#pon');if(pon)pon.addEventListener('click',async()=>{m.textContent='Attivo…';try{await attivaPush();c.querySelector('.pstate').innerHTML='<span class="chip2 ok">Attive su questo dispositivo</span>';m.textContent='Fatto. Ora ricevi le notifiche.';pon.remove();}catch(e){m.textContent=e.message;}});
+  const pt=c.querySelector('#ptest');if(pt)pt.addEventListener('click',async()=>{await avvisaUtente(CTX.user.id,'Prova: le notifiche di Bruna27 funzionano.','p-me');m.textContent='Inviata: arriva tra qualche secondo.';});
+  el.insertBefore(c,[...el.children].pop());}
+async function extraLoad(){await Promise.all([loadMyReq(),aiStato()]);}
+function dopoAvvio(){swReg();try{const g0=new URLSearchParams(location.search).get('go');if(g0&&canOpen(g0)){history.replaceState(null,'',location.pathname);go(g0);}}catch(e){}
+  if(SW_OK)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.go&&canOpen(e.data.go))go(e.data.go);});}
 
 /* ---------- avvio ---------- */
 autoLeve();
