@@ -195,5 +195,5 @@ do $$ begin
 end $$;
 
 -- ============ primo amministratore ============
-insert into public.inviti (email, nome, admin) values ('matteomarchitelli.mm@gmail.com', 'Matteo', true)
+insert into public.inviti (email, nome, admin) values ('LA-TUA-EMAIL@esempio.it', 'Matteo', true)
   on conflict (email) do update set admin = true;

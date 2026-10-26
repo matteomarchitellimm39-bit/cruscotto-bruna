@@ -182,5 +182,5 @@ do $$ begin
   begin alter publication supabase_realtime add table public.presenze; exception when others then null; end;
 end $$;
 
-insert into public.inviti (email, nome, admin) values ('matteomarchitelli.mm@gmail.com', 'Matteo', true)
+insert into public.inviti (email, nome, admin) values ('LA-TUA-EMAIL@esempio.it', 'Matteo', true)
   on conflict (email) do update set admin = true;

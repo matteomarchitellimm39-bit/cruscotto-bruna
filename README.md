@@ -9,7 +9,7 @@ Piattaforma di lavoro dell'Associazione Maria SS. della Bruna: bilancio 2026, fo
 - **Sorgente del cruscotto:** `tools/sorgente.html`. `python3 tools/costruisci.py` rigenera `index.html`.
 
 ## Messa in funzione (una volta sola)
-1. **Supabase → SQL Editor → New query:** incolla tutto il contenuto di `supabase/01-struttura.sql` e premi **Run**.
+1. **Supabase → SQL Editor → New query:** nel file `supabase/01-struttura-pulito.sql` sostituisci `LA-TUA-EMAIL@esempio.it` con l’email dell’amministratore, incolla tutto e premi **Run**.
 2. **Supabase → Authentication → URL Configuration:**
    - *Site URL*: l'indirizzo del sito su GitHub Pages;
    - *Redirect URLs*: lo stesso indirizzo.
