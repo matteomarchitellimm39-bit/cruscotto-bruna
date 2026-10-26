@@ -684,6 +684,10 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 @media(max-width:1023px){body::before{width:78vw;height:70vh;right:-14vw;bottom:8vh;opacity:.045}}
 #login{position:relative;z-index:1}
 .pdfing::before{display:none}
+.pwbox{background:#F6F6F8;border-radius:18px;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.pwbox div{display:flex;flex-direction:column}.pwbox span{font-size:13.5px;color:var(--muted)}.pwbox b{font-size:17px;overflow-wrap:anywhere}
+.pwbox .pw{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:1px;color:var(--navy)}
+.acc{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:1px solid #F0F0F3}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -721,6 +725,20 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
    <div class="ctl"><label for="np">Nuova password (almeno 8 caratteri)</label><input type="password" id="np" autocomplete="new-password"></div>
    <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="ngo">Salva e entra</button></div>
   </div>
+  <div class="lg-v" data-v="cambio" hidden>
+   <h2>Scegli la tua password</h2>
+   <p class="small">Sei entrato con una password temporanea. Per continuare scegline una tua: almeno 10 caratteri, con una lettera maiuscola, una minuscola, un numero e un simbolo (per esempio Matera-2027!).</p>
+   <div class="ctl"><label for="cp1">Nuova password</label><input type="password" id="cp1" autocomplete="new-password"></div>
+   <div class="ctl"><label for="cp2">Scrivila di nuovo</label><input type="password" id="cp2" autocomplete="new-password"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="cgo">Salva e continua</button></div>
+   <p class="small"><a href="#" class="lnk" id="cesci">Esci</a></p>
+  </div>
+  <div class="lg-v" data-v="informativa" hidden>
+   <h2>Informativa sulla privacy</h2>
+   <div class="info-txt" id="infotxt"></div>
+   <label class="ck"><input type="checkbox" id="iok"> Ho letto l’informativa</label>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="iacc">Continua</button></div>
+  </div>
   <div class="lg-v" data-v="importa" hidden>
    <h2>Primo avvio</h2>
    <p class="small">Il database è vuoto. Scrivi la chiave di importazione che ti ha dato Claude: carico bilancio, fornitori, previsione, eventi, censimento e le scelte già fatte nel cruscotto.</p>
@@ -740,6 +758,8 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 .lg-msg{margin:0;font-weight:600;min-height:1em}
 #app[hidden]{display:none!important}
 #s-adm select{font:inherit;font-size:16px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);padding:0 10px}
+.info-txt{max-height:46vh;overflow-y:auto;background:#F6F6F8;border-radius:18px;padding:14px 16px;font-size:15.5px;line-height:1.55}
+.info-txt h4{margin:12px 0 4px;font-size:16px}.info-txt p{margin:0 0 8px}
 </style>
 
 <div id="app" hidden>
@@ -2069,16 +2089,19 @@ function permEditor(get,set){const box=h('<div class="pe"></div>');const OPEN=ne
   draw();return box;}
 async function renderAdm2(){const el=document.getElementById('s-adm');if(cur!=='s-adm')return;el.innerHTML='';
   el.appendChild(h('<div class="sh"><span class="eyb">Amministratore</span><h2>Utenti e permessi</h2><p>Inviti le persone e scegli le sezioni. Dentro ogni sezione puoi decidere voce per voce. Il controllo vero lo fa il database.</p></div>'));
-  const [pf,pm,iv,rg]=await Promise.all([CTX.sb.from('profili').select('*').order('creato'),CTX.sb.from('permessi').select('*'),CTX.sb.from('inviti').select('*').eq('usato',false).order('creato'),CTX.sb.from('registro').select('*').order('quando',{ascending:false}).limit(60)]);
+  const [pf,pm,iv,rg]=await Promise.all([loadUtenti().then(()=>CTX.sb.from('profili').select('*').order('creato')),CTX.sb.from('permessi').select('*'),CTX.sb.from('inviti').select('*').eq('usato',false).order('creato'),CTX.sb.from('registro').select('*').order('quando',{ascending:false}).limit(60)]);
   if(cur!=='s-adm')return;
   const NP={};
-  const inv=h('<section class="card"><h3>Invita una persona</h3><div class="when"><div class="ctl"><label for="ie">Email</label><input type="text" inputmode="email" id="ie" autocomplete="off" autocapitalize="off"></div><div class="ctl"><label for="in">Nome</label><input type="text" id="in"></div></div><div class="lab">Cosa può vedere</div><div class="pehost"></div><label class="ck"><input type="checkbox" id="ipres"> È il Presidente (crea le richieste per tutti)</label><label class="ck"><input type="checkbox" id="iadm"> È amministratore (vede e modifica tutto)</label><div class="big-btns"><button type="button" class="bb dark" id="invia">Invita</button></div><p class="muted small" id="imsg">Dopo l’invito la persona apre il sito, sceglie «Primo accesso» e crea la password con questa email.</p></section>');
+  const inv=h('<section class="card"><h3>Aggiungi una persona</h3><div class="when"><div class="ctl"><label for="ie">Email</label><input type="text" inputmode="email" id="ie" autocomplete="off" autocapitalize="off"></div><div class="ctl"><label for="in">Nome</label><input type="text" id="in"></div></div><div class="lab">Cosa può vedere</div><div class="pehost"></div><label class="ck"><input type="checkbox" id="ipres"> È il Presidente (crea le richieste per tutti)</label><label class="ck"><input type="checkbox" id="iadm"> È amministratore (vede e modifica tutto)</label><div class="big-btns"><button type="button" class="bb dark" id="crea">Crea l’account con password temporanea</button><button type="button" class="bb soft" id="invia">Oppure manda solo un invito</button></div><p class="muted small" id="imsg">Con l’account la piattaforma genera una password temporanea da dare alla persona: al primo accesso ne sceglie una sua. Con l’invito invece la persona apre il sito, sceglie «Primo accesso» e crea da sola la password.</p></section>');
   inv.querySelector('.pehost').appendChild(permEditor(a=>NP[a],async(as,l)=>{as.forEach(a=>{if(l)NP[a]=l;else delete NP[a];});}));
   inv.querySelector('#invia').addEventListener('click',async()=>{const email=inv.querySelector('#ie').value.trim().toLowerCase();const msg=inv.querySelector('#imsg');
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){msg.textContent='Scrivi un’email valida.';return;}
     const permessi=Object.assign({},NP);if(inv.querySelector('#ipres').checked)permessi._presidente='si';
     const {error}=await CTX.sb.from('inviti').upsert({email,nome:inv.querySelector('#in').value.trim()||null,admin:inv.querySelector('#iadm').checked,permessi,usato:false});
     msg.textContent=error?'Non sono riuscito a salvare l’invito: '+error.message:'Invito salvato. Manda a '+email+' il link del sito.';if(!error)setTimeout(renderAdm2,1200);});
+  inv.querySelector('#crea').addEventListener('click',async()=>{const email=inv.querySelector('#ie').value.trim().toLowerCase(),nm=inv.querySelector('#in').value.trim();const msg=inv.querySelector('#imsg');
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){msg.textContent='Scrivi un’email valida.';return;}if(!nm){msg.textContent='Scrivi il nome.';return;}
+    msg.textContent='Creo l’account…';try{const r=await fnUtenti({azione:'crea',email,nome:nm,admin:inv.querySelector('#iadm').checked,presidente:inv.querySelector('#ipres').checked,permessi:NP});msg.textContent='Account creato.';mostraPassword(nm,email,r.password,()=>renderAdm2());}catch(e){msg.textContent=e.message;}});
   el.appendChild(inv);
   const P=pf.data||[],M=pm.data||[];
   const pc=h('<section class="card"><h3>Persone con accesso · '+P.length+'</h3><p class="muted small">Tocca una persona per cambiare cosa vede. Le modifiche valgono dal suo prossimo accesso.</p><div class="ppl"></div></section>');
@@ -2086,7 +2109,7 @@ async function renderAdm2(){const el=document.getElementById('s-adm');if(cur!=='
     const d=h('<details class="person"><summary><span class="av">'+esc((u.nome||u.email||'?').charAt(0).toUpperCase())+'</span><span class="pn"><b>'+esc(u.nome||u.email)+'</b><span class="muted small">'+(u.admin?'Amministratore · vede tutto':(secs.join(' · ')||'Nessuna sezione'))+(u.presidente?' · Presidente':'')+'</span></span></summary><div class="pbody"></div></details>');
     const b=d.querySelector('.pbody');
     const pr=h('<label class="ck"><input type="checkbox"'+(u.presidente?' checked':'')+'> È il Presidente</label>');pr.querySelector('input').addEventListener('change',async e=>{const {error}=await CTX.sb.from('profili').update({presidente:e.target.checked}).eq('id',u.id);stEl.textContent=error?'Errore: '+error.message:'Aggiornato.';u.presidente=e.target.checked;if(PEOPLE[u.id])PEOPLE[u.id].presidente=u.presidente;});
-    b.appendChild(pr);
+    b.appendChild(pr);accountBox(u,b);
     if(u.admin)b.appendChild(h('<p class="muted">È amministratore: vede e modifica tutto.</p>'));
     else b.appendChild(permEditor(a=>{const m=M.find(x=>x.user_id===u.id&&x.area===a);return m&&m.livello;},async(as,l)=>{
       const q=l?CTX.sb.from('permessi').upsert(as.map(a=>({user_id:u.id,area:a,livello:l}))):CTX.sb.from('permessi').delete().eq('user_id',u.id).in('area',as);
@@ -2795,6 +2818,24 @@ function ricaduteBox(el,r,P,can){if(!canV('s-cs')||typeof evCalc!=='function')re
     const ev=Object.assign(newEv(),{id:'e'+Date.now(),n:'Percorso '+P.nome,v:luogoVicino(P),d:P.data||'2027-07-02',du:'ore',dn:Math.max(1,Math.round(durata(P)/60)),t:'religioso',a:+dl.querySelector('#rc_a').value,p:Math.max(1,+dl.querySelector('#rc_p').value||0),c:prevPerc(P).filter(x=>x.dati.stato==='Accettato').reduce((a,x)=>a+(+x.dati.importo||0),0)});
     S.cs.evs=S.cs.evs||[];S.cs.evs.push(ev);P.sim_id=ev.id;await salvaP(r);_changed();}));
   el.appendChild(b);}
+
+/* ================= Bruna27 · account creati dall'amministratore ================= */
+let UTENTI={};
+async function loadUtenti(){try{const {data,error}=await CTX.sb.functions.invoke('utenti',{body:{azione:'elenco'}});if(!error&&data&&data.utenti){UTENTI={};data.utenti.forEach(x=>UTENTI[x.id]=x);}}catch(e){}}
+async function fnUtenti(body){let r;try{r=await CTX.sb.functions.invoke('utenti',{body});}catch(e){throw new Error('La funzione «utenti» non risponde: va installata in Supabase.');}
+  if(r.error)throw new Error('La funzione «utenti» non risponde: va installata in Supabase.');if(r.data&&r.data.error)throw new Error(r.data.error);return r.data||{};}
+function mostraPassword(nm,email,pw,dopo){const url=location.origin+location.pathname;
+  const d=sheet('Accesso di '+nm,'<p style="font-size:17px">Comunica questi dati a <b>'+esc(nm)+'</b>, meglio a voce o di persona. La password si vede solo adesso: non viene salvata da nessuna parte.</p><div class="pwbox"><div><span>Sito</span><b>'+esc(url)+'</b></div><div><span>Email</span><b>'+esc(email)+'</b></div><div><span>Password temporanea</span><b class="pw">'+esc(pw)+'</b></div></div><p class="muted small">Vale 7 giorni. Al primo accesso la piattaforma chiede di sceglierne una personale.</p><button type="button" class="bb soft sm" id="pwc">Copia il messaggio da mandare</button>','Fatto',async()=>{if(dopo)dopo();});
+  d.querySelector('#pwc').addEventListener('click',async()=>{const t='Ciao '+nm+', ecco il tuo accesso a Bruna27.\nSito: '+url+'\nEmail: '+email+'\nPassword temporanea: '+pw+'\nAl primo accesso ti chiederà di sceglierne una tua.';
+    try{await navigator.clipboard.writeText(t);d.querySelector('#pwc').textContent='Copiato ✓';}catch(e){d.querySelector('#pwc').textContent='Non riesco a copiare: scrivilo a mano';}});}
+function accountBox(u,b){const x=UTENTI[u.id]||{};const me=u.id===CTX.user.id;
+  const stato=u.attivo===false?'<span class="chip2 ko">Disattivato</span>':u.deve_cambiare?'<span class="chip2">Deve scegliere la sua password</span>':'<span class="chip2 ok">Attivo</span>';
+  const ult=x.ultimo_accesso?new Date(x.ultimo_accesso).toLocaleString('it-IT',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'mai';
+  const box=h('<div class="acc"><div class="chips">'+stato+(u.informativa_il?'<span class="chip2">Informativa letta il '+new Date(u.informativa_il).toLocaleDateString('it-IT')+'</span>':'')+'</div><span class="muted small">'+esc(u.email||'')+' · ultimo accesso: '+ult+'</span><div class="big-btns"><button type="button" class="bb soft sm" data-a="reimposta">Nuova password temporanea</button>'+(me?'':'<button type="button" class="bb soft sm '+(u.attivo===false?'':'ko')+'" data-a="'+(u.attivo===false?'riattiva':'disattiva')+'">'+(u.attivo===false?'Riattiva l’account':'Disattiva l’account')+'</button>')+'</div></div>');
+  box.querySelectorAll('[data-a]').forEach(btn=>btn.addEventListener('click',()=>{const a=btn.dataset.a;const n=u.nome||u.email;
+    const testi={reimposta:['Nuova password temporanea per '+n+'?','La password attuale smette di funzionare. La persona dovrà sceglierne una nuova al primo accesso.','Genera'],disattiva:['Disattivare l’account di '+n+'?','Non potrà più entrare finché non lo riattivi. I suoi dati restano.','Disattiva'],riattiva:['Riattivare l’account di '+n+'?','Potrà di nuovo entrare con la sua password.','Riattiva']}[a];
+    sheet(testi[0],'<p style="font-size:17px">'+testi[1]+'</p>',testi[2],async()=>{const r=await fnUtenti({azione:a,id:u.id});if(a==='reimposta')setTimeout(()=>mostraPassword(n,u.email,r.password,()=>renderAdm2()),50);else renderAdm2();});}));
+  b.appendChild(box);}
 
 /* ---------- avvio ---------- */
 autoLeve();

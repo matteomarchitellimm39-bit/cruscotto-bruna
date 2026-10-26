@@ -16,3 +16,7 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 @media(max-width:1023px){body::before{width:78vw;height:70vh;right:-14vw;bottom:8vh;opacity:.045}}
 #login{position:relative;z-index:1}
 .pdfing::before{display:none}
+.pwbox{background:#F6F6F8;border-radius:18px;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.pwbox div{display:flex;flex-direction:column}.pwbox span{font-size:13.5px;color:var(--muted)}.pwbox b{font-size:17px;overflow-wrap:anywhere}
+.pwbox .pw{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:1px;color:var(--navy)}
+.acc{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:1px solid #F0F0F3}

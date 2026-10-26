@@ -27,6 +27,20 @@
    <div class="ctl"><label for="np">Nuova password (almeno 8 caratteri)</label><input type="password" id="np" autocomplete="new-password"></div>
    <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="ngo">Salva e entra</button></div>
   </div>
+  <div class="lg-v" data-v="cambio" hidden>
+   <h2>Scegli la tua password</h2>
+   <p class="small">Sei entrato con una password temporanea. Per continuare scegline una tua: almeno 10 caratteri, con una lettera maiuscola, una minuscola, un numero e un simbolo (per esempio Matera-2027!).</p>
+   <div class="ctl"><label for="cp1">Nuova password</label><input type="password" id="cp1" autocomplete="new-password"></div>
+   <div class="ctl"><label for="cp2">Scrivila di nuovo</label><input type="password" id="cp2" autocomplete="new-password"></div>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="cgo">Salva e continua</button></div>
+   <p class="small"><a href="#" class="lnk" id="cesci">Esci</a></p>
+  </div>
+  <div class="lg-v" data-v="informativa" hidden>
+   <h2>Informativa sulla privacy</h2>
+   <div class="info-txt" id="infotxt"></div>
+   <label class="ck"><input type="checkbox" id="iok"> Ho letto l’informativa</label>
+   <div class="big-btns"><button type="button" class="bb" aria-pressed="true" id="iacc">Continua</button></div>
+  </div>
   <div class="lg-v" data-v="importa" hidden>
    <h2>Primo avvio</h2>
    <p class="small">Il database è vuoto. Scrivi la chiave di importazione che ti ha dato Claude: carico bilancio, fornitori, previsione, eventi, censimento e le scelte già fatte nel cruscotto.</p>
@@ -46,4 +60,6 @@
 .lg-msg{margin:0;font-weight:600;min-height:1em}
 #app[hidden]{display:none!important}
 #s-adm select{font:inherit;font-size:16px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);padding:0 10px}
+.info-txt{max-height:46vh;overflow-y:auto;background:#F6F6F8;border-radius:18px;padding:14px 16px;font-size:15.5px;line-height:1.55}
+.info-txt h4{margin:12px 0 4px;font-size:16px}.info-txt p{margin:0 0 8px}
 </style>
