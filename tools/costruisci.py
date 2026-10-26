@@ -13,7 +13,7 @@ rep('<script>\nconst D = __DATA__;\n</script>\n<script>\n(function(){\n"use stri
     '<script>\nwindow.APP=function(D,CTX){\n"use strict";')
 i = T.index('/* ---------- salvataggio ---------- */'); j = T.index('</script>', i)
 SAVE = open(os.path.join(R, 'salvataggio.js'), encoding='utf-8').read()
-F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase5.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase6.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase7.js'), encoding='utf-8').read()
+F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase5.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase6.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase7.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase8.js'), encoding='utf-8').read()
 assert SAVE.count('/* ---------- avvio ---------- */') == 1 and SAVE.count('\nshow(cur);\n') == 1
 SAVE = SAVE.replace('/* ---------- avvio ---------- */', F1 + '\n/* ---------- avvio ---------- */').replace('\nshow(cur);\n', '\navviaF1();\n')
 T = T[:i] + SAVE + '\n};\n' + T[j:]
@@ -68,7 +68,7 @@ rep("  PLACES.forEach(p=>IDX.push({k:'Luogo sulla mappa'","  extraIDX(IDX);\n  P
 rep('<span class="eyb">Scheda \'+n+\'</span>', '<span class="eyb">\'+eyb(n)+\'</span>')
 rep("const tab=TABS.find(t=>t[0]===cur);", "const tab=[cur,pageTitle(cur)];")
 rep('<title>Cruscotto Festa della Bruna</title>', '<title>Bruna27</title>')
-CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase3.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase4.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase7.css'), encoding='utf-8').read()
+CSS1 = open(os.path.join(R, 'fase1.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase2.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase3.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase4.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase7.css'), encoding='utf-8').read() + open(os.path.join(R, 'fase8.css'), encoding='utf-8').read()
 k = T.index('</style>'); T = T[:k] + CSS1 + T[k:]
 # login: pagina completa
 LOGIN = open(os.path.join(R, 'login.html'), encoding='utf-8').read()

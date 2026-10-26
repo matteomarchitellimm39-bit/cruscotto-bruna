@@ -6,7 +6,7 @@ self.addEventListener('push', e => {
   try { d = e.data ? e.data.json() : {}; } catch (x) { d = { testo: e.data ? e.data.text() : '' }; }
   e.waitUntil(self.registration.showNotification(d.titolo || 'Bruna27', {
     body: d.testo || 'Hai una novità su Bruna27', icon: 'icona-192.png', badge: 'icona-192.png',
-    data: { link: d.link || 'p-home' }, tag: 'b27-' + Date.now()
+    data: { link: d.link || 'p-home' }, tag: d.tag ? 'b27-' + d.tag : 'b27-' + Date.now(), renotify: !!d.tag, requireInteraction: !!d.urgente
   }));
 });
 self.addEventListener('notificationclick', e => {

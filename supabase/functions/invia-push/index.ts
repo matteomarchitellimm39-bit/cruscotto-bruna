@@ -19,13 +19,13 @@ Deno.serve(async () => {
   const { data: PR } = await admin.from("preferenze").select("user_id,dati").in("user_id", chi);
   const muti: Record<string, string[]> = {};
   (PR || []).forEach((p) => { muti[p.user_id] = (p.dati && p.dati.muti) || []; });
-  const categoria = (link: string) => (link === "v-psic" || link === "v-perc" ? "percorsi" : link);
+  const categoria = (link: string) => { const l = link.split("#")[0]; return l === "v-psic" || l === "v-perc" ? "percorsi" : l; };
   let ok = 0;
   for (const n of N) {
     if ((muti[n.per] || []).includes(categoria(n.link || "p-home"))) continue;
     for (const s of (S || []).filter((x) => x.user_id === n.per)) {
       try {
-        await webpush.sendNotification(s.dati, JSON.stringify({ titolo: "Bruna27", testo: n.testo, link: n.link || "p-home" }));
+        await webpush.sendNotification(s.dati, JSON.stringify({ titolo: n.titolo ? "Bruna27 · " + n.titolo : "Bruna27", testo: n.testo, link: n.link || "p-home", urgente: n.priorita === "urgente", tag: n.link || "p-home" }), { urgency: n.priorita === "urgente" ? "high" : "normal" });
         ok++;
       } catch (e) {
         const code = (e as { statusCode?: number }).statusCode;
