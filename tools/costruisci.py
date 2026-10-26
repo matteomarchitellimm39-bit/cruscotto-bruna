@@ -13,7 +13,7 @@ rep('<script>\nconst D = __DATA__;\n</script>\n<script>\n(function(){\n"use stri
     '<script>\nwindow.APP=function(D,CTX){\n"use strict";')
 i = T.index('/* ---------- salvataggio ---------- */'); j = T.index('</script>', i)
 SAVE = open(os.path.join(R, 'salvataggio.js'), encoding='utf-8').read()
-F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read()
+F1 = open(os.path.join(R, 'fase1.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase2.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase3.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase4.js'), encoding='utf-8').read() + '\n' + open(os.path.join(R, 'fase5.js'), encoding='utf-8').read()
 assert SAVE.count('/* ---------- avvio ---------- */') == 1 and SAVE.count('\nshow(cur);\n') == 1
 SAVE = SAVE.replace('/* ---------- avvio ---------- */', F1 + '\n/* ---------- avvio ---------- */').replace('\nshow(cur);\n', '\navviaF1();\n')
 T = T[:i] + SAVE + '\n};\n' + T[j:]

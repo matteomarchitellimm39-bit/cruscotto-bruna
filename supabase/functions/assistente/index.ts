@@ -41,6 +41,7 @@ Deno.serve(async (req) => {
   await admin.from("ai_uso").upsert({ user_id: prof.id, giorno: oggi, n: (uso?.n || 0) + 1 });
 
   let domanda = "";
+  let contenuto: unknown = null;
   let massimo = 500;
   if (body.tipo === "briefing") {
     domanda = "Scrivi il riassunto della giornata per " + (prof.nome || "il collaboratore") +
@@ -59,6 +60,16 @@ Deno.serve(async (req) => {
       (r.entro ? "\nDa consegnare entro: " + r.entro : "") + "\n\nLa piattaforma ha queste sezioni: " + SEZIONI +
       '\n\nScrivi un consiglio pratico in quattro parti, ognuna di una o due frasi, con questi titoli esatti su righe separate: ' +
       '"Cosa fare", "Cosa evitare", "Chi coinvolgere", "Primo passo". Indica dove trovare le cose nella piattaforma quando serve.';
+  } else if (body.tipo === "fattura") {
+    const img = String(body.img || "");
+    if (!img || img.length > 4_000_000) return risposta({ error: "immagine" }, 400);
+    contenuto = [
+      { type: "image", source: { type: "base64", media_type: "image/jpeg", data: img } },
+      { type: "text", text: "Questa è la foto o la scansione di una fattura o di un preventivo. L'Associazione Maria SS. della Bruna può essere il cliente (allora è un Costo) o chi emette (allora è un Ricavo). " +
+        "Rispondi SOLO con un oggetto JSON con queste chiavi: soggetto (l'altra parte, non l'Associazione), tipo (\"Costo\" o \"Ricavo\"), importo (numero, totale da pagare, con il punto per i decimali), " +
+        "data (AAAA-MM-GG), numero, scadenza (AAAA-MM-GG), nota (in poche parole cosa riguarda). Metti null dove non riesci a leggere con sicurezza. Non inventare." },
+    ];
+    massimo = 300;
   } else {
     return risposta({ error: "tipo" }, 400);
   }
@@ -70,7 +81,7 @@ Deno.serve(async (req) => {
       model: Deno.env.get("MODELLO") || "claude-haiku-5-5",
       max_tokens: massimo,
       system: SISTEMA,
-      messages: [{ role: "user", content: domanda }],
+      messages: [{ role: "user", content: contenuto ?? domanda }],
     }),
   });
   const out = await res.json().catch(() => ({}));

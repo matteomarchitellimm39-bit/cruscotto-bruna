@@ -84,6 +84,6 @@ async function mePush(el){const on=await pushAttiva();
   const pon=c.querySelector('#pon');if(pon)pon.addEventListener('click',async()=>{m.textContent='Attivo…';try{await attivaPush();c.querySelector('.pstate').innerHTML='<span class="chip2 ok">Attive su questo dispositivo</span>';m.textContent='Fatto. Ora ricevi le notifiche.';pon.remove();}catch(e){m.textContent=e.message;}});
   const pt=c.querySelector('#ptest');if(pt)pt.addEventListener('click',async()=>{await avvisaUtente(CTX.user.id,'Prova: le notifiche di Bruna27 funzionano.','p-me');m.textContent='Inviata: arriva tra qualche secondo.';});
   el.insertBefore(c,[...el.children].pop());}
-async function extraLoad(){await Promise.all([loadMyReq(),aiStato()]);}
+async function extraLoad(){evNoti();await Promise.all([loadMyReq(),aiStato()]);}
 function dopoAvvio(){swReg();try{const g0=new URLSearchParams(location.search).get('go');if(g0&&canOpen(g0)){history.replaceState(null,'',location.pathname);go(g0);}}catch(e){}
   if(SW_OK)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.go&&canOpen(e.data.go))go(e.data.go);});}

@@ -123,6 +123,7 @@ async function editorPerc(el,r,can){const P=r.dati;const edit=can&&(P.stato==='B
   if(can&&P.stato==='Alla Sicurezza'){const b=h('<button type="button" class="bb soft">Riprendi per modificarlo</button>');b.addEventListener('click',async()=>{P.stato='Bozza';await salvaP(r);await loadVD();rerender();});act.appendChild(b);}
   if(can){const b=h('<button type="button" class="bb soft ko">Elimina il percorso</button>');b.addEventListener('click',()=>ask('Eliminare «'+P.nome+'»?','Elimina',async()=>{await CTX.sb.from('voci_dati').delete().eq('id',r.id);PSEL['v-perc']=null;await loadVD();rerender();}));act.appendChild(b);}
   el.appendChild(act);
+  ricaduteBox(el,r,P,can);
   const fp=prevPerc(P);if(fp.length)el.appendChild(h('<section class="card"><h3>Fornitori del percorso</h3>'+fp.map(x=>'<div class="rq"><div><b>'+esc(x.dati.voce.replace(/^Percorso .*? – /,''))+'</b><span>'+esc(x.dati.fornitore||'fornitore da trovare')+' · '+esc(x.dati.stato||'')+'</span></div><b>'+(+x.dati.importo?eur(+x.dati.importo):'')+'</b></div>').join('')+'</section>'));}
 function prevPerc(P){return (VD['v-prev']||[]).filter(x=>(x.dati.voce||'').startsWith('Percorso '+P.nome+' – '));}
 
@@ -215,6 +216,7 @@ async function renderPub(){const el=document.getElementById('p-pub');el.innerHTM
   el.appendChild(h('<section class="card"><h3>Tappe e soste</h3>'+(P.tappe||[]).map((t,i)=>'<div class="tappa"><span class="tn'+(t.sosta?' s':'')+'">'+(i+1)+'</span><div class="tb2"><b>'+esc(t.n||('Tappa '+(i+1)))+'</b><span class="muted small">'+(t.sosta?'Sosta: '+esc(t.sosta)+(t.min?' · '+t.min+' min':''):'Passaggio')+'</span></div></div>').join('')+'</section>'));
   if((P.corteo||[]).length)el.appendChild(h('<section class="card"><h3>Ordine del corteo</h3>'+P.corteo.map((c,i)=>'<div class="tappa"><span class="tn c">'+(i+1)+'</span><div class="tb2"><b>'+esc(c)+'</b></div></div>').join('')+'</section>'));
   el.appendChild(h('<section class="card"><h3>Fornitori e costi</h3>'+(fp.length?fp.map(x=>'<div class="rq"><div><b>'+esc(x.dati.voce.replace(/^Percorso .*? – /,''))+'</b><span>'+esc(x.dati.fornitore||'da scegliere')+' · '+esc(x.dati.stato||'')+'</span></div><b>'+(+x.dati.importo?eur(+x.dati.importo):'')+'</b></div>').join('')+'<div class="fact2"><span>Costi già decisi</span><b>'+eur(costi)+'</b></div>':'<p class="muted">Nessun fornitore richiesto per questo percorso.</p>')+(canV('s-cs')?'<button type="button" class="lnk2" data-go="s-cs">Calcola le ricadute economiche nella Simulazione impatto</button>':'')+'</section>'));
+  ricaduteBox(el,r,P,false);
   if(P.sic&&P.sic.nota)el.appendChild(h('<section class="card"><h3>Indicazioni della Sicurezza</h3><p style="margin:0;white-space:pre-line">'+esc(P.sic.nota)+'</p></section>'));
   await leaflet();if(cur!=='p-pub')return;const m=mkMap(mc.querySelector('#pubmap'),'pub');drawRoute(m,P,{});}
 function pubWidget(){const L1=vperc().filter(r=>r.dati.stato==='Pubblicato');const mine=CTX.canEdit('v-psic')?vperc().filter(r=>r.dati.stato==='Alla Sicurezza'):[];if(!L1.length&&!mine.length)return null;

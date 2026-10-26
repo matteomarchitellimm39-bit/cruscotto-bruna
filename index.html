@@ -2146,13 +2146,14 @@ function leggiTesto(lines){const T=lines.join('\n');const AM=/(\d{1,3}(?:\.\d{3}
   o.tipo=ci>=0&&/bruna/i.test(lines[ci]+' '+(lines[ci+1]||''))?'Ricavo':'Costo';
   const sc=T.match(/scadenza[^\d]{0,30}(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})/i);if(sc)o.scadenza=isoD(sc[1],sc[2],sc[3]);
   o.voce=bilDaNome(o.soggetto);return o;}
-async function leggiFile(file){const n=(file.name||'').toLowerCase();
+async function leggiFile(file){const o=await leggiFile0(file);if((o.__come==='foto'||o.__come==='vuoto')&&AION){const x=await leggiConAI(file,o.__come==='vuoto');if(x)return x;}return o;}
+async function leggiFile0(file){const n=(file.name||'').toLowerCase();
   try{if(n.endsWith('.xml'))return xmlFattura(await file.text());
     if(n.endsWith('.p7m'))return xmlFattura(p7mInXml(await file.arrayBuffer()));
     if(n.endsWith('.pdf')||file.type==='application/pdf'){const L=await pdfTesto(file);if(!L.join('').trim())return {__come:'vuoto'};return leggiTesto(L);}
   }catch(e){return {__come:'errore'};}
   if((file.type||'').startsWith('image/'))return {__come:'foto'};return {__come:'altro'};}
-const COME={xml:'Ho letto la fattura elettronica: i dati sono quelli ufficiali.',pdf:'Ho letto il PDF: controlla soprattutto fornitore e importo prima di salvare.',vuoto:'Il PDF è una scansione senza testo: scrivi tu i dati, il file resta allegato.',foto:'Dalle foto non leggo ancora i dati: scrivili tu, la foto resta allegata.',errore:'Non sono riuscito a leggere il file: scrivi tu i dati, il file resta allegato.',altro:'Questo tipo di file non lo leggo: scrivi tu i dati, il file resta allegato.'};
+const COME={xml:'Ho letto la fattura elettronica: i dati sono quelli ufficiali.',pdf:'Ho letto il PDF: controlla soprattutto fornitore e importo prima di salvare.',vuoto:'Il PDF è una scansione senza testo: scrivi tu i dati, il file resta allegato.',foto:'Dalle foto non leggo ancora i dati: scrivili tu, la foto resta allegata.',errore:'Non sono riuscito a leggere il file: scrivi tu i dati, il file resta allegato.',altro:'Questo tipo di file non lo leggo: scrivi tu i dati, il file resta allegato.',ai:'L’assistente ha letto il documento: controlla tutti i dati prima di salvare.'};
 function caricaELeggi(voce,titolo){
   const d=sheet(titolo,'<div class="steps"><i class="on"></i><i></i><i></i></div><p class="muted">Passo 1 di 3 · scegli il file</p><label class="drop"><input type="file" id="cf" accept=".xml,.p7m,.pdf,application/pdf,image/*">'+svg(IC2.doc,30)+'<b>Tocca per scegliere</b><span>Fattura elettronica (XML o P7M), PDF oppure foto</span></label>','Leggi il file',async(dl)=>{const f=dl.querySelector('#cf').files[0];if(!f){dl.querySelector('.smsg').textContent='Scegli prima un file.';return false;}
     dl.querySelector('.smsg').textContent='Leggo il file…';const o=await leggiFile(f);o.__file=f;
@@ -2403,6 +2404,7 @@ async function editorPerc(el,r,can){const P=r.dati;const edit=can&&(P.stato==='B
   if(can&&P.stato==='Alla Sicurezza'){const b=h('<button type="button" class="bb soft">Riprendi per modificarlo</button>');b.addEventListener('click',async()=>{P.stato='Bozza';await salvaP(r);await loadVD();rerender();});act.appendChild(b);}
   if(can){const b=h('<button type="button" class="bb soft ko">Elimina il percorso</button>');b.addEventListener('click',()=>ask('Eliminare «'+P.nome+'»?','Elimina',async()=>{await CTX.sb.from('voci_dati').delete().eq('id',r.id);PSEL['v-perc']=null;await loadVD();rerender();}));act.appendChild(b);}
   el.appendChild(act);
+  ricaduteBox(el,r,P,can);
   const fp=prevPerc(P);if(fp.length)el.appendChild(h('<section class="card"><h3>Fornitori del percorso</h3>'+fp.map(x=>'<div class="rq"><div><b>'+esc(x.dati.voce.replace(/^Percorso .*? – /,''))+'</b><span>'+esc(x.dati.fornitore||'fornitore da trovare')+' · '+esc(x.dati.stato||'')+'</span></div><b>'+(+x.dati.importo?eur(+x.dati.importo):'')+'</b></div>').join('')+'</section>'));}
 function prevPerc(P){return (VD['v-prev']||[]).filter(x=>(x.dati.voce||'').startsWith('Percorso '+P.nome+' – '));}
 
@@ -2495,6 +2497,7 @@ async function renderPub(){const el=document.getElementById('p-pub');el.innerHTM
   el.appendChild(h('<section class="card"><h3>Tappe e soste</h3>'+(P.tappe||[]).map((t,i)=>'<div class="tappa"><span class="tn'+(t.sosta?' s':'')+'">'+(i+1)+'</span><div class="tb2"><b>'+esc(t.n||('Tappa '+(i+1)))+'</b><span class="muted small">'+(t.sosta?'Sosta: '+esc(t.sosta)+(t.min?' · '+t.min+' min':''):'Passaggio')+'</span></div></div>').join('')+'</section>'));
   if((P.corteo||[]).length)el.appendChild(h('<section class="card"><h3>Ordine del corteo</h3>'+P.corteo.map((c,i)=>'<div class="tappa"><span class="tn c">'+(i+1)+'</span><div class="tb2"><b>'+esc(c)+'</b></div></div>').join('')+'</section>'));
   el.appendChild(h('<section class="card"><h3>Fornitori e costi</h3>'+(fp.length?fp.map(x=>'<div class="rq"><div><b>'+esc(x.dati.voce.replace(/^Percorso .*? – /,''))+'</b><span>'+esc(x.dati.fornitore||'da scegliere')+' · '+esc(x.dati.stato||'')+'</span></div><b>'+(+x.dati.importo?eur(+x.dati.importo):'')+'</b></div>').join('')+'<div class="fact2"><span>Costi già decisi</span><b>'+eur(costi)+'</b></div>':'<p class="muted">Nessun fornitore richiesto per questo percorso.</p>')+(canV('s-cs')?'<button type="button" class="lnk2" data-go="s-cs">Calcola le ricadute economiche nella Simulazione impatto</button>':'')+'</section>'));
+  ricaduteBox(el,r,P,false);
   if(P.sic&&P.sic.nota)el.appendChild(h('<section class="card"><h3>Indicazioni della Sicurezza</h3><p style="margin:0;white-space:pre-line">'+esc(P.sic.nota)+'</p></section>'));
   await leaflet();if(cur!=='p-pub')return;const m=mkMap(mc.querySelector('#pubmap'),'pub');drawRoute(m,P,{});}
 function pubWidget(){const L1=vperc().filter(r=>r.dati.stato==='Pubblicato');const mine=CTX.canEdit('v-psic')?vperc().filter(r=>r.dati.stato==='Alla Sicurezza'):[];if(!L1.length&&!mine.length)return null;
@@ -2586,9 +2589,46 @@ async function mePush(el){const on=await pushAttiva();
   const pon=c.querySelector('#pon');if(pon)pon.addEventListener('click',async()=>{m.textContent='Attivo…';try{await attivaPush();c.querySelector('.pstate').innerHTML='<span class="chip2 ok">Attive su questo dispositivo</span>';m.textContent='Fatto. Ora ricevi le notifiche.';pon.remove();}catch(e){m.textContent=e.message;}});
   const pt=c.querySelector('#ptest');if(pt)pt.addEventListener('click',async()=>{await avvisaUtente(CTX.user.id,'Prova: le notifiche di Bruna27 funzionano.','p-me');m.textContent='Inviata: arriva tra qualche secondo.';});
   el.insertBefore(c,[...el.children].pop());}
-async function extraLoad(){await Promise.all([loadMyReq(),aiStato()]);}
+async function extraLoad(){evNoti();await Promise.all([loadMyReq(),aiStato()]);}
 function dopoAvvio(){swReg();try{const g0=new URLSearchParams(location.search).get('go');if(g0&&canOpen(g0)){history.replaceState(null,'',location.pathname);go(g0);}}catch(e){}
   if(SW_OK)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.go&&canOpen(e.data.go))go(e.data.go);});}
+
+/* ================= Bruna27 · Fase 5: foto delle fatture lette dall'assistente, preventivi dagli eventi, ricadute dei percorsi ================= */
+/* --- foto e scansioni lette dall'assistente --- */
+async function immagineRidotta(file,isPdf){let blob=file;if(isPdf){const o=await pdfImmagine(file);blob=o.blob;}
+  const bm=await createImageBitmap(blob);const k=Math.min(1,1600/Math.max(bm.width,bm.height));const cv=document.createElement('canvas');cv.width=Math.round(bm.width*k);cv.height=Math.round(bm.height*k);
+  const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);g.drawImage(bm,0,0,cv.width,cv.height);return cv.toDataURL('image/jpeg',0.85).split(',')[1];}
+async function leggiConAI(file,isPdf){try{const img=await immagineRidotta(file,isPdf);const r=await ai('fattura',{img});if(r.err||!r.testo)return null;
+    const m=r.testo.match(/\{[\s\S]*\}/);if(!m)return null;const j=JSON.parse(m[0]);const o={__come:'ai'};
+    ['soggetto','numero','data','scadenza','nota'].forEach(k=>{if(j[k])o[k]=String(j[k]).slice(0,200);});
+    if(j.importo!=null&&j.importo!==''){const v=typeof j.importo==='number'?j.importo:numIt(j.importo);if(v)o.importo=Math.round(v*100)/100;}
+    o.tipo=j.tipo==='Ricavo'?'Ricavo':'Costo';['data','scadenza'].forEach(k=>{if(o[k]&&!/^\d{4}-\d{2}-\d{2}$/.test(o[k])){const d=o[k].match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);o[k]=d?isoD(d[1],d[2],d[3]):'';}});
+    o.voce=bilDaNome(o.soggetto||'');return o;}catch(e){return null;}}
+
+/* --- quando si crea un evento: chiedi se servono fornitori --- */
+const EVK=new Set();function evNoti(){(S.evc||[]).forEach(e=>EVK.add(e.id));}
+const _changed=changed;
+changed=function(){const nuovi=(S.evc||[]).filter(e=>!EVK.has(e.id));_changed();evNoti();if(nuovi.length&&CTX.canEdit('s-ev'))setTimeout(()=>chiediFornEvento(nuovi[nuovi.length-1]),300);};
+const _rerender=rerender;rerender=function(){_rerender();if(!document.querySelector('.sdlg'))evNoti();};
+function chiediFornEvento(e){const ppl=Object.values(PEOPLE);
+  sheet('Servono fornitori per «'+(e.n||'il nuovo evento')+'»?','<p style="font-size:17px">Se servono, creo le richieste di preventivo nei Preventivi e avviso chi deve chiederli.</p><div class="checks fe">'+FORN_COSA.concat(['Allestimento','Service luci e audio','SIAE e permessi']).map(x=>'<label><input type="checkbox" value="'+esc(x)+'"> '+esc(x)+'</label>').join('')+'</div><div class="ctl"><label for="fe_p">Chi chiede i preventivi</label><select id="fe_p">'+ppl.map(p=>'<option value="'+p.id+'"'+(p.id===CTX.user.id?' selected':'')+'>'+esc(p.nome||p.email)+(p.id===CTX.user.id?' (io)':'')+'</option>').join('')+'</select></div>','Crea le richieste',async(dl)=>{
+    const cosa=[...dl.querySelectorAll('.fe input:checked')].map(x=>x.value);if(!cosa.length){return;}const chi=dl.querySelector('#fe_p').value;
+    const {error}=await CTX.sb.from('voci_dati').insert(cosa.map(c=>({voce:'v-prev',dati:{voce:'Evento '+(e.n||'')+' – '+c,fornitore:'',importo:'',stato:'Da chiedere',chi,entro:''}})));if(error)throw new Error(error.message);
+    await CTX.sb.from('compiti').insert({per:chi,titolo:'Chiedi i preventivi per «'+(e.n||'evento')+'»: '+cosa.join(', ')});
+    await Promise.all([loadVD(),loadSocial()]);stEl.textContent='Create '+cosa.length+' richieste di preventivo.';});
+  const ok=document.querySelectorAll('.sdlg');const last=ok[ok.length-1];if(last)last.querySelector('[data-no]').textContent='No, non servono';}
+
+/* --- ricadute economiche del percorso (Simulazione impatto) --- */
+function luogoVicino(P){const T=P.tappe||[];if(!T.length||typeof VEN==='undefined')return 'vv';let best=VEN[0],bd=1e9;T.forEach(t=>VEN.forEach(v=>{const d=distM({lat:v[2],lng:v[3]},t);if(d<bd){bd=d;best=v;}}));return best[0];}
+function ricaduteBox(el,r,P,can){if(!canV('s-cs')||typeof evCalc!=='function')return;const e=P.sim_id&&(S.cs&&S.cs.evs||[]).find(x=>x.id===P.sim_id);
+  if(e){let x=null;try{x=evCalc(e,1);}catch(err){}if(!x)return;
+    const c=h('<section class="card"><h3>Ricadute economiche stimate</h3><div class="fact2"><span>Persone al corteo</span><b>'+nf.format(e.p)+'</b></div><div class="fact2"><span>Spesa diretta sul territorio</span><b>'+eur(x.dir||0)+'</b></div><div class="fact2"><span>Ricchezza prodotta (PIL)</span><b>'+eur(x.pil||0)+'</b></div><div class="fact2"><span>Lavoro generato</span><b>'+(Math.round((x.ula||0)*10)/10).toString().replace('.',',')+' persone a tempo pieno per un anno</b></div><p class="muted small">Calcolo della Simulazione impatto (Centro Studi), stima centrale. Per cambiare le ipotesi aprila.</p><button type="button" class="lnk2" data-go="s-cs">Apri la Simulazione impatto</button></section>');el.appendChild(c);return;}
+  if(!can||!CTX.canEdit('s-cs'))return;
+  const b=h('<section class="card"><h3>Ricadute economiche</h3><p class="muted">Stima quanto porta il percorso a bar, ristoranti e negozi, e quanta ricchezza e lavoro crea.</p><button type="button" class="bb dark sm">Calcola le ricadute</button></section>');
+  b.querySelector('button').addEventListener('click',()=>sheet('Calcola le ricadute','<div class="ctl"><label for="rc_p">Quante persone seguono o guardano il corteo</label><input type="number" id="rc_p" inputmode="numeric" value="3000"></div><div class="ctl"><label for="rc_a">Età prevalente</label><select id="rc_a">'+AGE.map((a,i)=>'<option value="'+i+'"'+(i===(P.fragili?4:2)?' selected':'')+'>'+esc(a[0])+'</option>').join('')+'</select></div>','Calcola',async(dl)=>{
+    const ev=Object.assign(newEv(),{id:'e'+Date.now(),n:'Percorso '+P.nome,v:luogoVicino(P),d:P.data||'2027-07-02',du:'ore',dn:Math.max(1,Math.round(durata(P)/60)),t:'religioso',a:+dl.querySelector('#rc_a').value,p:Math.max(1,+dl.querySelector('#rc_p').value||0),c:prevPerc(P).filter(x=>x.dati.stato==='Accettato').reduce((a,x)=>a+(+x.dati.importo||0),0)});
+    S.cs.evs=S.cs.evs||[];S.cs.evs.push(ev);P.sim_id=ev.id;await salvaP(r);_changed();}));
+  el.appendChild(b);}
 
 /* ---------- avvio ---------- */
 autoLeve();
