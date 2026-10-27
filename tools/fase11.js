@@ -30,4 +30,4 @@ R['s-bil']=function(){if(typeof editMode!=='undefined'&&editMode)return _renderB
   nl.addEventListener('click',()=>cs.scrollBy({left:-cs.clientWidth*.8,behavior:'smooth'}));nr.addEventListener('click',()=>cs.scrollBy({left:cs.clientWidth*.8,behavior:'smooth'}));
   cs.addEventListener('scroll',navUpd,{passive:true});requestAnimationFrame(navUpd);det();};
 // in modalità Modifica torna la vista con gli importi modificabili
-if(typeof setEdit==='function'){const _setEdit11=setEdit;setEdit=function(on){_setEdit11(on);if(cur==='s-bil')rerender();};}
+if(typeof setEdit==='function'){const _setEdit11=setEdit;setEdit=function(on){_setEdit11(on);if(/^s-/.test(cur)&&ECO_ID[cur])rerender();};}

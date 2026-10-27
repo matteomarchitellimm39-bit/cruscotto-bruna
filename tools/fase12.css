@@ -1,0 +1,17 @@
+/* fase 12: sezioni di Economia a carte */
+.c12 .b26r:nth-child(3){border-bottom:1px solid #F0F1F5}.c12 .b26r:last-of-type{border-bottom:0}
+.c12sbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin:6px 0 2px}.c12sbtn:empty{display:none}
+.c12act{display:flex;gap:8px;flex-wrap:wrap}.c12act:empty{display:none}
+.c12tg{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.28);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+.b26cd{position:relative}
+.c12li{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F0F1F5;font-size:15px}.c12li:last-child{border-bottom:0}
+.c12li>span:not(.chip2){min-width:0;flex:1}.c12li small{display:block;color:var(--muted);font-size:12.5px}.c12li b{margin-left:auto;white-space:nowrap;text-align:right}
+.c12ch{margin:10px 0 0}.c12b{margin-top:12px}
+.chip2.wa{background:#F7EFDC;color:#8A6414}.chip2.ko{background:#FBECEB;color:#B8433F}
+.c12back{margin:0 0 10px}
+.c12seg{max-width:100%}
+.c12 .b26low>[hidden]{display:none}
+@media(max-width:1023px){.c12li{font-size:14.5px;padding:9px 0}.c12tg{top:11px;right:11px;font-size:10.5px}.c12act .bb{flex:1 1 auto}}
+.ar.gold{background:#F7EFDC;color:#8A6414}
+.b26cd .pc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.b26low>*{min-width:0}.c12li b{max-width:62%;white-space:normal;overflow-wrap:anywhere}
