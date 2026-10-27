@@ -1085,6 +1085,34 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 .ev14m{grid-template-columns:repeat(7,minmax(0,1fr))}
 .ev14m .ev14c{min-width:0;overflow:hidden}
 .ev14crea{width:auto;align-self:flex-start}
+/* stile della Home: riquadri bianchi, giorni come «Questa settimana», eventi come la Bacheca */
+.ev14grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+.ev14grid.uno{grid-template-columns:minmax(0,1fr)}
+.ev14side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.ev14calw .wh b{text-transform:capitalize;font-size:18px}
+.ev14calw .calh{font-weight:700}
+.ev14m .ev14c,.ev14wd{background:#F4F6FA;box-shadow:none;border-radius:16px}
+.ev14m .ev14c.fuori{background:transparent}
+.ev14m .ev14c.oggi,.ev14wd.oggi{box-shadow:inset 0 0 0 2px var(--navy)}
+.ev14m .ev14c.sel,.ev14wd.sel{background:var(--navy);color:#fff;box-shadow:none}
+.ev14m .ev14c.sel .ev14more{color:#fff}
+.ev14day{margin:0}
+.ev14day .wh .chip2{font-size:12.5px}
+.ev14day .wh b{text-transform:capitalize}
+.ev14cards{display:flex;flex-direction:column;gap:10px}
+.ev14post{cursor:default}
+.ev14post .pt{font-size:17px}
+.ev14post .px9{margin:0;font-size:15px;line-height:1.4}
+.ev14bil{margin:0;font-size:13.5px;color:var(--muted)}
+.ev14post .c12b{margin-top:4px}
+.ev14row.post9{width:100%;font:inherit;text-align:left;color:#16161D;cursor:pointer;min-height:0;box-shadow:none;border:1px solid #EEF0F5;align-items:stretch}
+.ev14row.post9>i{display:none}
+.ev14list{gap:8px}
+.ev14grid.uno .ev14cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+@media (max-width:1100px){.ev14grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.ev14grid.uno .ev14cards{grid-template-columns:1fr}.ev14calw{padding:12px 8px}.ev14m .ev14c{border-radius:10px}}
+.ev14post .ph .chips,.ev14row .ph .chips{order:3;flex-basis:100%;padding-left:50px}
+.ev14post .pa b{font-size:17px;line-height:1.25}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -4441,11 +4469,14 @@ function ocPassa(e){const a=evAppr(e),pr=evProg(e);switch(OCF){case 'I':case 'II
 function ocEventi(){const by={};allEv().filter(ocPassa).forEach(e=>{(evDays(e)||[]).forEach(d=>{if(d>=OC_MIN)(by[d]=by[d]||[]).push(e);});});Object.values(by).forEach(L=>L.sort((a,b)=>(a.ora||'').localeCompare(b.ora||'')));return by;}
 function ocBase(){let k=OCD||todayISO();if(k<OC_MIN)k=OC_MIN;return new Date(k+'T12:00:00');}
 function apriInPanoramica(e){EVQ='';EVFS='tutti';EVFC='tutti';EVFD='tutti';EVFR='tutti';CSELK['sec-evt']=String(e.id);go('sec-evt');window.scrollTo(0,0);}
-function cartaEvento(e,giorno){const c=evCol(e);const days=evDays(e)||[];const r=evResp(e);
-  const x=h('<article class="ev14card" style="--c:'+c+'"><div class="ev14top"><span class="ev14tipo">'+esc(TIPO(e))+'</span><b>'+esc(e.n)+'</b><span>'+esc(dLab(days))+esc(oraLab(e))+'</span></div>'+
-    '<div class="ev14body">'+chips([[labS(APPR,evAppr(e)),evGrigio(e)?'':'ok'],[labS(PROG,evProg(e))],[evOn(e)?'Nel bilancio 2027':'Fuori dal bilancio']])+righe([['Luogo',esc(e.luogo||'—')],['Responsabile',r?esc(r.n):'<span class="neg">da scegliere</span>'],['Quando',esc(evScad(e)||'—')]])+'</div></article>');
-  const B=x.querySelector('.ev14body');const can=CTX.canEdit('s-ev');const a=evAppr(e);
-  bottoni(B,[['Apri',()=>apriInPanoramica(e),true],can?['Modifica',()=>modificaEvento(e)]:null,CTX.admin&&a!=='approvato'&&a!=='pubblicato'?['Approva',()=>approva(e)]:null]);return x;}
+const chipStato=e=>{const a=evAppr(e),p=evProg(e);return '<span class="chips">'+(p!=='attivo'?'<span class="chip2">'+esc(labS(PROG,p))+'</span>':'')+'<span class="chip2 '+(a==='approvato'||a==='pubblicato'?'uff':a==='rifiutato'?'ko':'nw')+'">'+esc(labS(APPR,a))+'</span></span>';};
+const avEv=e=>'<span class="av9" style="--c:'+(TCOL[e.p]||TCOL.I)+'">'+(e.p==='I'?'B':'PW')+'</span>';
+function cartaEvento(e){const days=evDays(e)||[];const r=evResp(e);
+  const x=h('<article class="post9 ev14post" style="--c:'+evCol(e)+'"><div class="ph">'+avEv(e)+'<span class="pa"><b>'+esc(e.n)+'</b><em>'+esc(TIPO(e))+'</em></span>'+chipStato(e)+'</div>'+
+    '<p class="px9"><b>'+esc(dLab(days))+esc(oraLab(e))+'</b></p><p class="px9">'+esc(e.luogo||'Luogo da definire')+' · '+(r?'responsabile '+esc(r.n):'<span class="neg">responsabile da scegliere</span>')+(evScad(e)?' · '+esc(evScad(e)):'')+'</p>'+
+    '<p class="ev14bil">'+(evOn(e)?'Nel Bilancio di previsione 2027 · '+eur(evCost(e)):'Fuori dal Bilancio di previsione')+'</p></article>');
+  const can=CTX.canEdit('s-ev');const a=evAppr(e);
+  bottoni(x,[['Apri',()=>apriInPanoramica(e),true],can?['Modifica',()=>modificaEvento(e)]:null,CTX.admin&&a!=='approvato'&&a!=='pubblicato'?['Approva',()=>approva(e)]:null]);return x;}
 function renderUfficiale(){const el=document.getElementById('s-ev');el.innerHTML='';const base=ocBase();const by=ocEventi();const oggi=todayISO();
   el.appendChild(h('<div class="sh"><span class="eyb">Eventi</span><h2>Calendario eventi ufficiali</h2><p>Festa della Bruna e Bruna Passion Week, da novembre 2026 in poi. Tocca un giorno per vedere i suoi eventi.</p></div>'));
   const anni=[];const yMax=Math.max(new Date().getFullYear()+3,...Object.keys(by).map(d=>+d.slice(0,4)),2028);for(let y=2026;y<=yMax;y++)anni.push(y);
@@ -4465,27 +4496,27 @@ function renderUfficiale(){const el=document.getElementById('s-ev');el.innerHTML
   const fc=h('<div class="chips ev14f">'+OCFL.map(([k,l])=>'<button type="button" class="chip" data-f="'+k+'" aria-pressed="'+(k===OCF)+'">'+l+'</button>').join('')+'</div>');
   fc.querySelectorAll('[data-f]').forEach(b=>b.addEventListener('click',()=>{OCF=b.dataset.f;R['s-ev']();addBack('s-ev');}));el.appendChild(fc);
   const chip=e=>'<span class="ev14chip" style="--c:'+evCol(e)+';--t:'+(TCOL[e.p]||TCOL.I)+'">'+esc(e.n)+'</span>';
-  const tit=h('<h3 class="gh ev14tit"></h3>');el.appendChild(tit);
-  const giorno=k=>{const L=by[k]||[];const d=new Date(k+'T12:00:00');const s=h('<section class="ev14day"><p class="b26lab">'+esc(d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))+(L.length?' · '+L.length+(L.length===1?' evento':' eventi'):'')+'</p><div class="ev14cards"></div></section>');
-    const C=s.querySelector('.ev14cards');L.forEach(e=>C.appendChild(cartaEvento(e,k)));if(!L.length)C.appendChild(h('<p class="muted">Nessun evento ufficiale in questo giorno.</p>'));return s;};
+  const lay=h('<div class="ev14grid"><section class="w h13w ev14calw"><div class="wh"><b class="ev14tit"></b></div></section><div class="ev14side"></div></div>');el.appendChild(lay);const P=lay.querySelector('.ev14calw'),SD=lay.querySelector('.ev14side');const tit=P.querySelector('.ev14tit');if(OCV!=='mese')lay.classList.add('uno');
+  const giorno=k=>{const L=by[k]||[];const d=new Date(k+'T12:00:00');const s=h('<section class="w h13w ev14day"><div class="wh"><b>'+esc(d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}))+'</b>'+(L.length?'<span class="chip2 nw">'+L.length+(L.length===1?' evento':' eventi')+'</span>':'')+'</div><div class="ev14cards"></div></section>');
+    const C=s.querySelector('.ev14cards');L.forEach(e=>C.appendChild(cartaEvento(e)));if(!L.length)C.appendChild(h('<p class="muted">Nessun evento ufficiale in questo giorno.</p>'));return s;};
   if(OCV==='mese'){tit.textContent=base.toLocaleDateString('it-IT',{month:'long',year:'numeric'});const f=new Date(base.getFullYear(),base.getMonth(),1);const start=new Date(f);start.setDate(1-((f.getDay()+6)%7));
     const g=h('<div class="calm ev14m">'+['lun','mar','mer','gio','ven','sab','dom'].map(d=>'<span class="calh">'+d+'</span>').join('')+'</div>');
     const nd=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();const celle=Math.ceil((((f.getDay()+6)%7)+nd)/7)*7;
     for(let i=0;i<celle;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=isoL(d);const L=by[k]||[];const fuori=d.getMonth()!==base.getMonth();
       const c=h('<button type="button" class="calc ev14c'+(fuori?' fuori':'')+(k===oggi?' oggi':'')+(k===OCSEL?' sel':'')+(k<OC_MIN?' prima':'')+'" aria-label="'+esc(d.toLocaleDateString('it-IT',{day:'numeric',month:'long'}))+(L.length?', '+L.length+' eventi':'')+'"'+(k<OC_MIN?' disabled':'')+'><b>'+d.getDate()+'</b><span class="ev14chips">'+L.slice(0,3).map(chip).join('')+(L.length>3?'<span class="ev14more">+'+(L.length-3)+'</span>':'')+'</span></button>');
       c.addEventListener('click',()=>{OCSEL=OCSEL===k?null:k;if(fuori)OCD=k;R['s-ev']();addBack('s-ev');setTimeout(()=>{const s=document.querySelector('#s-ev .ev14day');if(s&&OCSEL)s.scrollIntoView({behavior:'smooth',block:'start'});},60);});g.appendChild(c);}
-    el.appendChild(g);
-    if(OCSEL&&OCSEL.slice(0,7)===isoL(base).slice(0,7))el.appendChild(giorno(OCSEL));
-    else{const mk=isoL(base).slice(0,7);const ks=Object.keys(by).filter(k=>k.slice(0,7)===mk).sort();const s=h('<section class="ev14day"><p class="b26lab">Gli eventi di '+esc(tit.textContent)+'</p><div class="ev14list"></div></section>');const Lb=s.querySelector('.ev14list');
-      const seen=new Set();ks.forEach(k=>by[k].forEach(e=>{if(seen.has(e.id))return;seen.add(e.id);const r=h('<button type="button" class="ev14row" style="--c:'+evCol(e)+'"><i></i><span><b>'+esc(e.n)+'</b><em>'+esc(dLab(evDays(e)))+esc(oraLab(e))+' · '+esc(TIPO(e))+'</em></span><span class="ev14rs">'+esc(labS(APPR,evAppr(e)))+'</span></button>');r.addEventListener('click',()=>{OCSEL=k;R['s-ev']();addBack('s-ev');});Lb.appendChild(r);}));
-      if(!ks.length)Lb.appendChild(h('<p class="muted">Nessun evento ufficiale in questo mese.'+(nx?' Tocca «Vai al prossimo evento».':'')+'</p>'));el.appendChild(s);}}
+    P.appendChild(g);
+    if(OCSEL&&OCSEL.slice(0,7)===isoL(base).slice(0,7))SD.appendChild(giorno(OCSEL));
+    else{const mk=isoL(base).slice(0,7);const ks=Object.keys(by).filter(k=>k.slice(0,7)===mk).sort();const s=h('<section class="w h13w ev14day"><div class="wh"><b>Gli eventi di '+esc(tit.textContent)+'</b></div><div class="ev14list"></div></section>');const Lb=s.querySelector('.ev14list');
+      const seen=new Set();ks.forEach(k=>by[k].forEach(e=>{if(seen.has(e.id))return;seen.add(e.id);const r=h('<button type="button" class="post9 ev14row" style="--c:'+evCol(e)+'"><span class="ph">'+avEv(e)+'<span class="pa"><b>'+esc(e.n)+'</b><em>'+esc(dLab(evDays(e)))+esc(oraLab(e))+'</em></span>'+chipStato(e)+'</span></button>');r.addEventListener('click',()=>{OCSEL=k;R['s-ev']();addBack('s-ev');});Lb.appendChild(r);}));
+      if(!ks.length)Lb.appendChild(h('<p class="muted">Nessun evento ufficiale in questo mese.'+(nx?' Tocca «Vai al prossimo evento».':'')+'</p>'));SD.appendChild(s);}}
   else if(OCV==='settimana'){const s0=new Date(base);s0.setDate(s0.getDate()-((s0.getDay()+6)%7));const s6=new Date(s0);s6.setDate(s0.getDate()+6);
     tit.textContent='Settimana dal '+s0.toLocaleDateString('it-IT',{day:'numeric',month:'long'})+' al '+s6.toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
     const g=h('<div class="ev14w"></div>');for(let i=0;i<7;i++){const d=new Date(s0);d.setDate(s0.getDate()+i);const k=isoL(d);const L=by[k]||[];
       const c=h('<button type="button" class="ev14wd'+(k===oggi?' oggi':'')+(k===OCSEL?' sel':'')+'"'+(k<OC_MIN?' disabled':'')+'><b>'+esc(d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric'}))+'</b><span class="ev14chips">'+L.map(chip).join('')+(L.length?'':'<span class="muted small">—</span>')+'</span></button>');
       c.addEventListener('click',()=>{OCSEL=k;R['s-ev']();addBack('s-ev');});g.appendChild(c);}
-    el.appendChild(g);if(OCSEL&&OCSEL>=isoL(s0)&&OCSEL<=isoL(s6))el.appendChild(giorno(OCSEL));}
-  else{const k=isoL(base);OCSEL=k;tit.textContent=base.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});el.appendChild(giorno(k));}
+    P.appendChild(g);if(OCSEL&&OCSEL>=isoL(s0)&&OCSEL<=isoL(s6))SD.appendChild(giorno(OCSEL));else SD.appendChild(h('<p class="muted">Tocca un giorno per vedere i suoi eventi.</p>'));}
+  else{const k=isoL(base);OCSEL=k;P.remove();SD.appendChild(giorno(k));}
   if(canOpen('p-crea')){const b=h('<button type="button" class="bb soft sm ev14crea">+ Crea evento</button>');b.addEventListener('click',()=>go('p-crea'));el.appendChild(b);}}
 // in modalità Modifica resta la pagina di prima (con le schede tecniche)
 const _ev14=R['s-ev'];R['s-ev']=function(){if(typeof editMode!=='undefined'&&editMode)return _ev14();renderUfficiale();};
