@@ -876,6 +876,29 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
   .w.wdark{flex-direction:row;align-items:center;flex-wrap:wrap;gap:4px 12px;padding:13px 16px}.w.wdark .wl{flex-basis:100%}.w.wdark .wbig{font-size:30px}
 }
 @media(max-width:380px){.tilegrid{grid-template-columns:1fr 1fr}.vtile .vt{font-size:14.5px}}
+/* fase 10: Economia con barra delle sezioni */
+.ecobar{display:flex;flex-direction:column;gap:10px;margin:0 0 6px;min-width:0}
+.ecotop{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;margin:0 -4px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.ecotop::-webkit-scrollbar{display:none}
+.ecotop button{flex:none;display:inline-flex;align-items:center;gap:7px;border:0;background:#fff;color:#2A2D38;font:inherit;font-size:15px;font-weight:700;padding:10px 15px;border-radius:999px;box-shadow:var(--shadow);cursor:pointer;white-space:nowrap;min-height:44px;scroll-snap-align:start}
+.ecotop button svg{width:18px;height:18px;flex:none}
+.ecotop button[aria-current="page"]{background:var(--navy);color:#fff}
+.ecosub{align-self:flex-start}
+.eco8 .vs{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ar10{padding:0!important;overflow:hidden}
+.ar10 summary{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;align-items:center;padding:16px 18px;cursor:pointer;list-style:none}
+.ar10 summary::-webkit-details-marker{display:none}
+.ar10 summary .t{font-weight:800;font-size:17px}.ar10 summary b{font-size:17px}.ar10 summary .pc{font-size:14px;color:var(--muted);min-width:46px;text-align:right}
+.ar10 summary i{grid-column:1/-1;height:6px;border-radius:3px;background:#EEF0F5;position:relative;overflow:hidden}
+.ar10 summary i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--acc);border-radius:3px}
+.ar10 .rows{padding:0 18px 14px}
+@media(min-width:1024px){.ecotop button{font-size:14.5px;padding:9px 14px}}
+@media(min-width:1024px) and (max-width:1439px){.ecotop button svg{display:none}.ecotop button{padding:9px 13px}}
+@media(max-width:1023px){
+  .ecotop button{font-size:14px;padding:8px 13px;min-height:40px}.ecotop button svg{width:16px;height:16px}
+  .ecosub button{min-height:38px;padding:7px 12px;font-size:14px}
+  .ar10 summary{padding:13px 14px}.ar10 summary .t,.ar10 summary b{font-size:15.5px}.ar10 .rows{padding:0 14px 12px}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -3283,7 +3306,7 @@ function renderSp27(){const id='v-sp27',el=document.getElementById(id);el.innerH
   L1.slice().reverse().forEach(r=>{const d=r.dati;const rate=d.rate||[];const fr=d.fatture_richieste||{};
     const c=h('<article class="card rc"><div class="chips"><span class="chip2 '+(['Confermato','Contratto firmato','Pagato'].includes(d.stato)?'ok':d.stato==='Rifiutato'?'ko':'')+'">'+esc(d.stato||'Non ancora contattato')+'</span>'+(d.tipo?'<span class="chip2">'+esc(d.tipo)+'</span>':'')+'</div><b class="vn">'+esc(d.nome||'')+'</b><b class="amt">'+eur(totSp(d))+'</b>'+
       (d.iniziativa?'<div class="fact2"><span>Sponsorizza</span><b>'+esc(d.iniziativa)+'</b></div>':'')+((d.spazi||[]).length?'<div class="chips">'+d.spazi.map(x=>'<span class="chip2">'+esc(x)+'</span>').join('')+'</div>':'')+
-      (rate.length?'<div class="lab">Rate</div>'+rate.map((x,i)=>'<div class="rq"><div><b>'+esc(x.n||('Rata '+(i+1)))+' · '+eur(+x.importo||0)+'</b><span>'+(x.data?'entro il '+fmtD(x.data):'data da decidere')+(fr[i]?' · fattura richiesta':'')+'</span></div>'+(can&&!fr[i]?'<button type="button" class="bb sm" data-fatt="'+i+'">Richiedi emissione fattura</button>':'')+'</div>').join(''):(can&&!fr[0]?'<button type="button" class="bb dark sm" data-fatt="0">Richiedi emissione fattura</button>':fr[0]?'<p class="muted small">Fattura richiesta</p>':''))+'</article>');
+      (rate.length?'<div class="lab">Rate</div>'+rate.map((x,i)=>'<div class="rq"><div><b>'+esc(x.n||('Rata '+(i+1)))+' · '+eur(+x.importo||0)+'</b><span>'+(x.data?'entro il '+fmtD(x.data):'data da decidere')+(fr[i]?' · fattura richiesta':'')+'</span></div>'+(can&&puoFatt()&&!fr[i]?'<button type="button" class="bb sm" data-fatt="'+i+'">Richiedi emissione fattura</button>':'')+'</div>').join(''):(can&&puoFatt()&&!fr[0]?'<button type="button" class="bb dark sm" data-fatt="0">Richiedi emissione fattura</button>':fr[0]?'<p class="muted small">Fattura richiesta</p>':''))+'</article>');
     c.querySelectorAll('[data-fatt]').forEach(b=>b.addEventListener('click',()=>richiediFattura(r,+b.dataset.fatt)));
     const cb=h('<div class="rowb"><button type="button">Contratto</button>'+(can?'<button type="button">Modifica</button><button type="button" class="ko">Elimina</button>':'')+'</div>');
     cb.children[0].addEventListener('click',()=>contratto(r));if(can){cb.children[1].addEventListener('click',()=>editSp(r));cb.children[2].addEventListener('click',()=>ask('Eliminare «'+(d.nome||'')+'»?','Elimina',async()=>{await CTX.sb.from('voci_dati').delete().eq('id',r.id);await loadVD();renderSp27();}));}
@@ -3333,7 +3356,7 @@ function contratto(r){const d=r.dati;const can=CTX.canEdit('v-sp27');
 
 /* --- Fatture da emettere --- */
 const ST_FE=['Da emettere','In lavorazione','Emessa','Annullata'];
-function renderFemit(){const id='v-femit',el=document.getElementById(id);el.innerHTML='';addBack(id);const L1=VD[id]||[];const can=CTX.canEdit(id)||IMP.resp_fatture===CTX.user.id;
+function renderFemit(){const id='v-femit',el=document.getElementById(id);el.innerHTML='';addBack(id);const L1=VD[id]||[];const can=CTX.canEdit(id);
   el.appendChild(h('<div class="sh"><span class="eyb">Economia</span><h2>Fatture da emettere</h2><p>Le richieste arrivano dagli sponsor. Chi emette la fattura registra numero, data e PDF. L’incasso si segna a parte.</p><div class="big-btns" style="margin-top:12px"><button type="button" class="bb soft pdfx">⤓ Scarica in PDF</button></div></div>'));
   if(!IMP.resp_fatture)el.appendChild(h('<div class="card hot"><p style="margin:0">Non è stato ancora scelto chi emette le fatture: lo sceglie l’amministratore in Utenti e accessi → Impostazioni.</p></div>'));
   const aperte=L1.filter(r=>['Da emettere','In lavorazione'].includes(r.dati.stato));const emesse=L1.filter(r=>r.dati.stato==='Emessa');
@@ -3765,6 +3788,60 @@ const _dopoAvvio9=dopoAvvio;dopoAvvio=function(){let nid=null;try{nid=new URLSea
   if(SW_OK)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.nid)segnaDaNotifica(e.data.nid);});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')chiudiPannelli();});
   document.addEventListener('click',e=>{if(!NPAN||NPAN.hidden)return;if(!e.target.isConnected||NPAN.contains(e.target)||e.target.closest('#bell')||e.target.closest('.sdlg'))return;chiudiPannelli();});};
+
+/* ================= Bruna27 · Economia riorganizzata: barra con 8 voci e sottosezioni (le pagine e i dati restano gli stessi) ================= */
+const ECO_G=[
+  {k:'b26',t:'Bilancio 2026',ic:'pie',p:[['s-bil','Bilancio'],['s-c26','Costi 2026'],['s-r26','Ricavi 2026']]},
+  {k:'b27',t:'Bilancio 2027',ic:'trend',p:[['v-p27','Bilancio di previsione'],['s-pre','Costi 2027'],['s-ric','Ricavi 2027'],['v-cv','Schede delle voci']]},
+  {k:'voci',t:'Costi e ricavi per voce',ic:'eq',p:[['v-voci','Costi e ricavi per voce']]},
+  {k:'fatt',t:'Fatture',ic:'doc',p:[['v-fatt','Fatture'],['v-femit','Fatture da emettere']]},
+  {k:'car',t:'Carità',ic:'heart',p:[['s-car','Fondo e contributi'],['v-care','Erogazioni']]},
+  {k:'pil',t:'PIL generato',ic:'pin',p:[['s-ter','PIL generato']]},
+  {k:'forn',t:'Fornitori',ic:'users',p:[['s-for','Fornitori 2026'],['v-for27','Fornitori 2027'],['v-pag','Pagamenti fornitori']]},
+  {k:'prev',t:'Preventivi',ic:'doc',p:[['v-prev','Preventivi']]}];
+const ECO_ID={};ECO_G.forEach(g=>g.p.forEach(([id])=>ECO_ID[id]=g));
+// nomi più chiari, anche nella pagina dei permessi
+[['v-p27','Bilancio di previsione 2027'],['s-pre','Costi 2027'],['s-ric','Ricavi 2027'],['v-voci','Costi e ricavi per voce'],['s-car','Carità: fondo e contributi']].forEach(([k,t])=>{if(VOCE[k])VOCE[k].t=t;const s=SEZ.find(x=>x.k==='eco');const v=s&&s.v.find(x=>x[0]===k);if(v)v[1]=t;});
+// Costi 2026 e Ricavi 2026: due viste nuove sugli stessi dati del Bilancio 2026, con gli stessi permessi
+VOCE['s-c26']={t:'Costi 2026',sec:'eco',ic:'down'};VOCE['s-r26']={t:'Ricavi 2026',sec:'eco',ic:'up'};
+const _canSee10=CTX.canSee,_canEdit10=CTX.canEdit;const AL10={'s-c26':'s-bil','s-r26':'s-bil'};
+CTX.canSee=k=>_canSee10(AL10[k]||k);CTX.canEdit=k=>_canEdit10(AL10[k]||k);
+ensureSec('s-c26');ensureSec('s-r26');
+function ecoVisibili(g){return g.p.filter(([id])=>canOpen(id));}
+function primaDi(g){const v=ecoVisibili(g);return v.length?v[0][0]:null;}
+function ecoBar(id){const g0=ECO_ID[id];const gs=ECO_G.filter(g=>primaDi(g));
+  const w=h('<div class="ecobar"><nav class="ecotop" aria-label="Sezioni di Economia">'+gs.map(g=>'<button type="button" data-go="'+primaDi(g)+'"'+(g===g0?' aria-current="page"':'')+'>'+svg(IC2[g.ic]||IC2.doc)+'<span>'+esc(g.t)+'</span></button>').join('')+'</nav>'+
+    (g0&&ecoVisibili(g0).length>1?'<div class="seg wrap ecosub" role="tablist">'+ecoVisibili(g0).map(([pid,t])=>'<button type="button" role="tab" data-go="'+pid+'" aria-pressed="'+(pid===id)+'" aria-selected="'+(pid===id)+'">'+esc(t)+'</button>').join('')+'</div>':'')+'</div>');
+  return w;}
+function mettiEcoBar(id){if(!ECO_ID[id])return;const el=document.getElementById(id);if(!el)return;const old=el.querySelector(':scope > .ecobar');if(old)old.remove();
+  const b=ecoBar(id);const back=el.querySelector(':scope > .back');if(back)back.after(b);else el.insertBefore(b,el.firstChild);
+  const a=b.querySelector('.ecotop [aria-current]');if(a)requestAnimationFrame(()=>{try{a.scrollIntoView({block:'nearest',inline:'center'});}catch(e){}});}
+const _addBack10=addBack;addBack=function(id){_addBack10(id);mettiEcoBar(id);};
+// la pagina Economia: la barra e le otto voci
+const _renderSec10=renderSec;renderSec=function(s){if(s.k!=='eco')return _renderSec10(s);const el=document.getElementById('sec-eco');el.innerHTML='';
+  el.appendChild(h('<div class="sh"><span class="eyb">Economia</span><h2>Economia</h2><p>Scegli una sezione per vederne i contenuti.</p></div>'));
+  const gs=ECO_G.filter(g=>primaDi(g));const grid=h('<div class="tilegrid eco8"></div>');
+  gs.forEach((g,i)=>{const sub=ecoVisibili(g).length>1?ecoVisibili(g).map(x=>x[1]).join(' · '):(tileInfo(g.p[0][0])||'');grid.appendChild(h('<button type="button" class="vtile'+(i===0?' first':'')+'" data-go="'+primaDi(g)+'"><span class="vic">'+svg(IC2[g.ic]||IC2.doc)+'</span><span class="vt">'+esc(g.t)+'</span>'+(sub?'<span class="vs">'+esc(sub)+'</span>':'')+'</button>'));});
+  if(!gs.length)grid.appendChild(h('<div class="card soon"><p>Non hai ancora pagine di Economia.</p></div>'));el.appendChild(grid);};
+SEZ.forEach(s=>{if(s.k==='eco')R['sec-eco']=()=>renderSec(s);});
+// Costi 2026
+R['s-c26']=function(){const el=document.getElementById('s-c26');el.innerHTML='';
+  el.appendChild(h('<div class="sh"><span class="eyb">Bilancio 2026</span><h2>Costi 2026</h2><p>Quanto è stato speso nel 2026, area per area. Tocca un’area per vedere le singole voci.</p></div>'));
+  el.appendChild(h('<div class="big3"><div class="kpi"><span>Costi 2026</span><b>'+eur(D.tot26)+'</b></div><div class="kpi"><span>Aree</span><b>'+D.bil.length+'</b></div><div class="kpi dark"><span>Ancora da pagare ai fornitori</span><b>'+eur(D.forn.reduce((s,f)=>s+(f.deb||0),0))+'</b></div></div>'));
+  const max=Math.max(...D.bil.map(a=>a.t));
+  D.bil.slice().sort((a,b)=>b.t-a.t).forEach(a=>{const vmax=Math.max(...a.voci.map(v=>v.v),1);
+    el.appendChild(h('<details class="card ar10"><summary><span class="t">'+esc(a.n)+'</span><b>'+eur(a.t)+'</b><span class="pc">'+(D.tot26?Math.round(a.t/D.tot26*1000)/10:0).toLocaleString('it-IT')+'%</span><i style="--w:'+(a.t/max*100)+'%"></i></summary><div class="rows">'+a.voci.map((v,vi)=>'<div class="row" data-ed="bilV:'+a.id+'.'+vi+'"><span class="n">'+esc(v.n)+'</span><span class="num">'+eur(v.v)+'</span><div class="d">'+bar(v.v,vmax)+'</div></div>').join('')+'</div></details>'));});
+  el.appendChild(h('<p class="muted small">Per modificare un importo usa «✎ Modifica» in alto (se hai il permesso): il totale e il Bilancio si aggiornano da soli.</p>'));};
+// Ricavi 2026
+R['s-r26']=function(){const el=document.getElementById('s-r26');el.innerHTML='';
+  el.appendChild(h('<div class="sh"><span class="eyb">Bilancio 2026</span><h2>Ricavi 2026</h2><p>Le entrate del 2026, voce per voce. Sono la base da cui partono i Ricavi 2027.</p></div>'));
+  const own=D.ric.filter(r=>r.own).reduce((a,r)=>a+r.v26,0);
+  el.appendChild(h('<div class="big3"><div class="kpi"><span>Ricavi 2026</span><b>'+eur(D.ric26)+'</b></div><div class="kpi"><span>Entrate proprie</span><b>'+eur(own)+'</b></div><div class="kpi dark"><span>Risultato 2026</span><b class="'+(D.ric26-D.tot26<0?'neg':'pos')+'">'+eur(D.ric26-D.tot26)+'</b></div></div>'));
+  const vmax=Math.max(...D.ric.map(r=>r.v26),1);
+  el.appendChild(h('<section class="card"><div class="rows">'+D.ric.slice().sort((a,b)=>b.v26-a.v26).map(r=>'<div class="row"><span class="n">'+esc(r.n)+(r.own?' <span class="chip2">entrata propria</span>':'')+'</span><span class="num">'+eur(r.v26)+'</span><div class="d">'+bar(r.v26,vmax)+'</div></div>').join('')+'</div></section>'));
+  el.appendChild(h('<p class="muted small">Gli importi del 2027 si scelgono in Bilancio 2027 → Ricavi 2027.</p>'));};
+// richieste di fattura: solo chi può modificare l'area Economia (Fatture da emettere)
+const puoFatt=()=>CTX.canEdit('v-femit');
 
 /* ---------- avvio ---------- */
 autoLeve();
