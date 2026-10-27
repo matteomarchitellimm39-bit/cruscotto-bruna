@@ -133,7 +133,7 @@ renderEventi13=function(){const el=document.getElementById('sec-evt');const E=al
   const can=CTX.canEdit('s-ev');
   const cards=L.slice(0,80).map(e=>{const days=evDays(e)||[];const dd=new Date(days[0]+'T12:00:00');const r=evResp(e);const av=evAvanz(e);const cr=evCrit(e);const sc=evScad(e);
     return {key:String(e.id),n:e.n,t:dd.toLocaleDateString('it-IT',{day:'numeric',month:'long'}),c:evCol(e),ic:e.p==='I'?'B':'PW',k:TIPO(e)+(days.length>1?' · '+days.length+' giorni':''),tg:labS(APPR,evAppr(e)),
-      s:[labS(PROG,evProg(e)),sc,cr.length?'⚠ '+cr.length+' da sistemare':''].filter(Boolean).join(' · '),lab:e.n,
+      s:[av.l==='attività organizzative'?av.pc+'% pronto':'',labS(PROG,evProg(e)),sc,cr.length?'⚠ '+cr.length+' da sistemare':''].filter(Boolean).join(' · '),lab:e.n,
       det:box=>{box.innerHTML=(e.desc?'<p style="margin:0 0 8px">'+esc(e.desc)+'</p>':'')+
         righe([['Data e ora',esc(dLab(days))+esc(oraLab(e))],['Tipo',esc(TIPO(e))],['Approvazione',esc(labS(APPR,evAppr(e)))],['Programmazione',esc(labS(PROG,evProg(e)))],['Bilancio',evOn(e)?'incluso · anno 2027':'non incluso'],['Responsabile',r?esc(r.n):'<span class="neg">da scegliere</span>'],['Luogo',esc(e.luogo||'—')],['Costo',evOn(e)?eur(evCost(e)):'escluso dalla previsione'],sc?['Quando',esc(sc)]:null])+
         '<div class="b26v ev14av" style="--c:'+evCol(e)+'"><span>Avanzamento<em>'+esc(av.l||'permessi e adempimenti')+': '+av.f+' su '+av.t+'</em></span><b>'+av.pc+'%</b><i style="--w:'+av.pc+'%"></i></div>'+

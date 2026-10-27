@@ -132,7 +132,7 @@ async function creaEvento(){const me=CTX.user.id;const id='C'+Date.now().toStrin
   const ore=CW.oi?(CW.oi+(CW.of?'–'+CW.of:'')):'';
   S.evc=(S.evc||[]).concat([{id,n:CW.n,p:CW.p,d1:CW.d1,d2:CW.d2&&CW.d2>=CW.d1?CW.d2:CW.d1,ora:ore,luogo:CW.luogo,costo:CW.costo,inPrev:CW.inPrev,st:'idea',appr:'proposta',prog:'attivo',desc:CW.desc,obiettivi:CW.obi,note:CW.note,resp:CW.resp,creatore:me,creato:ora.toISOString(),scade:sc,docs,esig,anno:+(CW.d1.slice(0,4)),ref:'',perm:{}}]);
   changed();
-  const rows=[];ESIG.forEach(([k,n])=>{const g=esig[k];if(g.serve)g.att.forEach(t=>rows.push({per:g.resp,titolo:CW.n+' · '+n+': '+t,area:'evento',priorita:'Alta',evento_id:id,scade_il:sc,entro:sc.slice(0,10)}));});
+  const rows=[];ESIG.forEach(([k,n])=>{const g=esig[k];if(g.serve)g.att.forEach(t=>rows.push({per:g.resp,titolo:CW.n+' · '+n+': '+t,area:'evento',fase:'scheda',priorita:'Alta',evento_id:id,scade_il:sc,entro:sc.slice(0,10)}));});
   if(rows.length){const {error}=await CTX.sb.from('compiti').insert(rows);if(error)throw new Error(error.message);}
   if(CW.resp!==me)await avvisaUtente(CW.resp,'Sei il responsabile principale dell’evento «'+CW.n+'».','sec-evt#'+id);
   await loadSocial();const n=CW.n;CW=null;CSELK['sec-evt']=id;EVQ='';EVFS='tutti';EVFC='tutti';EVFD='tutti';EVFR='tutti';go('sec-evt');window.scrollTo(0,0);

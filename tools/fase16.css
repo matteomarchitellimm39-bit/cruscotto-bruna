@@ -1,0 +1,29 @@
+/* Fase C · attività organizzative e percentuale */
+.ev16{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ev16:empty{display:none}
+.ev16>.b26lab{margin:0}
+.ev16pc{position:relative;background:#EEF3FF;border-radius:16px;padding:12px 14px 16px;overflow:hidden}
+.ev16pc>div{display:flex;align-items:center;gap:12px}
+.ev16pc b{font-size:28px;line-height:1}
+.ev16pc span{font-size:14.5px;color:#3B4660}
+.ev16pc span b{font-size:inherit}
+.ev16pc i{position:absolute;left:0;bottom:0;height:6px;width:var(--w);background:var(--navy);border-radius:0 3px 3px 0}
+.ev16pc.ok{background:#E8F6EF}.ev16pc.ok>div>b{color:#1E7F55}.ev16pc.ok i{background:#1E7F55}
+.ev16how{background:#F6F7FB;border-radius:14px;padding:8px 12px}
+.ev16how summary{font-weight:700;cursor:pointer;font-size:15px}
+.ev16t{background:#fff;border:1px solid #EEF0F5;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.ev16t.ok{background:#FAFCFB}
+.ev16th{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start}
+.ev16th .chips{display:flex;gap:4px;flex-wrap:wrap}
+.ev16c{margin:0;font-size:14px;color:#3B4660}
+.ev16mini{margin:2px 0 0}
+.ev16home{gap:10px}
+.ev16hr{position:relative;display:flex;align-items:center;gap:10px;width:100%;border:1px solid #EEF0F5;background:#fff;border-radius:16px;padding:10px 12px 14px 16px;font:inherit;text-align:left;cursor:pointer;color:#16161D;overflow:hidden}
+.ev16hr::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.ev16hr i{position:absolute;left:16px;right:12px;bottom:6px;height:4px;border-radius:2px;background:#EEF0F5}
+.ev16hr i::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--c);border-radius:2px}
+.ev16hn{flex:1;display:flex;flex-direction:column;min-width:0}
+.ev16hn b{font-size:15.5px}
+.ev16hn em{font-style:normal;font-size:13px;color:var(--muted)}
+.ev16hp{font-weight:800;font-size:18px}
+.sdlg .ck{display:flex;gap:10px;align-items:flex-start;justify-content:flex-start;text-align:left;font-size:16px;margin:4px 0}.sdlg .ck input{flex:none;width:22px;height:22px;margin:2px 0 0}
