@@ -51,6 +51,9 @@ on conflict (id) do update set public = true, file_size_limit = 2097152, allowed
 drop policy if exists p_foto_scrivi on storage.objects;
 create policy p_foto_scrivi on storage.objects for insert to authenticated
   with check (bucket_id = 'foto' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists p_foto_leggi on storage.objects;
+create policy p_foto_leggi on storage.objects for select to authenticated
+  using (bucket_id = 'foto');
 drop policy if exists p_foto_cambia on storage.objects;
 create policy p_foto_cambia on storage.objects for update to authenticated
   using (bucket_id = 'foto' and (storage.foldername(name))[1] = auth.uid()::text);

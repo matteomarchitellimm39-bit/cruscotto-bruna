@@ -15,7 +15,7 @@ function cardFoto(){const me=CTX.user.id;const p=PEOPLE[me]||{};
   c.querySelector('input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;let blob;try{blob=await quadrata(f,400);}catch(x){stEl.textContent='Non riesco a leggere questa immagine.';return;}
     const prev=URL.createObjectURL(blob);
     sheet('La tua nuova foto','<div class="fotoprev"><img src="'+prev+'" alt="Anteprima della foto"></div><p class="muted small">Così la vedranno gli altri. Se va bene, premi Salva.</p>','Salva',async()=>{
-      const path=me+'/'+Date.now()+'.jpg';const up=await CTX.sb.storage.from('foto').upload(path,blob,{contentType:'image/jpeg',upsert:true});if(up.error)throw new Error(up.error.message);
+      const path=me+'/'+Date.now()+'.jpg';const up=await CTX.sb.storage.from('foto').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(up.error)throw new Error(up.error.message);
       const url=CTX.sb.storage.from('foto').getPublicUrl(path).data.publicUrl;const {error}=await CTX.sb.rpc('imposta_foto',{url});if(error)throw new Error(error.message);
       const vecchia=p.foto;PEOPLE[me]=Object.assign(PEOPLE[me]||{},{foto:url});aggiornaAvt();renderMe();stEl.textContent='Foto salvata.';
       if(vecchia){const k=vecchia.split('/object/public/foto/')[1];if(k)CTX.sb.storage.from('foto').remove([decodeURIComponent(k)]).catch(()=>{});}});});
