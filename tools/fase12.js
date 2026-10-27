@@ -1,11 +1,11 @@
 /* ================= Bruna27 · le altre sezioni di Economia a carte (stesso schema del Bilancio 2026) ================= */
 // Schema comune: a sinistra il riassunto, al centro carte colorate che scorrono, sotto il dettaglio della carta scelta.
 // Per modificare tutto come prima resta la «vista completa» di ogni pagina.
-const CSEL={},VISTA={};
+const CSEL={},VISTA={},CSELK={};
 const PAL12=['#2F63F0','#2A9D8F','#8A6CF0','#E2A23A','#5AA0F2','#182C6B','#D9534F','#3F8F4F','#94A3C0','#B5527E'];
 const OK12='#3F8F4F',KO12='#D9534F',GOLD12='#E2A23A',BLU12='#2F63F0';
 function sumRows(rows){return rows.map(([cls,ic,l,v,vc])=>'<div class="b26r"><span class="ar '+(cls||'')+'">'+ic+'</span><span>'+l+'</span><b class="'+(vc||'')+'">'+v+'</b></div>').join('');}
-function cartePagina(el,cfg){el.innerHTML='';const id=cfg.id;const L=cfg.cards||[];let sel=CSEL[id]||0;if(sel>=L.length)sel=0;
+function cartePagina(el,cfg){el.innerHTML='';const id=cfg.id;const L=cfg.cards||[];let sel=CSEL[id]||0;if(CSELK[id]!=null){const ki=L.findIndex(x=>x.key===CSELK[id]);if(ki>=0)sel=ki;}if(sel>=L.length)sel=0;if(L[sel]&&L[sel].key!=null)CSELK[id]=L[sel].key;
   const w=h('<div class="b26 c12"><aside class="b26sum">'+sumRows(cfg.sum)+(cfg.note?'<div class="b26reg">'+cfg.note+'</div>':'')+'<div class="c12sbtn"></div><button type="button" class="bb soft sm pdfx">⤓ Scarica in PDF</button></aside>'+
     '<div class="b26main"><div class="sh"><span class="eyb">'+esc(cfg.ey||'Economia')+'</span><h2>'+esc(cfg.title)+'</h2><p>'+esc(cfg.sub||'')+'</p></div>'+
     '<div class="b26mini">'+(cfg.mini||[]).map(([l,v,c])=>'<div><span>'+l+'</span><b class="'+(c||'')+'">'+v+'</b></div>').join('')+'</div><div class="c12act"></div>'+
@@ -19,8 +19,8 @@ function cartePagina(el,cfg){el.innerHTML='';const id=cfg.id;const L=cfg.cards||
   const det=()=>{const x=L[sel];const d=w.querySelector('.c12d'),s=w.querySelector('.c12s');if(!x){d.hidden=true;s.hidden=true;return;}
     d.hidden=false;w.querySelector('.c12d .b26lab').textContent=x.lab||x.n;const box=w.querySelector('.c12det');box.innerHTML='';x.det(box);
     if(x.side){s.hidden=false;w.querySelector('.c12sl').textContent=x.sideLab||'';const sb=w.querySelector('.c12side');sb.innerHTML='';x.side(sb);}else s.hidden=true;};
-  w.querySelectorAll('.b26cd').forEach(b=>b.addEventListener('click',()=>{sel=CSEL[id]=+b.dataset.i;w.querySelectorAll('.b26cd').forEach(z=>{const on=z===b;z.classList.toggle('on',on);z.setAttribute('aria-pressed',String(on));});det();try{b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});}catch(e){}}));
-  if(cfg.seg)w.querySelectorAll('.c12seg [data-v]').forEach(b=>b.addEventListener('click',()=>{CSEL[id]=0;cfg.seg.set(b.dataset.v);R[id]();addBack(id);}));
+  w.querySelectorAll('.b26cd').forEach(b=>b.addEventListener('click',()=>{sel=CSEL[id]=+b.dataset.i;CSELK[id]=L[sel]&&L[sel].key!=null?L[sel].key:null;w.querySelectorAll('.b26cd').forEach(z=>{const on=z===b;z.classList.toggle('on',on);z.setAttribute('aria-pressed',String(on));});det();try{b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});}catch(e){}}));
+  if(cfg.seg)w.querySelectorAll('.c12seg [data-v]').forEach(b=>b.addEventListener('click',()=>{CSEL[id]=0;CSELK[id]=null;cfg.seg.set(b.dataset.v);R[id]();addBack(id);}));
   const cs=w.querySelector('.b26cards');if(cs){const nl=w.querySelector('.b26nav.l'),nr=w.querySelector('.b26nav.r');const upd=()=>{nl.hidden=cs.scrollLeft<8;nr.hidden=cs.scrollLeft+cs.clientWidth>=cs.scrollWidth-8;};
     nl.addEventListener('click',()=>cs.scrollBy({left:-cs.clientWidth*.8,behavior:'smooth'}));nr.addEventListener('click',()=>cs.scrollBy({left:cs.clientWidth*.8,behavior:'smooth'}));cs.addEventListener('scroll',upd,{passive:true});requestAnimationFrame(upd);
     const on=cs.querySelector('.b26cd.on');if(on&&sel>0)requestAnimationFrame(()=>{try{on.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}});}

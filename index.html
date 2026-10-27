@@ -1011,6 +1011,9 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 .sim13 .tile.sim13pil{background:var(--navy)!important;border-color:var(--navy)}.sim13 .tile.sim13pil .l{color:#B9BAC6}.sim13 .tile.sim13pil .v{color:#7FD6AE}
 .sim13>.tiles .tile:last-child,.sim13res .tiles .tile:nth-last-child(-n+1){background:#fff;color:var(--fg)}
 @media(max-width:1023px){.sim13 .tile .v{font-size:19px}.sim13 .tile{padding:10px 12px}}
+.ev13flag{margin:12px 0 2px;font-size:16px;font-weight:650}
+.ev13act{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid #F0F1F5}
+.c12b .bb.ko,.ev13act .bb.ko{color:#B8433F;border-color:#F1C9C5}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -3992,11 +3995,11 @@ if(typeof setEdit==='function'){const _setEdit11=setEdit;setEdit=function(on){_s
 /* ================= Bruna27 · le altre sezioni di Economia a carte (stesso schema del Bilancio 2026) ================= */
 // Schema comune: a sinistra il riassunto, al centro carte colorate che scorrono, sotto il dettaglio della carta scelta.
 // Per modificare tutto come prima resta la «vista completa» di ogni pagina.
-const CSEL={},VISTA={};
+const CSEL={},VISTA={},CSELK={};
 const PAL12=['#2F63F0','#2A9D8F','#8A6CF0','#E2A23A','#5AA0F2','#182C6B','#D9534F','#3F8F4F','#94A3C0','#B5527E'];
 const OK12='#3F8F4F',KO12='#D9534F',GOLD12='#E2A23A',BLU12='#2F63F0';
 function sumRows(rows){return rows.map(([cls,ic,l,v,vc])=>'<div class="b26r"><span class="ar '+(cls||'')+'">'+ic+'</span><span>'+l+'</span><b class="'+(vc||'')+'">'+v+'</b></div>').join('');}
-function cartePagina(el,cfg){el.innerHTML='';const id=cfg.id;const L=cfg.cards||[];let sel=CSEL[id]||0;if(sel>=L.length)sel=0;
+function cartePagina(el,cfg){el.innerHTML='';const id=cfg.id;const L=cfg.cards||[];let sel=CSEL[id]||0;if(CSELK[id]!=null){const ki=L.findIndex(x=>x.key===CSELK[id]);if(ki>=0)sel=ki;}if(sel>=L.length)sel=0;if(L[sel]&&L[sel].key!=null)CSELK[id]=L[sel].key;
   const w=h('<div class="b26 c12"><aside class="b26sum">'+sumRows(cfg.sum)+(cfg.note?'<div class="b26reg">'+cfg.note+'</div>':'')+'<div class="c12sbtn"></div><button type="button" class="bb soft sm pdfx">⤓ Scarica in PDF</button></aside>'+
     '<div class="b26main"><div class="sh"><span class="eyb">'+esc(cfg.ey||'Economia')+'</span><h2>'+esc(cfg.title)+'</h2><p>'+esc(cfg.sub||'')+'</p></div>'+
     '<div class="b26mini">'+(cfg.mini||[]).map(([l,v,c])=>'<div><span>'+l+'</span><b class="'+(c||'')+'">'+v+'</b></div>').join('')+'</div><div class="c12act"></div>'+
@@ -4010,8 +4013,8 @@ function cartePagina(el,cfg){el.innerHTML='';const id=cfg.id;const L=cfg.cards||
   const det=()=>{const x=L[sel];const d=w.querySelector('.c12d'),s=w.querySelector('.c12s');if(!x){d.hidden=true;s.hidden=true;return;}
     d.hidden=false;w.querySelector('.c12d .b26lab').textContent=x.lab||x.n;const box=w.querySelector('.c12det');box.innerHTML='';x.det(box);
     if(x.side){s.hidden=false;w.querySelector('.c12sl').textContent=x.sideLab||'';const sb=w.querySelector('.c12side');sb.innerHTML='';x.side(sb);}else s.hidden=true;};
-  w.querySelectorAll('.b26cd').forEach(b=>b.addEventListener('click',()=>{sel=CSEL[id]=+b.dataset.i;w.querySelectorAll('.b26cd').forEach(z=>{const on=z===b;z.classList.toggle('on',on);z.setAttribute('aria-pressed',String(on));});det();try{b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});}catch(e){}}));
-  if(cfg.seg)w.querySelectorAll('.c12seg [data-v]').forEach(b=>b.addEventListener('click',()=>{CSEL[id]=0;cfg.seg.set(b.dataset.v);R[id]();addBack(id);}));
+  w.querySelectorAll('.b26cd').forEach(b=>b.addEventListener('click',()=>{sel=CSEL[id]=+b.dataset.i;CSELK[id]=L[sel]&&L[sel].key!=null?L[sel].key:null;w.querySelectorAll('.b26cd').forEach(z=>{const on=z===b;z.classList.toggle('on',on);z.setAttribute('aria-pressed',String(on));});det();try{b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});}catch(e){}}));
+  if(cfg.seg)w.querySelectorAll('.c12seg [data-v]').forEach(b=>b.addEventListener('click',()=>{CSEL[id]=0;CSELK[id]=null;cfg.seg.set(b.dataset.v);R[id]();addBack(id);}));
   const cs=w.querySelector('.b26cards');if(cs){const nl=w.querySelector('.b26nav.l'),nr=w.querySelector('.b26nav.r');const upd=()=>{nl.hidden=cs.scrollLeft<8;nr.hidden=cs.scrollLeft+cs.clientWidth>=cs.scrollWidth-8;};
     nl.addEventListener('click',()=>cs.scrollBy({left:-cs.clientWidth*.8,behavior:'smooth'}));nr.addEventListener('click',()=>cs.scrollBy({left:cs.clientWidth*.8,behavior:'smooth'}));cs.addEventListener('scroll',upd,{passive:true});requestAnimationFrame(upd);
     const on=cs.querySelector('.b26cd.on');if(on&&sel>0)requestAnimationFrame(()=>{try{on.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}});}
@@ -4222,10 +4225,10 @@ function renderEventi13(){const el=document.getElementById('sec-evt');const E=al
   const SE=VD['s-ev']||[];const can=CTX.canEdit('s-ev');
   const cards=L.slice(0,60).map(e=>{const days=evDays(e)||[];const dd=new Date(days[0]+'T12:00:00');const on1=evOn(e);
     const rec=SE.find(x=>x.dati.evid===String(e.id));const d=rec?rec.dati:{};
-    return {n:e.n,t:dd.toLocaleDateString('it-IT',{day:'numeric',month:'long'}),c:on1?(PCOL[e.p]||'#2F63F0'):'#94A3C0',ic:e.p==='I'?'B':'PW',k:(e.p==='I'?'La Bruna':'Passion Week')+(days.length>1?' · '+days.length+' giorni':''),tg:!on1?'Escluso':st(e)==='ok'?'Confermato':'',
+    return {key:String(e.id),n:e.n,t:dd.toLocaleDateString('it-IT',{day:'numeric',month:'long'}),c:on1?(PCOL[e.p]||'#2F63F0'):'#94A3C0',ic:e.p==='I'?'B':'PW',k:(e.p==='I'?'La Bruna':'Passion Week')+(days.length>1?' · '+days.length+' giorni':''),tg:!on1?'Escluso':st(e)==='ok'?'Confermato':'',
       s:[e.luogo||'',on1?km(evCost(e))+' €':''].filter(Boolean).join(' · '),lab:e.n,
       det:box=>{box.innerHTML=(e.desc?'<p style="margin:0 0 8px">'+esc(e.desc)+'</p>':'')+righe([['Date',esc(typeof dLab==='function'?dLab(days):days.join(', '))],e.ora?['Orario',esc(e.ora)]:null,['Luogo',esc(e.luogo||'—')],['Programma',e.p==='I'?'La Bruna':'Passion Week'],['Costo',on1?eur(evCost(e)):'escluso dalla previsione'],['Stato',st(e)==='ok'?'confermato':'da confermare']]);
-        bottoni(box,[['Apri la scheda',()=>schedaEvento(e),true],['Scheda tecnica',()=>apriFiche(e)],can?['Cosa serve?',()=>cosaServe(e)]:null,canOpen('p-crea')?['Simula l’impatto',()=>go('p-crea')]:null]);},
+        azioniEvento(e,box);bottoni(box,[['Apri la scheda',()=>schedaEvento(e),true],['Scheda tecnica',()=>apriFiche(e)],can?['Cosa serve?',()=>cosaServe(e)]:null,canOpen('p-crea')?['Simula l’impatto',()=>go('p-crea')]:null]);},
       sideLab:'Percorso, persone e fornitori',side:box=>{const P=typeof vperc==='function'?vperc():[];const pc=d.percorso&&P.find(x=>x.id===d.percorso);
         box.innerHTML=righe([['Percorso',pc?esc(pc.dati.nome):'nessuno'],['Responsabile',d.resp?esc(nome(d.resp)):'—']])+((d.fornitori||[]).length?'<p class="b26lab" style="margin:10px 0 4px">Fornitori</p>'+d.fornitori.map(f=>'<div class="c12li"><span class="chip2">'+esc(f.stato||'')+'</span><span>'+esc(f.servizio)+'<small>'+esc(f.fornitore||'da trovare')+'</small></span><b>'+(f.importo?eur(+f.importo):'')+'</b></div>').join(''):'');
         if(pc&&canOpen('v-perc')){const b=h('<button type="button" class="lnk2">Apri il percorso ›</button>');b.addEventListener('click',()=>go('v-perc'));box.appendChild(b);}}};});
@@ -4264,6 +4267,42 @@ R['p-crea']=function(){const el=document.getElementById('p-crea');el.innerHTML='
 const _ev13=R['s-ev'];R['s-ev']=function(){_ev13();const el=document.getElementById('s-ev');const f=el.querySelector('#nadd');const c=f&&f.closest('.card');if(c&&!editMode)c.remove();
   if(canOpen('p-crea')&&!el.querySelector('.crea13btn')){const b=h('<button type="button" class="bb dark sm crea13btn">+ Crea un evento</button>');b.addEventListener('click',()=>go('p-crea'));const sh=el.querySelector('.sh');if(sh)sh.after(b);}};
 const _go13=go;go=function(id){if(id==='v-crea')id='p-crea';return _go13(id);};
+
+/* --- Modifica ed eliminazione degli eventi già creati, con la scelta se contano nel Bilancio di previsione 2027 --- */
+// eventi della base: le modifiche stanno in S.ev[id] (data, ora, luogo, nome, eliminato); quelli creati a mano in S.evc
+allEv=function(){return D.ev.filter(e=>!evS(e.id).del).map(e=>{const s=evS(e.id);return (s.ora||s.luogo||s.nome)?Object.assign({},e,{ora:s.ora||e.ora,luogo:s.luogo||e.luogo,n:s.nome||e.n}):e;}).concat((S.evc||[]).map(c=>Object.assign({custom:true},c)));};
+const vocEv=e=>e.custom?null:VOCI[e.vo];
+const costoFisso=e=>{const v=vocEv(e);return !!(v&&(v.sub||v.auto));};
+function setEvS(id,o){S.ev=Object.assign({},S.ev);S.ev[id]=Object.assign({},S.ev[id]||{},o);}
+function inBilancio(e,on){if(e.custom){S.evc=S.evc.map(c=>c.id===e.id?Object.assign({},c,{inPrev:on}):c);}else{const v=vocEv(e);if(v)setVo(v.id,'on',on);}changed();
+  stEl.textContent=on?'«'+e.n+'» ora conta nel Bilancio di previsione 2027.':'«'+e.n+'» non conta più nel Bilancio di previsione 2027.';}
+function modificaEvento(e){const days=evDays(e)||[];const v=vocEv(e);const fisso=costoFisso(e);const can=CTX.canEdit('s-ev');const canB=e.custom?can:CTX.canEdit('s-pre');
+  const dl=sheet('Modifica «'+e.n+'»','<div class="ctl"><label for="me_n">Nome dell’evento</label><input type="text" id="me_n" value="'+esc(e.n)+'"></div>'+
+    (e.custom?'<div class="ctl"><span class="lab">Programma</span><div class="seg wrap" id="me_p"><button type="button" data-v="I" aria-pressed="'+(e.p==='I')+'">La Bruna</button><button type="button" data-v="II" aria-pressed="'+(e.p!=='I')+'">Passion Week</button></div></div>':'')+
+    '<div class="when"><div class="ctl"><label for="me_d1">Dal</label><input type="date" id="me_d1" value="'+esc(days[0]||'')+'"></div><div class="ctl"><label for="me_d2">Al</label><input type="date" id="me_d2" value="'+esc(days[days.length-1]||'')+'"></div></div>'+
+    '<div class="ctl"><label for="me_o">Orario (se serve)</label><input type="text" id="me_o" value="'+esc(e.ora||'')+'" placeholder="Per esempio: 21:00 oppure 18:00–23:00"></div>'+
+    '<div class="ctl"><label for="me_l">Luogo</label><input type="text" id="me_l" value="'+esc(e.luogo||'')+'"></div>'+
+    '<div class="ctl"><label for="me_c">Costo (€)</label><input type="number" id="me_c" min="0" step="100" value="'+Math.round(evCost(e))+'"'+(fisso||!canB?' disabled':'')+'>'+(fisso?'<span class="muted small">Questo costo è la somma di più voci: si cambia in Economia → Bilancio 2027 → Costi.</span>':'')+'</div>'+
+    '<label class="ck"><input type="checkbox" id="me_b"'+(evOn(e)?' checked':'')+(canB?'':' disabled')+'> Incide sul Bilancio di previsione 2027</label>'+(canB?'':'<p class="muted small">Per cambiare costo e bilancio serve il permesso di modifica su Economia → Costi 2027.</p>'),'Salva',async(x)=>{
+    if(!can){x.querySelector('.smsg').textContent='Non hai il permesso di modificare gli eventi.';return false;}
+    const n=x.querySelector('#me_n').value.trim();if(!n){x.querySelector('.smsg').textContent='Scrivi il nome.';return false;}
+    const d1=x.querySelector('#me_d1').value,d2=x.querySelector('#me_d2').value||d1;if(!d1){x.querySelector('.smsg').textContent='Scegli la data.';return false;}
+    const ora=x.querySelector('#me_o').value.trim(),luogo=x.querySelector('#me_l').value.trim(),costo=Math.max(0,Number(x.querySelector('#me_c').value)||0),on=x.querySelector('#me_b').checked;
+    if(e.custom){const pb=x.querySelector('#me_p [aria-pressed="true"]');S.evc=S.evc.map(c=>c.id===e.id?Object.assign({},c,{n,p:pb?pb.dataset.v:c.p,d1,d2:d2<d1?d1:d2,ora,luogo,costo:canB?costo:c.costo,inPrev:canB?on:c.inPrev}):c);}
+    else{const cambiaData=d1!==days[0]||(d2||d1)!==days[days.length-1];setEvS(e.id,Object.assign({nome:n!==(D.ev.find(z=>z.id===e.id)||{}).n?n:'',ora,luogo},cambiaData?{o:-1,d1,d2:d2<d1?d1:d2}:{}));
+      if(v&&canB){if(!fisso&&costo!==Math.round(evCost(e)))setVo(v.id,'v',costo);if(on!==evOn(e))setVo(v.id,'on',on);}}
+    changed();stEl.textContent='Evento aggiornato.';});
+  dl.querySelectorAll('#me_p button').forEach(b=>b.addEventListener('click',()=>dl.querySelectorAll('#me_p button').forEach(z=>z.setAttribute('aria-pressed',String(z===b)))));}
+function eliminaEvento(e){ask('Eliminare «'+e.n+'»? Sparisce dal calendario'+(evOn(e)?' e il suo costo esce dal Bilancio di previsione 2027':'')+'.','Elimina',async()=>{
+  if(e.custom)S.evc=S.evc.filter(c=>c.id!==e.id);else{setEvS(e.id,{del:true});const v=vocEv(e);if(v&&CTX.canEdit('s-pre'))setVo(v.id,'on',false);}
+  changed();stEl.textContent='Evento eliminato.';});}
+function azioniEvento(e,box){const can=CTX.canEdit('s-ev');const canB=e.custom?can:CTX.canEdit('s-pre');
+  const t=h('<label class="ck ev13flag"><input type="checkbox"'+(evOn(e)?' checked':'')+(canB?'':' disabled')+'> Incide sul Bilancio di previsione 2027</label>');t.querySelector('input').addEventListener('change',ev=>inBilancio(e,ev.target.checked));box.appendChild(t);
+  if(can)bottoni(box,[['Modifica',()=>modificaEvento(e)],['Elimina',()=>eliminaEvento(e)]]);const last=box.lastElementChild;if(can&&last){const del=last.lastElementChild;if(del)del.classList.add('ko');}}
+// nella Panoramica: interruttore del bilancio, Modifica ed Elimina nel dettaglio di ogni evento
+const _renderEventi13b=renderEventi13;renderEventi13=function(){_renderEventi13b();};
+// nelle schede tecniche del Calendario eventi
+const _fiche13=fiche;fiche=function(e){const d=_fiche13(e);const body=d.querySelector('.area-body')||d;const box=h('<div class="ev13act"></div>');azioniEvento(e,box);body.appendChild(box);return d;};
 
 /* ---------- avvio ---------- */
 autoLeve();

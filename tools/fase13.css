@@ -40,3 +40,6 @@
 .sim13 .tile.sim13pil{background:var(--navy)!important;border-color:var(--navy)}.sim13 .tile.sim13pil .l{color:#B9BAC6}.sim13 .tile.sim13pil .v{color:#7FD6AE}
 .sim13>.tiles .tile:last-child,.sim13res .tiles .tile:nth-last-child(-n+1){background:#fff;color:var(--fg)}
 @media(max-width:1023px){.sim13 .tile .v{font-size:19px}.sim13 .tile{padding:10px 12px}}
+.ev13flag{margin:12px 0 2px;font-size:16px;font-weight:650}
+.ev13act{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid #F0F1F5}
+.c12b .bb.ko,.ev13act .bb.ko{color:#B8433F;border-color:#F1C9C5}

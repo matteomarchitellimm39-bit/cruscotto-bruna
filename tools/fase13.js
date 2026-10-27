@@ -59,10 +59,10 @@ function renderEventi13(){const el=document.getElementById('sec-evt');const E=al
   const SE=VD['s-ev']||[];const can=CTX.canEdit('s-ev');
   const cards=L.slice(0,60).map(e=>{const days=evDays(e)||[];const dd=new Date(days[0]+'T12:00:00');const on1=evOn(e);
     const rec=SE.find(x=>x.dati.evid===String(e.id));const d=rec?rec.dati:{};
-    return {n:e.n,t:dd.toLocaleDateString('it-IT',{day:'numeric',month:'long'}),c:on1?(PCOL[e.p]||'#2F63F0'):'#94A3C0',ic:e.p==='I'?'B':'PW',k:(e.p==='I'?'La Bruna':'Passion Week')+(days.length>1?' · '+days.length+' giorni':''),tg:!on1?'Escluso':st(e)==='ok'?'Confermato':'',
+    return {key:String(e.id),n:e.n,t:dd.toLocaleDateString('it-IT',{day:'numeric',month:'long'}),c:on1?(PCOL[e.p]||'#2F63F0'):'#94A3C0',ic:e.p==='I'?'B':'PW',k:(e.p==='I'?'La Bruna':'Passion Week')+(days.length>1?' · '+days.length+' giorni':''),tg:!on1?'Escluso':st(e)==='ok'?'Confermato':'',
       s:[e.luogo||'',on1?km(evCost(e))+' €':''].filter(Boolean).join(' · '),lab:e.n,
       det:box=>{box.innerHTML=(e.desc?'<p style="margin:0 0 8px">'+esc(e.desc)+'</p>':'')+righe([['Date',esc(typeof dLab==='function'?dLab(days):days.join(', '))],e.ora?['Orario',esc(e.ora)]:null,['Luogo',esc(e.luogo||'—')],['Programma',e.p==='I'?'La Bruna':'Passion Week'],['Costo',on1?eur(evCost(e)):'escluso dalla previsione'],['Stato',st(e)==='ok'?'confermato':'da confermare']]);
-        bottoni(box,[['Apri la scheda',()=>schedaEvento(e),true],['Scheda tecnica',()=>apriFiche(e)],can?['Cosa serve?',()=>cosaServe(e)]:null,canOpen('p-crea')?['Simula l’impatto',()=>go('p-crea')]:null]);},
+        azioniEvento(e,box);bottoni(box,[['Apri la scheda',()=>schedaEvento(e),true],['Scheda tecnica',()=>apriFiche(e)],can?['Cosa serve?',()=>cosaServe(e)]:null,canOpen('p-crea')?['Simula l’impatto',()=>go('p-crea')]:null]);},
       sideLab:'Percorso, persone e fornitori',side:box=>{const P=typeof vperc==='function'?vperc():[];const pc=d.percorso&&P.find(x=>x.id===d.percorso);
         box.innerHTML=righe([['Percorso',pc?esc(pc.dati.nome):'nessuno'],['Responsabile',d.resp?esc(nome(d.resp)):'—']])+((d.fornitori||[]).length?'<p class="b26lab" style="margin:10px 0 4px">Fornitori</p>'+d.fornitori.map(f=>'<div class="c12li"><span class="chip2">'+esc(f.stato||'')+'</span><span>'+esc(f.servizio)+'<small>'+esc(f.fornitore||'da trovare')+'</small></span><b>'+(f.importo?eur(+f.importo):'')+'</b></div>').join(''):'');
         if(pc&&canOpen('v-perc')){const b=h('<button type="button" class="lnk2">Apri il percorso ›</button>');b.addEventListener('click',()=>go('v-perc'));box.appendChild(b);}}};});
@@ -101,3 +101,39 @@ R['p-crea']=function(){const el=document.getElementById('p-crea');el.innerHTML='
 const _ev13=R['s-ev'];R['s-ev']=function(){_ev13();const el=document.getElementById('s-ev');const f=el.querySelector('#nadd');const c=f&&f.closest('.card');if(c&&!editMode)c.remove();
   if(canOpen('p-crea')&&!el.querySelector('.crea13btn')){const b=h('<button type="button" class="bb dark sm crea13btn">+ Crea un evento</button>');b.addEventListener('click',()=>go('p-crea'));const sh=el.querySelector('.sh');if(sh)sh.after(b);}};
 const _go13=go;go=function(id){if(id==='v-crea')id='p-crea';return _go13(id);};
+
+/* --- Modifica ed eliminazione degli eventi già creati, con la scelta se contano nel Bilancio di previsione 2027 --- */
+// eventi della base: le modifiche stanno in S.ev[id] (data, ora, luogo, nome, eliminato); quelli creati a mano in S.evc
+allEv=function(){return D.ev.filter(e=>!evS(e.id).del).map(e=>{const s=evS(e.id);return (s.ora||s.luogo||s.nome)?Object.assign({},e,{ora:s.ora||e.ora,luogo:s.luogo||e.luogo,n:s.nome||e.n}):e;}).concat((S.evc||[]).map(c=>Object.assign({custom:true},c)));};
+const vocEv=e=>e.custom?null:VOCI[e.vo];
+const costoFisso=e=>{const v=vocEv(e);return !!(v&&(v.sub||v.auto));};
+function setEvS(id,o){S.ev=Object.assign({},S.ev);S.ev[id]=Object.assign({},S.ev[id]||{},o);}
+function inBilancio(e,on){if(e.custom){S.evc=S.evc.map(c=>c.id===e.id?Object.assign({},c,{inPrev:on}):c);}else{const v=vocEv(e);if(v)setVo(v.id,'on',on);}changed();
+  stEl.textContent=on?'«'+e.n+'» ora conta nel Bilancio di previsione 2027.':'«'+e.n+'» non conta più nel Bilancio di previsione 2027.';}
+function modificaEvento(e){const days=evDays(e)||[];const v=vocEv(e);const fisso=costoFisso(e);const can=CTX.canEdit('s-ev');const canB=e.custom?can:CTX.canEdit('s-pre');
+  const dl=sheet('Modifica «'+e.n+'»','<div class="ctl"><label for="me_n">Nome dell’evento</label><input type="text" id="me_n" value="'+esc(e.n)+'"></div>'+
+    (e.custom?'<div class="ctl"><span class="lab">Programma</span><div class="seg wrap" id="me_p"><button type="button" data-v="I" aria-pressed="'+(e.p==='I')+'">La Bruna</button><button type="button" data-v="II" aria-pressed="'+(e.p!=='I')+'">Passion Week</button></div></div>':'')+
+    '<div class="when"><div class="ctl"><label for="me_d1">Dal</label><input type="date" id="me_d1" value="'+esc(days[0]||'')+'"></div><div class="ctl"><label for="me_d2">Al</label><input type="date" id="me_d2" value="'+esc(days[days.length-1]||'')+'"></div></div>'+
+    '<div class="ctl"><label for="me_o">Orario (se serve)</label><input type="text" id="me_o" value="'+esc(e.ora||'')+'" placeholder="Per esempio: 21:00 oppure 18:00–23:00"></div>'+
+    '<div class="ctl"><label for="me_l">Luogo</label><input type="text" id="me_l" value="'+esc(e.luogo||'')+'"></div>'+
+    '<div class="ctl"><label for="me_c">Costo (€)</label><input type="number" id="me_c" min="0" step="100" value="'+Math.round(evCost(e))+'"'+(fisso||!canB?' disabled':'')+'>'+(fisso?'<span class="muted small">Questo costo è la somma di più voci: si cambia in Economia → Bilancio 2027 → Costi.</span>':'')+'</div>'+
+    '<label class="ck"><input type="checkbox" id="me_b"'+(evOn(e)?' checked':'')+(canB?'':' disabled')+'> Incide sul Bilancio di previsione 2027</label>'+(canB?'':'<p class="muted small">Per cambiare costo e bilancio serve il permesso di modifica su Economia → Costi 2027.</p>'),'Salva',async(x)=>{
+    if(!can){x.querySelector('.smsg').textContent='Non hai il permesso di modificare gli eventi.';return false;}
+    const n=x.querySelector('#me_n').value.trim();if(!n){x.querySelector('.smsg').textContent='Scrivi il nome.';return false;}
+    const d1=x.querySelector('#me_d1').value,d2=x.querySelector('#me_d2').value||d1;if(!d1){x.querySelector('.smsg').textContent='Scegli la data.';return false;}
+    const ora=x.querySelector('#me_o').value.trim(),luogo=x.querySelector('#me_l').value.trim(),costo=Math.max(0,Number(x.querySelector('#me_c').value)||0),on=x.querySelector('#me_b').checked;
+    if(e.custom){const pb=x.querySelector('#me_p [aria-pressed="true"]');S.evc=S.evc.map(c=>c.id===e.id?Object.assign({},c,{n,p:pb?pb.dataset.v:c.p,d1,d2:d2<d1?d1:d2,ora,luogo,costo:canB?costo:c.costo,inPrev:canB?on:c.inPrev}):c);}
+    else{const cambiaData=d1!==days[0]||(d2||d1)!==days[days.length-1];setEvS(e.id,Object.assign({nome:n!==(D.ev.find(z=>z.id===e.id)||{}).n?n:'',ora,luogo},cambiaData?{o:-1,d1,d2:d2<d1?d1:d2}:{}));
+      if(v&&canB){if(!fisso&&costo!==Math.round(evCost(e)))setVo(v.id,'v',costo);if(on!==evOn(e))setVo(v.id,'on',on);}}
+    changed();stEl.textContent='Evento aggiornato.';});
+  dl.querySelectorAll('#me_p button').forEach(b=>b.addEventListener('click',()=>dl.querySelectorAll('#me_p button').forEach(z=>z.setAttribute('aria-pressed',String(z===b)))));}
+function eliminaEvento(e){ask('Eliminare «'+e.n+'»? Sparisce dal calendario'+(evOn(e)?' e il suo costo esce dal Bilancio di previsione 2027':'')+'.','Elimina',async()=>{
+  if(e.custom)S.evc=S.evc.filter(c=>c.id!==e.id);else{setEvS(e.id,{del:true});const v=vocEv(e);if(v&&CTX.canEdit('s-pre'))setVo(v.id,'on',false);}
+  changed();stEl.textContent='Evento eliminato.';});}
+function azioniEvento(e,box){const can=CTX.canEdit('s-ev');const canB=e.custom?can:CTX.canEdit('s-pre');
+  const t=h('<label class="ck ev13flag"><input type="checkbox"'+(evOn(e)?' checked':'')+(canB?'':' disabled')+'> Incide sul Bilancio di previsione 2027</label>');t.querySelector('input').addEventListener('change',ev=>inBilancio(e,ev.target.checked));box.appendChild(t);
+  if(can)bottoni(box,[['Modifica',()=>modificaEvento(e)],['Elimina',()=>eliminaEvento(e)]]);const last=box.lastElementChild;if(can&&last){const del=last.lastElementChild;if(del)del.classList.add('ko');}}
+// nella Panoramica: interruttore del bilancio, Modifica ed Elimina nel dettaglio di ogni evento
+const _renderEventi13b=renderEventi13;renderEventi13=function(){_renderEventi13b();};
+// nelle schede tecniche del Calendario eventi
+const _fiche13=fiche;fiche=function(e){const d=_fiche13(e);const body=d.querySelector('.area-body')||d;const box=h('<div class="ev13act"></div>');azioniEvento(e,box);body.appendChild(box);return d;};
