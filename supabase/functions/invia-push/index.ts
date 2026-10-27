@@ -18,14 +18,27 @@ Deno.serve(async () => {
   const { data: S } = await admin.from("push_iscrizioni").select("*").in("user_id", chi);
   const { data: PR } = await admin.from("preferenze").select("user_id,dati").in("user_id", chi);
   const muti: Record<string, string[]> = {};
-  (PR || []).forEach((p) => { muti[p.user_id] = (p.dati && p.dati.muti) || []; });
+  const nascosta: Record<string, boolean> = {};
+  (PR || []).forEach((p) => { muti[p.user_id] = (p.dati && p.dati.muti) || []; nascosta[p.user_id] = !!(p.dati && p.dati.anteprima === "nascosta"); });
+  // foto di chi ha generato la notifica (se non c'è, l'icona di Bruna27)
+  const autori = [...new Set(N.map((n) => n.da).filter((x) => !!x))];
+  const foto: Record<string, string> = {};
+  if (autori.length) {
+    const { data: PF } = await admin.from("profili").select("id,foto").in("id", autori);
+    (PF || []).forEach((p) => { if (p.foto) foto[p.id] = p.foto; });
+  }
   const categoria = (link: string) => { const l = link.split("#")[0]; return l === "v-psic" || l === "v-perc" ? "percorsi" : l; };
   let ok = 0;
   for (const n of N) {
     if ((muti[n.per] || []).includes(categoria(n.link || "p-home"))) continue;
     for (const s of (S || []).filter((x) => x.user_id === n.per)) {
       try {
-        await webpush.sendNotification(s.dati, JSON.stringify({ titolo: n.titolo ? "Bruna27 · " + n.titolo : "Bruna27", testo: n.testo, link: n.link || "p-home", urgente: n.priorita === "urgente", tag: n.link || "p-home" }), { urgency: n.priorita === "urgente" ? "high" : "normal" });
+        await webpush.sendNotification(s.dati, JSON.stringify({
+          titolo: n.titolo || "Bruna27",
+          testo: nascosta[n.per] ? ((n.link || "").startsWith("p-chat") ? "Nuovo messaggio" : "Apri Bruna27 per i dettagli.") : n.testo,
+          link: n.link || "p-home", nid: n.id, urgente: n.priorita === "urgente", tag: n.link || "p-home",
+          icon: (n.da && foto[n.da]) || null,
+        }), { urgency: n.priorita === "urgente" ? "high" : "normal" });
         ok++;
       } catch (e) {
         const code = (e as { statusCode?: number }).statusCode;

@@ -106,7 +106,7 @@ function dichiara(x,dopo){const {r,p,i}=x;sheet('Registra il pagamento','<p>'+es
     const f=dl.querySelector('#dp_f').files[0];const ric=f?await carica(f,'v-for27'):null;const imp=+dl.querySelector('#dp_i').value||0;
     const P=r.dati.pagamenti.map((q,k)=>k===i?Object.assign({},q,{stato:'dichiarato',dichiarato:{importo:imp,data:dl.querySelector('#dp_d').value,metodo:dl.querySelector('#dp_m').value,rif:dl.querySelector('#dp_r').value.trim(),ricevuta:ric,da:CTX.user.id,quando:new Date().toISOString()},motivo:''}):q);
     const {error}=await CTX.sb.from('voci_dati').update({dati:Object.assign({},r.dati,{pagamenti:P}),aggiornato:new Date().toISOString()}).eq('id',r.id);if(error)throw new Error(error.message);
-    if(respPag()&&respPag()!==CTX.user.id)await avvisaUtente(respPag(),'Da confermare: pagamento a '+r.dati.fornitore+' · '+(p.n||'rata')+' · '+eur(imp),'v-pag');
+    if(respPag()&&respPag()!==CTX.user.id)await avvisaUtente(respPag(),nome(CTX.user.id)+' ha registrato un pagamento di '+eur(imp)+' per il fornitore '+r.dati.fornitore+' ('+(p.n||'rata')+'). Verifica e conferma l’operazione.','v-pag');
     await loadVD();dopo();stEl.textContent='Pagamento registrato: aspetta la conferma.';});}
 function rataHtml(x,conFornitore){const {r,p}=x;const st=statoRata(p);const dc=p.dichiarato;
   return '<div class="rata"><div class="chips"><span class="chip2 '+st[1]+'">'+st[0]+'</span></div><b>'+(conFornitore?esc(r.dati.fornitore)+' · ':'')+esc(p.n||'Rata')+' · '+eur(+p.importo||0)+'</b><span class="muted small">'+(p.data?'prevista il '+fmtD(p.data):'data da decidere')+(r.dati.evento?' · '+esc(r.dati.evento):'')+(r.dati.resp_pag?' · segue '+esc(nome(r.dati.resp_pag)):'')+'</span>'+
@@ -280,8 +280,8 @@ function extraHome(g){const daL=AVV.filter(a=>!letto(a)),fis=AVV.filter(a=>a.fis
 
 /* --- tempo reale per chat e bacheca --- */
 function liveF8(){if(!CTX.sb)return;CTX.sb.channel('fase8')
-  .on('postgres_changes',{event:'INSERT',schema:'public',table:'messaggi'},async p=>{const m=p.new;if(!m||!CONV.find(c=>c.id===m.conv_id)){await loadChat();chatBadge();return;}if((MSG[m.conv_id]||[]).some(x=>x.id===m.id))return;(MSG[m.conv_id]=MSG[m.conv_id]||[]).push(m);
-    if(cur==='p-chat'&&CHATOPEN===m.conv_id&&CHATSEL===m.conv_id&&CHATDRAW){CHATDRAW();segnaLetta(m.conv_id);}else if(cur==='p-chat'&&!CHATSEL)renderChat();chatBadge();})
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'messaggi'},async p=>{const m=p.new;if(!m||!CONV.find(c=>c.id===m.conv_id)){await loadChat();chatBadge();chatLive(m,true);return;}if((MSG[m.conv_id]||[]).some(x=>x.id===m.id))return;(MSG[m.conv_id]=MSG[m.conv_id]||[]).push(m);
+    if(cur==='p-chat'&&CHATOPEN===m.conv_id&&CHATSEL===m.conv_id&&CHATDRAW){CHATDRAW();segnaLetta(m.conv_id);}else if(cur==='p-chat'&&!CHATSEL)renderChat();chatBadge();chatLive(m,false);})
   .on('postgres_changes',{event:'*',schema:'public',table:'avvisi'},async()=>{await loadBach();if(cur==='p-bach'||cur==='p-home')rerender();})
   .subscribe();}
 const _dopoAvvio=dopoAvvio;dopoAvvio=function(){_dopoAvvio();liveF8();chatBadge();};
