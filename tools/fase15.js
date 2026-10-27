@@ -82,14 +82,14 @@ const _imp15=impostazioniCard;impostazioniCard=function(){const c=_imp15();
 
 // --- Crea evento: 4 passaggi ---
 let CW=null;
-function cwNuovo(){CW={step:1,n:'',p:'I',desc:'',d1:'',d2:'',oi:'',of:'',luogo:'',resp:CTX.user.id,obi:'',note:'',files:[],esig:{},costo:0,inPrev:true};
+function cwNuovo(){CW={step:1,n:'',p:'I',desc:'',d1:'',d2:'',oi:'',of:'',luogo:'',resp:CTX.user.id,obi:'',note:'',files:[],esig:{},costo:0,ricavi:0,inPrev:true,anno:''};
   ESIG.forEach(([k])=>CW.esig[k]={serve:null,att:[],forn:[],resp:IMP['resp_ev_'+k]||''});}
 const PASSI=['Informazioni','Che cosa serve','Chi se ne occupa','Controlla e invia'];
 function cwLeggi(el){const v=s=>{const x=el.querySelector(s);return x?x.value:undefined;};
-  if(CW.step===1){['n','desc','d1','d2','oi','of','luogo','resp','obi','note'].forEach(k=>{const x=v('#cw_'+k);if(x!==undefined)CW[k]=k==='n'||k==='luogo'?x.trim():x;});const f=el.querySelector('#cw_f');if(f&&f.files.length)CW.files=[...f.files];}
+  if(CW.step===1){['n','desc','d1','d2','oi','of','luogo','resp','obi','note','anno'].forEach(k=>{const x=v('#cw_'+k);if(x!==undefined)CW[k]=k==='n'||k==='luogo'?x.trim():x;});const f=el.querySelector('#cw_f');if(f&&f.files.length)CW.files=[...f.files];}
   if(CW.step===3)ESIG.forEach(([k])=>{const x=v('#cw_r_'+k);if(x!==undefined)CW.esig[k].resp=x;});
-  if(CW.step===4){const c=v('#cw_c');if(c!==undefined)CW.costo=Math.max(0,Number(c)||0);const b=el.querySelector('#cw_b');if(b)CW.inPrev=b.checked;}}
-function cwErrore(){if(CW.step===1){if(!CW.n)return 'Scrivi il nome dell’evento.';if(!CW.d1)return 'Scegli la data.';if(!CW.luogo)return 'Scrivi il luogo.';if(!CW.resp)return 'Scegli il responsabile principale.';if(CW.d2&&CW.d2<CW.d1)return 'La data di fine viene prima di quella di inizio.';}
+  if(CW.step===4){const c=v('#cw_c');if(c!==undefined)CW.costo=Math.max(0,Number(c)||0);const ri=v('#cw_ri');if(ri!==undefined)CW.ricavi=Math.max(0,Number(ri)||0);const b=el.querySelector('#cw_b');if(b)CW.inPrev=b.checked;}}
+function cwErrore(){if(CW.step===1){if(!CW.n)return 'Scrivi il nome dell’evento.';if(!CW.d1)return 'Scegli la data.';if(!CW.luogo)return 'Scrivi il luogo.';if(!CW.anno)return 'Scegli a quale edizione appartiene l’evento: serve a collegarlo al bilancio giusto.';if(!CW.resp)return 'Scegli il responsabile principale.';if(CW.d2&&CW.d2<CW.d1)return 'La data di fine viene prima di quella di inizio.';}
   if(CW.step===2){for(const [k,n] of ESIG){const g=CW.esig[k];if(g.serve===null)return 'Per «'+n+'» scegli «Serve» oppure «Non necessario».';if(g.serve&&!g.att.length)return 'Per «'+n+'» spunta almeno un’attività, oppure scegli «Non necessario».';}}
   if(CW.step===3){for(const [k,n] of ESIG)if(CW.esig[k].serve&&!CW.esig[k].resp)return 'Scegli chi se ne occupa per «'+n+'».';}return '';}
 function wizard(){const box=h('<section class="w h13w ev15wiz"></section>');const ridisegna=()=>{const nb=wizard();box.replaceWith(nb);window.scrollTo({top:Math.max(0,nb.getBoundingClientRect().top+window.scrollY-90)});};
@@ -101,6 +101,7 @@ function wizard(){const box=h('<section class="w h13w ev15wiz"></section>');cons
       '<div class="ctl"><label for="cw_desc">Descrizione</label><textarea id="cw_desc" placeholder="Che cos’è, a chi si rivolge">'+esc(CW.desc)+'</textarea></div>'+
       '<div class="when"><div class="ctl"><label for="cw_d1">Giorno</label><input type="date" id="cw_d1" value="'+esc(CW.d1)+'" min="2026-11-01"></div><div class="ctl"><label for="cw_d2">Fino al (se dura più giorni)</label><input type="date" id="cw_d2" value="'+esc(CW.d2)+'" min="2026-11-01"></div></div>'+
       '<div class="when"><div class="ctl"><label for="cw_oi">Ora di inizio</label><input type="time" id="cw_oi" value="'+esc(CW.oi)+'"></div><div class="ctl"><label for="cw_of">Ora di fine</label><input type="time" id="cw_of" value="'+esc(CW.of)+'"></div></div>'+
+      '<div class="ctl"><label for="cw_anno">Edizione (bilancio collegato)</label><select id="cw_anno"><option value="">Scegli l’edizione</option>'+anniBilancio().map(([y,l])=>'<option value="'+y+'"'+(String(y)===String(CW.anno)?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select><span class="muted small">Gli eventi da novembre 2026 all’estate 2027 di solito sono dell’edizione 2027.</span></div>'+
       '<div class="ctl"><label for="cw_luogo">Luogo</label><input type="text" id="cw_luogo" value="'+esc(CW.luogo)+'"></div>'+
       '<div class="ctl"><label for="cw_resp">Responsabile principale</label>'+selP('cw_resp',CW.resp)+'</div>'+
       '<div class="ctl"><label for="cw_obi">Obiettivi e programma</label><textarea id="cw_obi">'+esc(CW.obi)+'</textarea></div>'+
@@ -118,10 +119,10 @@ function wizard(){const box=h('<section class="w h13w ev15wiz"></section>');cons
     const serve=ESIG.filter(([k])=>CW.esig[k].serve);if(!serve.length)B.appendChild(h('<p class="muted">Nessuna area serve per questo evento: non parte nessuna attività.</p>'));
     serve.forEach(([k,n,col])=>{const g=CW.esig[k];B.appendChild(h('<div class="ev15area" style="--c:'+col+'"><div class="ev15ah"><span class="av9 sm" style="--c:'+col+'">'+n.slice(0,2).toUpperCase()+'</span><b>'+n+'</b><em>'+g.att.length+(g.att.length===1?' attività':' attività')+'</em></div><div class="ctl"><label for="cw_r_'+k+'">Chi se ne occupa</label>'+selP('cw_r_'+k,g.resp,'Scegli una persona')+'</div><p class="muted small" style="margin:0">'+esc(g.att.join(' · '))+'</p></div>'));});}
   if(CW.step===4){const serve=ESIG.filter(([k])=>CW.esig[k].serve),nn=ESIG.filter(([k])=>CW.esig[k].serve===false);const ore=CW.oi?(CW.oi+(CW.of?'–'+CW.of:'')):'';
-    B.innerHTML=righe([['Nome',esc(CW.n)],['Tipologia',CW.p==='I'?'Festa della Bruna':'Bruna Passion Week'],['Quando',esc(dLab(rng(CW.d1,CW.d2||CW.d1)))+(ore?' · ore '+esc(ore):'')],['Luogo',esc(CW.luogo)],['Responsabile principale',esc(nome(CW.resp))],['Documenti',CW.files.length?CW.files.length+' file':'nessuno']])+
+    B.innerHTML=righe([['Nome',esc(CW.n)],['Tipologia',CW.p==='I'?'Festa della Bruna':'Bruna Passion Week'],['Quando',esc(dLab(rng(CW.d1,CW.d2||CW.d1)))+(ore?' · ore '+esc(ore):'')],['Luogo',esc(CW.luogo)],['Responsabile principale',esc(nome(CW.resp))],['Edizione',esc(CW.anno)+' · '+esc(nomeBilancio(+CW.anno))],['Documenti',CW.files.length?CW.files.length+' file':'nessuno']])+
       '<p class="lab" style="margin:12px 0 4px">Attività che partono</p>'+(serve.length?serve.map(([k,n])=>'<div class="c12li"><span>'+n+'<small>'+esc(CW.esig[k].att.join(', '))+'</small></span><b>'+esc(nome(CW.esig[k].resp))+'</b></div>').join(''):'<p class="muted">Nessuna.</p>')+
       (nn.length?'<p class="muted small">Non necessario: '+nn.map(z=>z[1]).join(', ')+'</p>':'')+
-      '<div class="ctl" style="margin-top:10px"><label for="cw_c">Costo stimato (€)</label><input type="number" id="cw_c" min="0" step="100" value="'+CW.costo+'"></div><label class="ck"><input type="checkbox" id="cw_b"'+(CW.inPrev?' checked':'')+'> Incide sul Bilancio di previsione '+esc((CW.d1||'2027').slice(0,4))+'</label>'+
+      '<div class="ctl" style="margin-top:10px"><label for="cw_c">Costo stimato (€)</label><input type="number" id="cw_c" min="0" step="100" value="'+CW.costo+'"></div><div class="ctl"><label for="cw_ri">Ricavi previsti (€), se ce ne sono</label><input type="number" id="cw_ri" min="0" step="100" value="'+CW.ricavi+'"></div><label class="ck"><input type="checkbox" id="cw_b"'+(CW.inPrev?' checked':'')+'> Incide sul '+esc(nomeBilancio(+CW.anno))+'</label>'+
       '<p class="muted small">Dopo l’invio l’evento è una <b>Proposta</b>: compare in grigio nel calendario finché l’amministratore non lo approva.</p>';}
   const N=box.querySelector('.ev15nav');const msg=box.querySelector('.smsg');
   bottoni(N,[CW.step>1?['‹ Indietro',()=>{cwLeggi(box);CW.step--;ridisegna();}]:null,CW.step<4?['Avanti ›',()=>{cwLeggi(box);const er=cwErrore();if(er){msg.textContent=er;return;}CW.step++;ridisegna();},true]:['Crea l’evento e avvisa i responsabili',async()=>{cwLeggi(box);msg.textContent='Un momento…';try{await creaEvento();}catch(x){msg.textContent='Errore: '+x.message;}},true],CW.step===1&&CW.n?['Ricomincia',()=>{cwNuovo();ridisegna();}]:null]);
@@ -130,7 +131,7 @@ async function creaEvento(){const me=CTX.user.id;const id='C'+Date.now().toStrin
   const docs=[];for(const f of CW.files)docs.push(await carica(f,'compiti/'+me));
   const esig={};ESIG.forEach(([k])=>{const g=CW.esig[k];esig[k]={serve:!!g.serve,att:g.att.slice(),forn:g.forn.slice(),resp:g.serve?g.resp:null};});
   const ore=CW.oi?(CW.oi+(CW.of?'–'+CW.of:'')):'';
-  S.evc=(S.evc||[]).concat([{id,n:CW.n,p:CW.p,d1:CW.d1,d2:CW.d2&&CW.d2>=CW.d1?CW.d2:CW.d1,ora:ore,luogo:CW.luogo,costo:CW.costo,inPrev:CW.inPrev,st:'idea',appr:'proposta',prog:'attivo',desc:CW.desc,obiettivi:CW.obi,note:CW.note,resp:CW.resp,creatore:me,creato:ora.toISOString(),scade:sc,docs,esig,anno:+(CW.d1.slice(0,4)),ref:'',perm:{}}]);
+  S.evc=(S.evc||[]).concat([{id,n:CW.n,p:CW.p,d1:CW.d1,d2:CW.d2&&CW.d2>=CW.d1?CW.d2:CW.d1,ora:ore,luogo:CW.luogo,costo:CW.costo,inPrev:CW.inPrev,st:'idea',appr:'proposta',prog:'attivo',desc:CW.desc,obiettivi:CW.obi,note:CW.note,resp:CW.resp,creatore:me,creato:ora.toISOString(),scade:sc,docs,esig,anno:+CW.anno,ricavi:CW.ricavi,ref:'',perm:{}}]);
   changed();
   const rows=[];ESIG.forEach(([k,n])=>{const g=esig[k];if(g.serve)g.att.forEach(t=>rows.push({per:g.resp,titolo:CW.n+' · '+n+': '+t,area:'evento',fase:'scheda',priorita:'Alta',evento_id:id,scade_il:sc,entro:sc.slice(0,10)}));});
   if(rows.length){const {error}=await CTX.sb.from('compiti').insert(rows);if(error)throw new Error(error.message);}

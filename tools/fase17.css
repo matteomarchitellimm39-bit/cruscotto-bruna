@@ -1,0 +1,14 @@
+/* Fase D · bilancio collegato, suggerimenti, compilazione assistita */
+.ev17bil{background:#F6F7FB;border-radius:16px;padding:12px 14px;margin:10px 0;display:flex;flex-direction:column;gap:2px}
+.ev17bh{display:flex;flex-direction:column;gap:2px;margin-bottom:4px}
+.ev17bh b{font-size:16.5px}
+.ev17sug{background:linear-gradient(135deg,#EEF3FF,#F6F1FF);border-radius:18px;padding:12px 14px;margin:0 0 12px;display:flex;flex-direction:column;gap:8px}
+.ev17sh{display:flex;align-items:center;gap:8px}
+.ev17sh b{font-size:16px}
+.ev17s{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:#fff;border-radius:14px;padding:10px 12px}
+.ev17s span{flex:1;min-width:200px;font-size:15.5px;line-height:1.4}
+.ev17ai{background:linear-gradient(135deg,#EEF3FF,#F6F1FF);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.ev17ai textarea{min-height:90px;font-size:16px}
+.ev17ab{display:flex;gap:8px}
+.ev17res .c12li{background:#fff}
+.ev17res:empty{display:none}
