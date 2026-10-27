@@ -899,6 +899,59 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
   .ecosub button{min-height:38px;padding:7px 12px;font-size:14px}
   .ar10 summary{padding:13px 14px}.ar10 summary .t,.ar10 summary b{font-size:15.5px}.ar10 .rows{padding:0 14px 12px}
 }
+/* fase 11: Bilancio 2026 a carte */
+.b26{display:grid;grid-template-columns:270px minmax(0,1fr);gap:26px;align-items:start}
+.b26sum{background:#fff;border-radius:28px;padding:20px 20px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;position:sticky;top:16px}
+.b26r{display:flex;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #F0F1F5}.b26r:nth-child(3){border-bottom:0}
+.b26r span:nth-child(2){font-size:14px;color:var(--muted)}.b26r b{margin-left:auto;font-size:19px;letter-spacing:-.3px;white-space:nowrap}
+.ar{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px}.ar.in{background:#E7F6EE;color:#1F8A5B}.ar.out{background:#FBECEB;color:#C0392B}.ar.eq{background:#EEF2FA;color:var(--acc)}
+.b26reg{margin:8px 0 0;background:#EEF2FA;border-radius:18px;padding:13px 14px;font-size:14.5px;line-height:1.45;color:#3A3D48}
+.b26deb{margin:8px 2px;font-size:14.5px;color:var(--muted)}.b26deb b{color:var(--fg)}
+.b26sum .pdfx{align-self:flex-start;margin-top:4px}
+.b26main{min-width:0;display:flex;flex-direction:column;gap:14px}
+.b26main .sh{margin:0}
+.b26mini{display:none}
+.b26seg{align-self:flex-start}
+.b26wrap{position:relative;margin:0 -6px}
+.b26cards{display:flex;gap:16px;overflow-x:auto;padding:12px 6px 26px;scroll-snap-type:x mandatory;scrollbar-width:none;align-items:center;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.b26cards::-webkit-scrollbar{display:none}
+.b26cd{--bg2:color-mix(in srgb,var(--c) 62%,#fff);flex:none;width:176px;height:204px;border-radius:26px;padding:16px;color:#fff;display:flex;flex-direction:column;cursor:pointer;scroll-snap-align:start;transition:width .25s,height .25s,box-shadow .25s,transform .25s;box-shadow:0 12px 22px -14px var(--c);background:linear-gradient(160deg,var(--bg2),var(--c));border:0;font:inherit;text-align:left;opacity:.92}
+.b26cd.on{width:204px;height:236px;box-shadow:0 20px 32px -16px var(--c);opacity:1}
+.b26cd .ic{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.95);color:var(--c);display:grid;place-items:center;font-weight:800;font-size:14px}
+.b26cd small{margin-top:auto;font-size:12px;opacity:.88}.b26cd .nm{font-size:15.5px;font-weight:700;line-height:1.25;margin-top:2px}
+.b26cd .am{font-size:22px;font-weight:800;margin-top:8px;letter-spacing:-.4px;white-space:nowrap}.b26cd.on .am{font-size:25px}.b26cd .pc{font-size:12px;opacity:.88}
+.b26nav{position:absolute;top:50%;transform:translateY(-60%);z-index:2;width:44px;height:44px;border-radius:50%;border:0;background:#fff;box-shadow:0 6px 18px rgba(11,33,71,.18);font-size:26px;line-height:1;color:var(--navy);cursor:pointer}
+.b26nav.l{left:-4px}.b26nav.r{right:-4px}.b26nav[hidden]{display:none}
+.b26low{display:grid;grid-template-columns:1.2fr 1fr;gap:22px;align-items:start}
+.b26lab{font-size:15px;color:var(--muted);margin:0 0 10px}
+.b26box{background:#fff;border-radius:24px;box-shadow:0 18px 40px -22px rgba(11,33,71,.3);padding:16px 18px}
+.b26v{display:grid;grid-template-columns:1fr auto;gap:5px 12px;padding:9px 0}.b26v span{font-size:15.5px}.b26v b{font-size:15.5px;white-space:nowrap}.b26v em{font-style:normal;color:var(--muted);font-size:12.5px;margin-left:5px}
+.b26v i{grid-column:1/-1;height:10px;border-radius:5px;background:#F0F2F7;position:relative;overflow:hidden}.b26v i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);border-radius:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 60%,#fff),var(--c))}
+.b26ppl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
+.b26p{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;min-width:0}
+.b26p .av{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;font-size:15px;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 62%,#fff),var(--c));box-shadow:0 8px 16px -8px var(--c)}
+.b26p .pn{font-size:13px;color:var(--muted);line-height:1.2;overflow-wrap:anywhere}.b26p b{font-size:14.5px;white-space:nowrap}
+.b26more{grid-column:1/-1;justify-self:center;margin-top:4px}
+.b26fw[hidden]{display:none}
+@media(max-width:1439px) and (min-width:1024px){.b26{grid-template-columns:250px minmax(0,1fr);gap:20px}.b26low{grid-template-columns:1fr}}
+@media(max-width:1023px){
+  .b26{grid-template-columns:1fr;gap:14px}
+  .b26sum{order:2;position:static;background:none;box-shadow:none;padding:0}.b26sum .b26r{display:none}
+  .b26reg{margin:0;font-size:14px}.b26deb{font-size:14px;margin:4px 2px}
+  .b26mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .b26mini div{background:#fff;border-radius:16px;padding:9px 11px;box-shadow:var(--shadow);min-width:0}.b26mini span{display:block;font-size:12px;color:var(--muted)}
+  .b26mini b{font-size:clamp(13px,3.7vw,15.5px);white-space:nowrap;letter-spacing:-.2px}
+  .b26main{gap:12px}
+  .b26wrap{margin:0 -12px}.b26cards{gap:10px;padding:8px 12px 20px;scroll-padding:0 12px}
+  .b26cd{width:clamp(132px,38vw,160px);height:clamp(158px,45vw,184px);border-radius:22px;padding:13px}
+  .b26cd.on{width:clamp(146px,42vw,176px);height:clamp(174px,50vw,204px)}
+  .b26cd .ic{width:32px;height:32px;font-size:12.5px}.b26cd .nm{font-size:14px}.b26cd .am{font-size:clamp(17px,5vw,20px)}.b26cd.on .am{font-size:clamp(18px,5.4vw,22px)}.b26cd .pc,.b26cd small{font-size:11.5px}
+  .b26nav{display:none}
+  .b26low{grid-template-columns:1fr;gap:14px}
+  .b26box{padding:12px 14px;border-radius:20px}.b26lab{font-size:14px;margin-bottom:8px}
+  .b26v{padding:7px 0}.b26v span,.b26v b{font-size:14.5px}.b26v i{height:8px}
+  .b26p .av{width:42px;height:42px;font-size:13px}.b26p .pn{font-size:12px}.b26p b{font-size:13.5px}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -3842,6 +3895,40 @@ R['s-r26']=function(){const el=document.getElementById('s-r26');el.innerHTML='';
   el.appendChild(h('<p class="muted small">Gli importi del 2027 si scelgono in Bilancio 2027 → Ricavi 2027.</p>'));};
 // richieste di fattura: solo chi può modificare l'area Economia (Fatture da emettere)
 const puoFatt=()=>CTX.canEdit('v-femit');
+
+/* ================= Bruna27 · Bilancio 2026 semplice: riassunto, carte colorate per area, dettaglio con un tocco ================= */
+// Costi 2026 e Ricavi 2026 ora stanno dentro la pagina del Bilancio 2026 (le pagine restano raggiungibili dai collegamenti)
+ECO_G[0].p=[['s-bil','Bilancio 2026']];ECO_ID['s-bil']=ECO_G[0];ECO_ID['s-c26']=ECO_G[0];ECO_ID['s-r26']=ECO_G[0];
+const B26G=[['Sponsor',['r1','r2','r3','r4','r5'],'#2F63F0'],['Donazioni',['r6'],'#2A9D8F'],['Regione',['r15','r16'],'#182C6B'],['Comune, Provincia e altri enti',['r9','r10','r11','r12','r13','r14'],'#5AA0F2'],['Lotteria',['r7'],'#E2A23A'],['Servizi',['r8'],'#8A6CF0'],['Altro',['r17','r18','r19'],'#94A3C0']];
+let B26V='spese',B26S=0;
+function b26Dati(){if(B26V==='spese')return D.bil.map(a=>({id:a.id,n:a.n,t:a.t,c:ac(a.id),v:a.voci.map(v=>[v.n,v.v]),f:fornByArea(a.id).slice().sort((x,y)=>y.v-x.v)})).sort((a,b)=>b.t-a.t);
+  return B26G.map(([n,ids,c])=>{const rr=D.ric.filter(r=>ids.includes(r.id)&&r.v26);return {n,c,t:rr.reduce((s,r)=>s+r.v26,0),v:rr.sort((a,b)=>b.v26-a.v26).map(r=>[r.n.replace(/^Regione · progetto /,'Progetto ').replace(/ \(Dip\. Sviluppo Economico\)/,''),r.v26]),f:[]};}).filter(g=>g.t>0).sort((a,b)=>b.t-a.t);}
+const iniz11=s=>{const w=String(s).replace(/[^A-Za-zÀ-ÿ' ]/g,' ').split(/\s+/).filter(x=>/^[A-ZÀ-Ý]/.test(x));return (w.length?w.slice(0,2).map(x=>x[0]).join(''):String(s).charAt(0)).toUpperCase();};
+const _renderBil11=R['s-bil'];
+R['s-bil']=function(){if(typeof editMode!=='undefined'&&editMode)return _renderBil11();
+  const el=document.getElementById('s-bil');el.innerHTML='';const res=D.ric26-D.tot26,deb=D.forn.reduce((s,f)=>s+(f.deb||0),0);
+  const L=b26Dati();if(B26S>=L.length)B26S=0;const tot=L.reduce((a,x)=>a+x.t,0);const pc=v=>(tot?v/tot*100:0).toLocaleString('it-IT',{maximumFractionDigits:1})+'%';
+  const w=h('<div class="b26"><aside class="b26sum"><div class="b26r"><span class="ar in">↑</span><span>Entrate</span><b>'+eur(D.ric26)+'</b></div><div class="b26r"><span class="ar out">↓</span><span>Spese</span><b>'+eur(D.tot26)+'</b></div><div class="b26r"><span class="ar eq">=</span><span>Risultato</span><b class="'+(res<0?'neg':'pos')+'">'+(res<0?'− ':'+ ')+eur(Math.abs(res))+'</b></div>'+
+      '<p class="b26reg">Con i <b>280.000 €</b> della Regione il risultato diventa <b class="pos">'+(res+280000<0?'− ':'+ ')+eur(Math.abs(res+280000))+'</b></p><p class="b26deb">Ancora da pagare ai fornitori: <b>'+eur(deb)+'</b></p><button type="button" class="bb soft sm pdfx">⤓ Scarica in PDF</button></aside>'+
+    '<div class="b26main"><div class="sh"><span class="eyb">Economia</span><h2>Bilancio 2026</h2><p>Tocca una carta per vedere come sono divisi i soldi.</p></div>'+
+      '<div class="b26mini"><div><span>Entrate</span><b>'+eur(D.ric26)+'</b></div><div><span>Spese</span><b>'+eur(D.tot26)+'</b></div><div><span>Risultato</span><b class="'+(res<0?'neg':'pos')+'">'+(res<0?'−':'+')+eur(Math.abs(res))+'</b></div></div>'+
+      '<div class="seg b26seg"><button type="button" data-v="spese" aria-pressed="'+(B26V==='spese')+'">Spese</button><button type="button" data-v="entrate" aria-pressed="'+(B26V==='entrate')+'">Entrate</button></div>'+
+      '<div class="b26wrap"><button type="button" class="b26nav l" aria-label="Carte precedenti">‹</button><div class="b26cards" role="list">'+L.map((x,i)=>'<button type="button" role="listitem" class="b26cd'+(i===B26S?' on':'')+'" data-i="'+i+'" style="--c:'+x.c+'" aria-pressed="'+(i===B26S)+'"><span class="ic">'+esc(iniz11(x.n))+'</span><small>'+(B26V==='spese'?'Spese':'Entrate')+'</small><span class="nm">'+esc(x.n)+'</span><span class="am">'+eur(x.t)+'</span><span class="pc">'+pc(x.t)+' del totale</span></button>').join('')+'</div><button type="button" class="b26nav r" aria-label="Carte successive">›</button></div>'+
+      '<div class="b26low"><div><p class="b26lab"></p><div class="b26box b26voci"></div></div><div class="b26fw"><p class="b26lab">Fornitori principali</p><div class="b26box"><div class="b26ppl"></div></div></div></div></div></div>');
+  el.appendChild(w);
+  const det=()=>{const x=L[B26S];if(!x)return;w.querySelector('.b26lab').textContent='Come sono divisi i '+eur(x.t)+' · '+x.n;
+    w.querySelector('.b26voci').innerHTML=x.v.map(y=>'<div class="b26v" style="--c:'+x.c+'"><span>'+esc(y[0])+'<em>'+(x.t?Math.round(y[1]/x.t*100):0)+'%</em></span><b>'+eur(y[1])+'</b><i style="--w:'+(x.t?y[1]/x.t*100:0)+'%"></i></div>').join('')||'<p class="muted">Nessuna voce.</p>';
+    const fw=w.querySelector('.b26fw');fw.hidden=B26V!=='spese';
+    if(B26V==='spese'){const P=w.querySelector('.b26ppl');P.innerHTML=x.f.length?x.f.slice(0,6).map(f=>'<div class="b26p" style="--c:'+x.c+'"><span class="av">'+esc(iniz11(f.n))+'</span><span class="pn">'+esc(f.n)+'</span><b>'+eur(f.v)+'</b></div>').join(''):'<p class="muted" style="grid-column:1/-1;margin:0">Nessun fornitore: sono somme versate direttamente.</p>';
+      if(x.f.length&&canOpen('s-for')){const b=h('<button type="button" class="lnk2 b26more">'+(x.f.length>6?'Vedi tutti i '+x.f.length+' fornitori':'Apri in Fornitori 2026')+' ›</button>');b.addEventListener('click',()=>{try{fa=x.id;}catch(e){}go('s-for');});P.appendChild(b);}}};
+  w.querySelectorAll('.b26cd').forEach(b=>b.addEventListener('click',()=>{B26S=+b.dataset.i;w.querySelectorAll('.b26cd').forEach(z=>{const on=z===b;z.classList.toggle('on',on);z.setAttribute('aria-pressed',String(on));});det();try{b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});}catch(e){}}));
+  w.querySelectorAll('.b26seg [data-v]').forEach(b=>b.addEventListener('click',()=>{B26V=b.dataset.v;B26S=0;R['s-bil']();addBack('s-bil');}));
+  const cs=w.querySelector('.b26cards');const nl=w.querySelector('.b26nav.l'),nr=w.querySelector('.b26nav.r');
+  const navUpd=()=>{nl.hidden=cs.scrollLeft<8;nr.hidden=cs.scrollLeft+cs.clientWidth>=cs.scrollWidth-8;};
+  nl.addEventListener('click',()=>cs.scrollBy({left:-cs.clientWidth*.8,behavior:'smooth'}));nr.addEventListener('click',()=>cs.scrollBy({left:cs.clientWidth*.8,behavior:'smooth'}));
+  cs.addEventListener('scroll',navUpd,{passive:true});requestAnimationFrame(navUpd);det();};
+// in modalità Modifica torna la vista con gli importi modificabili
+if(typeof setEdit==='function'){const _setEdit11=setEdit;setEdit=function(on){_setEdit11(on);if(cur==='s-bil')rerender();};}
 
 /* ---------- avvio ---------- */
 autoLeve();
