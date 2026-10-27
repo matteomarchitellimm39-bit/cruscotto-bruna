@@ -161,7 +161,6 @@ function mePrefNoti(el){const muti=PREF.muti||[];const c=h('<section class="card
 let CALV='mese',CALD=null;const TIPOR=['Riunione','Sopralluogo','Appuntamento'];
 const COLC={evento:'#24478F',riunione:'#2A8C6F',sopralluogo:'#D9822B',appuntamento:'#7A4FB5',percorso:'#0B2147',scadenza:'#C0392B'};
 function voceCal(){const me=CTX.user.id,out=[];const add=(data,ora,titolo,tipo,go,extra)=>{if(data)out.push(Object.assign({data:String(data).slice(0,10),ora:ora||'',titolo,tipo,go},extra||{}));};
-  if(canV('s-ev')&&typeof allEv==='function')allEv().forEach(e=>{try{(evDays(e)||[]).forEach(d=>add(d,e.ora||'',e.n,'evento','s-ev',{ev:e}));}catch(x){}});
   RIUN.forEach(r=>{const d=new Date(r.quando);const dd=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');add(dd,d.toTimeString().slice(0,5),r.titolo+(r.luogo?' · '+r.luogo:''),(r.tipo||'Riunione').toLowerCase(),'p-cal',{riu:r});});
   vperc().forEach(r=>{if(r.dati.data)add(r.dati.data,r.dati.ora,'Percorso: '+r.dati.nome,'percorso',r.dati.stato==='Pubblicato'?'p-pub':'v-perc');});
   RICH.filter(r=>r.entro&&r.stato!=='fatta'&&(r.preso_da===me||isPres())).forEach(r=>add(r.entro,'','Scade: '+r.titolo,'scadenza','p-req'));
@@ -172,7 +171,7 @@ function voceCal(){const me=CTX.user.id,out=[];const add=(data,ora,titolo,tipo,g
   (VD['v-req']||[]).filter(r=>r.dati.entro&&r.dati.stato!=='Arrivato').forEach(r=>add(r.dati.entro,'','Documento atteso: '+r.dati.documento,'scadenza','v-req'));
   return out.sort((a,b)=>(a.data+a.ora).localeCompare(b.data+b.ora));}
 function renderCalU(){const el=document.getElementById('p-cal');el.innerHTML='';const me=CTX.user.id;const base=CALD?new Date(CALD+'T12:00:00'):new Date();const ISO=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  el.appendChild(h('<div class="sh"><span class="eyb">Per tutti</span><h2>Calendario</h2><p>Eventi, riunioni, sopralluoghi, appuntamenti, percorsi e scadenze in un solo posto. Ognuno vede quello che gli compete.</p></div>'));
+  el.appendChild(h('<div class="sh"><span class="eyb">Eventi</span><h2>Calendario organizzativo</h2><p>Riunioni, sopralluoghi, appuntamenti con i fornitori, percorsi e scadenze. Le riunioni le vedono solo gli invitati. Gli eventi della festa sono nel Calendario eventi ufficiali.</p></div>'));
   const bar=h('<div class="calbar"><div class="seg">'+[['giorno','Giorno'],['settimana','Settimana'],['mese','Mese']].map(([k,l])=>'<button type="button" data-v="'+k+'" aria-pressed="'+(k===CALV)+'">'+l+'</button>').join('')+'</div><div class="calnav"><button type="button" data-n="-1" aria-label="Indietro">‹</button><button type="button" data-n="0">Oggi</button><button type="button" data-n="1" aria-label="Avanti">›</button></div></div>');
   bar.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{CALV=b.dataset.v;renderCalU();}));
   bar.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{const n=+b.dataset.n;if(!n){CALD=null;}else{const d=new Date(base);if(CALV==='mese')d.setMonth(d.getMonth()+n,1);else d.setDate(d.getDate()+n*(CALV==='settimana'?7:1));CALD=ISO(d);}renderCalU();}));

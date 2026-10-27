@@ -20,6 +20,6 @@ function accountBox(u,b){const x=UTENTI[u.id]||{};const me=u.id===CTX.user.id;
   b.appendChild(box);}
 
 /* --- dal telefono: le pagine che sul computer stanno nel menu a sinistra --- */
-function meLinks(el){const L1=[['p-cal','Calendario',IC2.cal],['p-req','Richieste del Presidente',IC2.inbox],['p-pub','Percorsi pubblicati',IC2.route],['p-bach','Bacheca',IC2.doc],['p-chat','Chat',IC2.users]];if(canV('v-pag')||IMP.resp_pagamenti===CTX.user.id)L1.push(['v-pag','Pagamenti ai fornitori',IC2.cal]);if(IMP.resp_fatture===CTX.user.id)L1.push(['v-femit','Fatture da emettere',IC2.doc]);if(CTX.admin)L1.unshift(['s-adm','Utenti e accessi',IC2.key]);
+function meLinks(el){const L1=[['p-req','Richieste del Presidente',IC2.inbox],['p-pub','Percorsi pubblicati',IC2.route],['p-bach','Bacheca',IC2.doc],['p-chat','Chat',IC2.users]];if(canV('v-pag')||IMP.resp_pagamenti===CTX.user.id)L1.push(['v-pag','Pagamenti ai fornitori',IC2.cal]);if(IMP.resp_fatture===CTX.user.id)L1.push(['v-femit','Fatture da emettere',IC2.doc]);if(CTX.admin)L1.unshift(['s-adm','Utenti e accessi',IC2.key]);
   const c=h('<section class="card melinks"><h3>Altre pagine</h3><div class="tilegrid">'+L1.map(([k,t,ic],i)=>'<button type="button" class="vtile'+(k==='s-adm'?' first':'')+'" data-go="'+k+'"><span class="vic">'+svg(ic)+'</span><span class="vt">'+esc(t)+'</span>'+(k==='s-adm'?'<span class="vs">Crea gli accessi e decidi chi vede cosa</span>':'')+'</button>').join('')+'</div></section>');
   el.insertBefore(c,el.children[1]||null);}

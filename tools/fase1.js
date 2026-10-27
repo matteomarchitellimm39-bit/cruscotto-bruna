@@ -41,7 +41,7 @@ SEZ.forEach(s=>R['sec-'+s.k]=()=>renderSec(s));
 const NAVL=document.getElementById('navlist'),BOT=document.getElementById('botnav');
 function navBtn(id,label,ic,cls){return '<button type="button" class="nv '+(cls||'')+'" data-go="'+id+'">'+svg(ic)+'<span>'+esc(label)+'</span></button>';}
 function buildNav(){
-  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-bach','Bacheca',IC2.doc,'small')+navBtn('p-chat','Chat',IC2.users,'small')+navBtn('p-cal','Calendario',IC2.cal,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
+  NAVL.innerHTML=navBtn('p-home','Home',IC2.home)+mySez().map(s=>navBtn('sec-'+s.k,s.n,s.i)).join('')+'<div style="flex-grow:1;min-height:16px"></div>'+navBtn('p-req','Richieste del Presidente',IC2.inbox,'small')+navBtn('p-bach','Bacheca',IC2.doc,'small')+navBtn('p-chat','Chat',IC2.users,'small')+navBtn('p-pub','Percorsi pubblicati',IC2.route,'small')+(CTX.admin?navBtn('s-adm','Utenti e permessi',IC2.key,'small'):'')+navBtn('p-me','Il mio spazio','<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>','me');
   BOT.innerHTML=mySez().map(s=>navBtn('sec-'+s.k,s.n==='Amministrazione'?'Ammin.':s.n,s.i)).join('');
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-go]');if(!b)return;e.preventDefault();go(b.dataset.go);});
