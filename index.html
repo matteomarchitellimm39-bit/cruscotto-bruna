@@ -993,6 +993,24 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
   .h13grid>*,.h13l>*,.h13r>*{width:100%;box-sizing:border-box}
   .c12seg{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none}.c12seg::-webkit-scrollbar{display:none}.c12seg button{padding:8px 12px;font-size:14px;min-height:38px;flex:none}
 }
+/* Crea un evento e simulazione */
+#p-crea{display:flex;flex-direction:column;gap:14px}
+#p-crea .crea13{border-radius:24px}
+.sim13h{margin-top:10px}
+.sim13 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+
+.sim13 details.area{background:#fff;border-radius:24px;box-shadow:var(--shadow);margin-top:12px}
+.sim13step{margin:4px 0 8px;font-size:13px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--acc)}
+.sim13form{background:#F7F8FB;border-radius:18px;padding:12px 14px}
+.sim13res{margin-top:14px}.sim13frase{font-size:17px!important;line-height:1.55!important;background:#EEF2FA;border-radius:18px;padding:14px 16px;margin:0 0 10px}
+.sim13more{margin-top:12px;border-top:1px solid #F0F1F5;padding-top:6px}.sim13more>summary{font-weight:700;color:var(--acc);cursor:pointer;padding:10px 0}
+.crea13btn{align-self:flex-start;margin:4px 0 6px}
+@media(max-width:1023px){.sim13 .tiles{grid-template-columns:1fr 1fr;gap:8px}.sim13frase{font-size:15.5px!important}.sim13form{padding:10px 12px}}
+.sim13 .tile{background:#fff!important;border:1px solid #ECEEF4;border-radius:18px;box-shadow:none;color:var(--fg)}
+.sim13 .tile .l{color:var(--muted);font-size:13.5px}.sim13 .tile .v{font-weight:800;font-size:24px;color:var(--fg)}
+.sim13 .tile.sim13pil{background:var(--navy)!important;border-color:var(--navy)}.sim13 .tile.sim13pil .l{color:#B9BAC6}.sim13 .tile.sim13pil .v{color:#7FD6AE}
+.sim13>.tiles .tile:last-child,.sim13res .tiles .tile:nth-last-child(-n+1){background:#fff;color:var(--fg)}
+@media(max-width:1023px){.sim13 .tile .v{font-size:19px}.sim13 .tile{padding:10px 12px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -4188,8 +4206,8 @@ renderHome=function(){const el=document.getElementById('p-home');el.innerHTML=''
 R['p-home']=renderHome;
 
 /* --- Eventi: barra delle sezioni e pagina principale a carte --- */
-const EVT_G=[['sec-evt','Panoramica','list'],['s-ev','Programma e schede','doc'],['p-cal','Calendario','cal'],['s-cs','Simulazione impatto','flask'],['v-perc','Percorsi','route']];
-const EVT_ID={'sec-evt':1,'s-ev':1,'s-cs':1,'v-perc':1};
+const EVT_G=[['sec-evt','Panoramica','list'],['p-cal','Calendario','cal'],['s-ev','Calendario eventi','star'],['p-crea','Crea un evento','plus'],['v-perc','Percorsi','route']];
+const EVT_ID={'sec-evt':1,'s-ev':1,'p-crea':1,'p-cal':1,'v-perc':1,'s-cs':1};
 function evtBar(id){const vis=EVT_G.filter(([k])=>canOpen(k));return h('<div class="ecobar"><nav class="ecotop" aria-label="Sezioni di Eventi">'+vis.map(([k,t,ic])=>'<button type="button" data-go="'+k+'"'+(k===id?' aria-current="page"':'')+'>'+svg(IC2[ic]||IC2.doc)+'<span>'+esc(t)+'</span></button>').join('')+'</nav></div>');}
 const _addBack13=addBack;addBack=function(id){_addBack13(id);if(!EVT_ID[id])return;const el=document.getElementById(id);if(!el)return;const old=el.querySelector(':scope > .ecobar');if(old)old.remove();const b=evtBar(id);const back=el.querySelector(':scope > .back');if(back)back.after(b);else el.insertBefore(b,el.firstChild);};
 let EVF='prossimi';
@@ -4207,7 +4225,7 @@ function renderEventi13(){const el=document.getElementById('sec-evt');const E=al
     return {n:e.n,t:dd.toLocaleDateString('it-IT',{day:'numeric',month:'long'}),c:on1?(PCOL[e.p]||'#2F63F0'):'#94A3C0',ic:e.p==='I'?'B':'PW',k:(e.p==='I'?'La Bruna':'Passion Week')+(days.length>1?' · '+days.length+' giorni':''),tg:!on1?'Escluso':st(e)==='ok'?'Confermato':'',
       s:[e.luogo||'',on1?km(evCost(e))+' €':''].filter(Boolean).join(' · '),lab:e.n,
       det:box=>{box.innerHTML=(e.desc?'<p style="margin:0 0 8px">'+esc(e.desc)+'</p>':'')+righe([['Date',esc(typeof dLab==='function'?dLab(days):days.join(', '))],e.ora?['Orario',esc(e.ora)]:null,['Luogo',esc(e.luogo||'—')],['Programma',e.p==='I'?'La Bruna':'Passion Week'],['Costo',on1?eur(evCost(e)):'escluso dalla previsione'],['Stato',st(e)==='ok'?'confermato':'da confermare']]);
-        bottoni(box,[['Apri la scheda',()=>schedaEvento(e),true],['Scheda tecnica',()=>apriFiche(e)],can?['Cosa serve?',()=>cosaServe(e)]:null,canOpen('s-cs')?['Simula l’impatto',()=>go('s-cs')]:null]);},
+        bottoni(box,[['Apri la scheda',()=>schedaEvento(e),true],['Scheda tecnica',()=>apriFiche(e)],can?['Cosa serve?',()=>cosaServe(e)]:null,canOpen('p-crea')?['Simula l’impatto',()=>go('p-crea')]:null]);},
       sideLab:'Percorso, persone e fornitori',side:box=>{const P=typeof vperc==='function'?vperc():[];const pc=d.percorso&&P.find(x=>x.id===d.percorso);
         box.innerHTML=righe([['Percorso',pc?esc(pc.dati.nome):'nessuno'],['Responsabile',d.resp?esc(nome(d.resp)):'—']])+((d.fornitori||[]).length?'<p class="b26lab" style="margin:10px 0 4px">Fornitori</p>'+d.fornitori.map(f=>'<div class="c12li"><span class="chip2">'+esc(f.stato||'')+'</span><span>'+esc(f.servizio)+'<small>'+esc(f.fornitore||'da trovare')+'</small></span><b>'+(f.importo?eur(+f.importo):'')+'</b></div>').join(''):'');
         if(pc&&canOpen('v-perc')){const b=h('<button type="button" class="lnk2">Apri il percorso ›</button>');b.addEventListener('click',()=>go('v-perc'));box.appendChild(b);}}};});
@@ -4215,10 +4233,37 @@ function renderEventi13(){const el=document.getElementById('sec-evt');const E=al
     sum:[['gold','★','La Bruna · '+cI.length+' eventi',km(costo(cI))+' €'],['eq','◆','Passion Week · '+cII.length+' eventi',km(costo(cII))+' €'],['in','✓','Confermati',conf+' su '+E.length],['out','€','Costo totale',eur(costo(on))]],
     note:'Corpus Sacro: <b>29 giugno – 3 luglio</b>. Alla Bruna mancano <b>'+countdown()+' giorni</b>.',sumBtn:canOpen('p-cal')?[['Calendario completo',()=>go('p-cal')]]:null,
     mini:[['Eventi',String(on.length)],['Confermati',conf+'/'+E.length],['Costo',km(costo(on))+' €']],
-    actions:[can?['+ Crea un evento',()=>go('v-crea'),true]:null,canOpen('s-ev')?['Programma e schede',()=>go('s-ev')]:null].filter(Boolean),
+    actions:[canOpen('p-crea')?['+ Crea un evento',()=>go('p-crea'),true]:null,canOpen('s-ev')?['Calendario eventi',()=>go('s-ev')]:null].filter(Boolean),
     seg:{on:EVF,list:[['prossimi','Prossimi'],['I','La Bruna'],['II','Passion Week'],['tutti','Tutti']],set:v=>EVF=v},vuoto:'Nessun evento in questa scelta.',cards});
   const old=el.querySelector(':scope > .ecobar');if(old)old.remove();el.insertBefore(evtBar('sec-evt'),el.firstChild);}
 const _renderSec13=renderSec;renderSec=function(s){if(s.k==='evt')return renderEventi13();return _renderSec13(s);};
+
+/* --- Crea un evento: pagina unica con la creazione e la simulazione dell'impatto (stesso funzionamento, impaginazione più semplice) --- */
+PAGEX['p-crea']='Crea un evento';ensureSec('p-crea');
+const _canOpen13=canOpen;canOpen=function(id){if(id==='p-crea')return canV('s-ev')||canV('s-cs');return _canOpen13(id);};
+function semplificaSim(box){
+  const KEY=['Partecipanti','Incasso delle attività vicine','PIL generato','Giornate di lavoro','Chi compra','Incasso delle attività'];
+  const tieni=(tl,cls)=>{if(!tl)return;const via=[...tl.children].filter(t=>{const l=(t.querySelector('.l')||{}).textContent||'';return !KEY.includes(l.trim());});
+    tl.querySelectorAll('.tile').forEach(t=>{const l=((t.querySelector('.l')||{}).textContent||'').trim();t.classList.toggle('sim13pil',l==='PIL generato');});
+    if(via.length){const m=h('<details class="more sim13more"><summary>Altri numeri</summary><div class="tiles"></div></details>');via.forEach(t=>m.querySelector('.tiles').appendChild(t));tl.after(m);}};
+  tieni([...box.children].find(k=>k.classList.contains('tiles')));
+  box.querySelectorAll('.edform').forEach(f=>{const rows=[...f.querySelectorAll(':scope > .when')];if(rows.length>3){const m=h('<details class="more sim13more"><summary>Altri dettagli (facoltativi): sponsor, ragazzi, addetti, acquisti</summary></details>');rows.slice(3).forEach(r=>m.appendChild(r));f.appendChild(m);}});
+  box.querySelectorAll('details.area').forEach(d=>{const B=d.querySelector('.area-body');if(!B)return;
+    const kids=[...B.children];const form=kids.find(k=>k.classList.contains('edform'));const frase=kids.find(k=>k.tagName==='P');const tiles=kids.find(k=>k.classList.contains('tiles'));
+    const tech=kids.filter(k=>k!==form&&k!==frase&&k!==tiles&&!k.classList.contains('tip')&&!(k.classList.contains('big-btns')&&/Duplica/.test(k.textContent)));
+    if(form){form.classList.add('sim13form');const st=h('<p class="sim13step">1 · Descrivi l’evento</p>');B.insertBefore(st,form);}
+    if(frase||tiles){const r=h('<div class="sim13res"><p class="sim13step">2 · Il risultato</p></div>');if(frase){frase.classList.add('sim13frase');r.appendChild(frase);}if(tiles){r.appendChild(tiles);tieni(tiles);}B.insertBefore(r,form?form.nextSibling:B.firstChild);}
+    if(tech.length){const m=h('<details class="more sim13more"><summary>Vedi il calcolo completo (dove va l’incasso, attività vicine, indotto, lavoro)</summary></details>');tech.forEach(t=>m.appendChild(t));const dup=[...B.children].find(k=>k.classList.contains('big-btns'));B.insertBefore(m,dup||null);}});}
+R['p-crea']=function(){const el=document.getElementById('p-crea');el.innerHTML='';const canE=CTX.canEdit('s-ev'),canS=CTX.canEdit('s-cs');
+  el.appendChild(h('<div class="sh"><span class="eyb">Eventi</span><h2>Crea un evento</h2><p>Aggiungi un evento al calendario e guarda subito quanto può rendere alla città.</p></div>'));
+  if(canV('s-ev')){const f=addForm();f.classList.add('crea13');if(!canE)f.querySelectorAll('input,button,select').forEach(x=>x.disabled=true);el.appendChild(f);}
+  if(canV('s-cs')){el.appendChild(h('<div class="sh sim13h"><span class="eyb">Simulazione dell’impatto</span><h2>Che cosa genera un evento</h2><p>Per ogni evento indica luogo, data, durata, tipo, età del pubblico e partecipanti: in un attimo vedi chi compra nei locali vicini, quanto incassano e il PIL generato.</p></div>'));
+    const box=h('<div class="sim13"></div>');renderProj(box);semplificaSim(box);box.querySelectorAll('button').forEach(b=>{if(b.textContent.trim()==='+ Aggiungi un evento')b.textContent='+ Simula un altro evento';});if(!canS)box.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);el.appendChild(box);
+    const lk=h('<button type="button" class="lnk2">Ricadute di tutta la stagione, parametri e fonti (Centro Studi) ›</button>');lk.addEventListener('click',()=>go('s-cs'));el.appendChild(lk);}};
+// dal Calendario eventi si toglie il modulo «Aggiungi un evento»: ora c'è la pagina Crea un evento
+const _ev13=R['s-ev'];R['s-ev']=function(){_ev13();const el=document.getElementById('s-ev');const f=el.querySelector('#nadd');const c=f&&f.closest('.card');if(c&&!editMode)c.remove();
+  if(canOpen('p-crea')&&!el.querySelector('.crea13btn')){const b=h('<button type="button" class="bb dark sm crea13btn">+ Crea un evento</button>');b.addEventListener('click',()=>go('p-crea'));const sh=el.querySelector('.sh');if(sh)sh.after(b);}};
+const _go13=go;go=function(id){if(id==='v-crea')id='p-crea';return _go13(id);};
 
 /* ---------- avvio ---------- */
 autoLeve();
