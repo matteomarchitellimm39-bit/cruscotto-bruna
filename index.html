@@ -1242,6 +1242,35 @@ body::before{content:"";position:fixed;right:-1vw;bottom:-3vh;width:min(42vw,500
 .imp18sp label.ck{flex-direction:row;display:flex;align-items:center;gap:8px;width:auto;font-size:15px;color:#16161D;margin:0}
 .imp18sp label.ck input,.imp18rh label.ck input{width:22px;height:22px;flex:none;margin:0}
 .imp18rh label.ck{display:flex;align-items:center;gap:6px;font-weight:700}
+/* schermata di caricamento semplificata, nello stile della Home */
+.imp18in{background:#F4F5F8}
+.imp18b{display:flex;flex-direction:column;gap:12px}
+.imp18as{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,#EEF3FF,#F6F1FF);border-radius:18px;padding:12px 14px}
+.imp18as>div{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}
+.imp18as>div b{font-size:15px}
+.imp18as>div span{font-size:15.5px;line-height:1.45}
+.imp18drop2{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;border-radius:22px;padding:34px 18px;box-shadow:var(--shadow);cursor:pointer;color:#16161D}
+.imp18drop2 svg{color:var(--navy)}
+.imp18drop2 b{font-size:19px}
+.imp18drop2 span{color:var(--muted);font-size:15px;max-width:440px}
+.imp18drop2 em{font-style:normal;font-weight:800;color:#1E7F55}
+.imp18drop2.ok{box-shadow:inset 0 0 0 2px #1E7F55,var(--shadow)}
+.imp18list{gap:10px}
+.imp18c{cursor:default;gap:10px;padding:12px 14px 12px 18px;box-shadow:var(--shadow);border:0}
+.imp18c.da{background:#FFFBF0}
+.imp18c.off{opacity:.45}
+.imp18c .ph{flex-wrap:nowrap}
+.imp18c .pa b{font-size:16.5px}
+.imp18t{font-size:19px;white-space:nowrap}
+.imp18q{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.imp18q .seg button{min-height:42px;font-size:15px}
+.imp18q .ck,.imp18a .ck{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.imp18q .ck input,.imp18a .ck input,.imp18g .ck input{width:22px;height:22px;margin:0;flex:none}
+.imp18w{display:flex;flex-direction:column;gap:2px;font-size:14.5px}
+.imp18w .ko{color:#B3261E}.imp18w .wa{color:#8A5A00}.imp18w .ai{color:#4B3BA8}
+.imp18a{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #F1F2F6;padding-top:8px}
+.imp18g .ck{flex-direction:row;color:#16161D;font-size:15px}
+@media (max-width:760px){.imp18q .seg{width:100%}.imp18q .seg button{flex:1}.imp18c .ph{flex-wrap:wrap}.imp18t{margin-left:auto}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -5117,52 +5146,61 @@ function apriImport(){const id='v-fatt';if(!CTX.canEdit(id)){stEl.textContent='S
   const ov=h('<div class="imp18" role="dialog" aria-modal="true" aria-label="Carica fatture"><div class="imp18in"><div class="imp18h"><div><span class="eyb">Fatture</span><h2>Carica i documenti</h2></div><button type="button" class="imp18x" aria-label="Chiudi">×</button></div><div class="imp18b"></div><div class="imp18f"></div></div></div>');
   document.body.appendChild(ov);document.body.style.overflow='hidden';const chiudi=()=>{ov.remove();document.body.style.overflow='';IMP18=null;};ov.querySelector('.imp18x').addEventListener('click',()=>{if(IMP18&&IMP18.rows.length&&!IMP18.salvato)ask('Chiudere senza salvare i documenti letti?','Chiudi',async()=>chiudi());else chiudi();});
   IMP18={ov,rows:[],chiudi};passoScelta();}
-function passoScelta(){const B=IMP18.ov.querySelector('.imp18b'),F=IMP18.ov.querySelector('.imp18f');
-  B.innerHTML='<label class="drop imp18drop"><input type="file" id="i18f" multiple accept=".pdf,.xml,.p7m,application/pdf">'+svg(IC2.doc,34)+'<b>Tocca per scegliere i documenti</b><span>Puoi sceglierne tanti insieme: fatture con IVA, liberalità, note di credito, ricevute, fatture dei fornitori (PDF, XML o P7M). Li leggo 20 alla volta.</span></label><p class="muted small imp18sel"></p>';F.innerHTML='';
-  const inp=B.querySelector('#i18f');inp.addEventListener('change',()=>{const n=inp.files.length;B.querySelector('.imp18sel').textContent=n?n+(n===1?' documento scelto.':' documenti scelti.'):'';btn.disabled=!n;});
-  const btn=h('<button type="button" class="bb dark" disabled>Leggi i documenti</button>');btn.addEventListener('click',()=>leggiTutti([...inp.files]));F.appendChild(btn);}
+const assist18=(t,btn)=>{const a=h('<div class="imp18as"><span class="orb"></span><div><b>L’assistente</b><span>'+t+'</span></div></div>');if(btn){const k=h('<button type="button" class="bb dark sm">'+esc(btn[0])+'</button>');k.addEventListener('click',btn[1]);a.appendChild(k);}return a;};
+function passoScelta(){const B=IMP18.ov.querySelector('.imp18b'),F=IMP18.ov.querySelector('.imp18f');B.innerHTML='';F.innerHTML='';
+  B.appendChild(assist18('Scegli i documenti: li leggo io e ti preparo tutto. Tu controlli e salvi.'));
+  const dr=h('<label class="imp18drop2"><input type="file" id="i18f" multiple accept=".pdf,.xml,.p7m,application/pdf" hidden>'+svg(IC2.doc,30)+'<b>Scegli i documenti</b><span>Anche tanti insieme: fatture, liberalità, note di credito, ricevute</span><em class="imp18sel"></em></label>');B.appendChild(dr);
+  const inp=dr.querySelector('#i18f');const btn=h('<button type="button" class="bb dark" disabled>Leggi i documenti</button>');btn.addEventListener('click',()=>leggiTutti([...inp.files]));
+  inp.addEventListener('change',()=>{const n=inp.files.length;dr.querySelector('.imp18sel').textContent=n?n+(n===1?' documento scelto':' documenti scelti'):'';dr.classList.toggle('ok',!!n);btn.disabled=!n;if(n)leggiTutti([...inp.files]);});F.appendChild(btn);}
 async function leggiTutti(files){const B=IMP18.ov.querySelector('.imp18b'),F=IMP18.ov.querySelector('.imp18f');F.innerHTML='';
-  B.innerHTML='<div class="imp18prog"><b>Leggo i documenti…</b><span>0 di '+files.length+'</span><i style="--w:0%"></i></div>';const P=B.querySelector('.imp18prog');const rows=[];
+  B.innerHTML='';B.appendChild(assist18('Sto leggendo i documenti, un momento…'));B.appendChild(h('<div class="imp18prog"><b>Leggo i documenti</b><span>0 di '+files.length+'</span><i style="--w:0%"></i></div>'));const P=B.querySelector('.imp18prog');const rows=[];
   for(let i=0;i<files.length;i+=20){const ch=files.slice(i,i+20);const L=await Promise.all(ch.map(f=>leggiDoc(f)));rows.push(...L);const n=Math.min(files.length,i+20);P.querySelector('span').textContent=n+' di '+files.length+(files.length>20?' · a gruppi di 20':'');P.querySelector('i').style.setProperty('--w',(n/files.length*100)+'%');}
   // note di credito: prendono categoria, edizione e festa dalla fattura stornata
   rows.forEach(o=>{if(isNota(o.doc)){const g=trovaOrig(o.storno,rows);if(g){const d=g.d;if(d.categoria){o.categoria=d.categoria;o.dubbi=o.dubbi.filter(x=>x!=='categoria');}if(d.edizione&&!o.dubbi.includes('edizione')===false){o.edizione=d.edizione;o.dubbi=o.dubbi.filter(x=>x!=='edizione');}if(d.festa&&!o.festa){o.festa=d.festa;o.dubbi=o.dubbi.filter(x=>x!=='festa');}}}
     o.salva=!avvisi18(o,rows).some(([k,t])=>/^Già caricato|^Doppione/.test(t));if(o.festa&&!/bruna/i.test(o.festa))o.imputa=false;o.collega=true;});
   IMP18.rows=rows;tabellaImport();}
+function campiImport(o){const n=isNota(o.doc);return '<div class="imp18g">'+
+  '<label>Tipo<select data-k="doc">'+DOCK.map(k=>'<option value="'+k+'"'+(k===o.doc?' selected':'')+'>'+DOC1[k]+'</option>').join('')+'</select></label>'+
+  '<label>Numero<input type="text" data-k="numero" value="'+esc(o.numero||'')+'"></label>'+
+  '<label>Data<input type="date" data-k="data" value="'+esc(o.data||'')+'"></label>'+
+  '<label>'+(o.doc==='PAS'?'Fornitore':'Cliente')+'<input type="text" data-k="soggetto" value="'+esc(o.soggetto||'')+'"></label>'+
+  '<label>Partita IVA / Cod. fiscale<input type="text" data-k="piva" value="'+esc(o.piva||'')+'"></label>'+
+  '<label>Imponibile (€)<input type="number" step="0.01" data-k="imponibile" value="'+(o.imponibile!=null?o.imponibile:'')+'"></label>'+
+  '<label>IVA (€)<input type="number" step="0.01" data-k="iva" value="'+(o.iva!=null?o.iva:'')+'"></label>'+
+  '<label>Totale (€)<input type="number" step="0.01" data-k="importo" value="'+(o.importo!=null?o.importo:'')+'"></label>'+
+  (n?'<label>Storna la fattura<input type="text" data-k="storno" value="'+esc(o.storno||'')+'"></label>':'')+
+  '<label>È<select data-k="categoria">'+CAT18.map(c=>'<option'+(c===o.categoria?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
+  '<label>Festa<input type="text" data-k="festa" value="'+esc(o.festa||'')+'"></label>'+
+  '<label class="w2">Descrizione<input type="text" data-k="descrizione" value="'+esc(o.descrizione||o.nota||'')+'"></label>'+
+  '<label class="ck w2"><input type="checkbox" data-k="collega"'+(o.collega?' checked':'')+'> Collega alla lista '+(o.categoria==='Sponsor'?'Sponsor':o.categoria==='Donazione'?'Donatori':o.categoria==='Fornitore'?'Fornitori':'')+'</label></div>';}
 function tabellaImport(){const B=IMP18.ov.querySelector('.imp18b'),F=IMP18.ov.querySelector('.imp18f');const rows=IMP18.rows;
-  const tot=k=>rows.filter(o=>o.salva&&o.doc===k).length;
-  B.innerHTML='<div class="imp18sum">'+DOCK.filter(k=>rows.some(o=>o.doc===k)).map(k=>'<span class="chip2" style="--c:'+DOC18[k][1]+'">'+DOC18[k][0]+': <b>'+rows.filter(o=>o.doc===k).length+'</b></span>').join('')+'</div><p class="muted small" style="margin:0 0 6px">Controlla ogni documento. Le caselle con il segno ✦ sono proposte: se sono giuste lasciale così. Quando è tutto a posto tocca «Salva».</p><div class="imp18list"></div>';
-  const LI=B.querySelector('.imp18list');
-  rows.forEach((o,i)=>{const av=avvisi18(o,rows);const dubbio=k=>o.dubbi.includes(k)?' ✦':'';
-    const r=h('<article class="imp18r'+(o.salva?'':' off')+'" style="--c:'+DOC18[o.doc][1]+'"><div class="imp18rh"><label class="ck"><input type="checkbox" data-k="salva"'+(o.salva?' checked':'')+'> Salva</label><b>'+esc(o.soggetto||'Senza nome')+'</b><span class="chip2">'+esc(DOC18[o.doc][0])+'</span><em>'+esc(o.__nome||'')+'</em></div>'+
-      '<div class="imp18g">'+
-      '<label>Tipo<select data-k="doc">'+DOCK.map(k=>'<option value="'+k+'"'+(k===o.doc?' selected':'')+'>'+DOC18[k][0]+'</option>').join('')+'</select></label>'+
-      '<label>Numero<input type="text" data-k="numero" value="'+esc(o.numero||'')+'"></label>'+
-      '<label>Data<input type="date" data-k="data" value="'+esc(o.data||'')+'"></label>'+
-      '<label>'+(o.doc==='PAS'?'Fornitore':'Cliente')+'<input type="text" data-k="soggetto" value="'+esc(o.soggetto||'')+'"></label>'+
-      '<label>Partita IVA / Cod. fiscale<input type="text" data-k="piva" value="'+esc(o.piva||'')+'"></label>'+
-      '<label>Imponibile (€)<input type="number" step="0.01" data-k="imponibile" value="'+(o.imponibile!=null?o.imponibile:'')+'"></label>'+
-      '<label>IVA (€)<input type="number" step="0.01" data-k="iva" value="'+(o.iva!=null?o.iva:'')+'"></label>'+
-      '<label>Totale (€)<input type="number" step="0.01" data-k="importo" value="'+(o.importo!=null?o.importo:'')+'"></label>'+
-      (isNota(o.doc)?'<label>Storna la fattura<input type="text" data-k="storno" value="'+esc(o.storno||'')+'"></label>':'')+
-      '<label class="w2">Descrizione<input type="text" data-k="descrizione" value="'+esc(o.descrizione||o.nota||'')+'"></label></div>'+
-      '<div class="imp18sp"><div><span class="lab">Edizione'+dubbio('edizione')+'</span><div class="seg wrap">'+anniBilancio().slice(0,3).map(([y])=>'<button type="button" data-ed="'+y+'" aria-pressed="'+(+o.edizione===y)+'">Bruna '+y+'</button>').join('')+'</div></div>'+
-      '<div><span class="lab">È'+dubbio('categoria')+'</span><div class="seg wrap">'+CAT18.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(o.categoria===c)+'">'+c+'</button>').join('')+'</div></div>'+
-      '<div><span class="lab">Festa'+dubbio('festa')+'</span><input type="text" data-k="festa" value="'+esc(o.festa||'')+'" placeholder="Festa della Bruna"></div>'+
-      '<label class="ck"><input type="checkbox" data-k="imputa"'+(o.imputa?' checked':'')+'> Imputa al bilancio '+(o.edizione||'')+'</label>'+
-      '<label class="ck"><input type="checkbox" data-k="collega"'+(o.collega?' checked':'')+'> Collega alla lista '+(o.categoria==='Sponsor'?'Sponsor '+(o.edizione||''):o.categoria==='Donazione'?'Donatori':o.categoria==='Fornitore'?'Fornitori '+(o.edizione||''):'')+'</label></div>'+
-      (av.length?'<div class="imp18av">'+av.map(([k,t])=>'<span class="'+k+'">'+esc(t)+'</span>').join('')+'</div>':'')+'</article>');
-    r.querySelectorAll('[data-k]').forEach(x=>x.addEventListener('change',()=>{const k=x.dataset.k;let v=x.type==='checkbox'?x.checked:x.value;if(['imponibile','iva','importo'].includes(k))v=v===''?null:+v;o[k]=v;if(k==='festa'||k==='doc'||k==='storno'||k==='numero'||k==='importo'||k==='imponibile'||k==='iva'){o.dubbi=o.dubbi.filter(z=>z!==(k==='festa'?'festa':'controlla'));tabellaImport();}else if(k==='salva')r.classList.toggle('off',!v);}));
+  const dub=rows.filter(o=>o.salva&&(o.dubbi.length||avvisi18(o,rows).some(([k])=>k==='ko'||k==='wa')));
+  B.innerHTML='';const tot=rows.filter(o=>o.salva).length;
+  B.appendChild(assist18('Ho letto <b>'+rows.length+(rows.length===1?' documento':' documenti')+'</b>.'+(dub.length?' <b>'+dub.length+'</b> '+(dub.length===1?'ha':'hanno')+' qualcosa da controllare: li trovi in cima, segnati in giallo.':' È tutto a posto: controlla edizione e tipo e tocca «Salva».'),AION&&rows.some(o=>o.salva&&o.dubbi.length)?['Controlla tu per me',async()=>{await aiutoAI();}]:null));
+  const LI=h('<div class="imp18list"></div>');B.appendChild(LI);
+  const ord=rows.map((o,i)=>[o,i]).sort((x,y)=>(dub.includes(y[0])-dub.includes(x[0]))||x[1]-y[1]).map(x=>x[0]);
+  ord.forEach(o=>{const av=avvisi18(o,rows).filter(([k])=>k!=='ok');const da=dub.includes(o);const k=o.doc;
+    const r=h('<article class="post9 imp18c'+(o.salva?'':' off')+(da?' da':'')+'" style="--c:'+DOC18[k][1]+'"><div class="ph"><span class="av9" style="--c:'+DOC18[k][1]+'">'+(k==='RIC'?'R':k)+'</span><span class="pa"><b>'+esc(o.soggetto||'Senza nome')+'</b><em>'+esc(DOC1[k])+' '+esc(String(o.numero||'').replace(/^Ricevuta\s*/,''))+(o.data?' · '+fmtD(o.data)+' '+o.data.slice(0,4):'')+'</em></span><b class="imp18t">'+(o.importo!=null?eur(+o.importo):'—')+'</b></div>'+
+      '<div class="imp18q"><div class="seg wrap">'+anniBilancio().slice(0,2).map(([y])=>'<button type="button" data-ed="'+y+'" aria-pressed="'+(+o.edizione===y)+'">Bruna '+y+'</button>').join('')+'</div>'+
+      '<div class="seg wrap">'+['Sponsor','Donazione','Fornitore'].map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(o.categoria===c)+'">'+c+'</button>').join('')+'</div>'+
+      '<label class="ck"><input type="checkbox" data-k="imputa"'+(o.imputa?' checked':'')+'> Nel bilancio</label></div>'+
+      (av.length?'<div class="imp18w">'+av.slice(0,2).map(([kk,t])=>'<span class="'+kk+'">'+esc(t)+'</span>').join('')+'</div>':'')+
+      '<div class="imp18a"><label class="ck"><input type="checkbox" data-k="salva"'+(o.salva?' checked':'')+'> Da salvare</label><button type="button" class="lnk2 imp18m">'+(o.__apri?'Chiudi i dati':'Modifica i dati')+'</button></div>'+
+      (o.__apri?campiImport(o):'')+'</article>');
+    r.querySelectorAll('[data-k]').forEach(x=>x.addEventListener('change',()=>{const kk=x.dataset.k;let v=x.type==='checkbox'?x.checked:x.value;if(['imponibile','iva','importo'].includes(kk))v=v===''?null:+v;o[kk]=v;
+      if(kk==='festa'){o.dubbi=o.dubbi.filter(z=>z!=='festa');if(v&&!/bruna/i.test(v))o.imputa=false;}if(kk==='categoria')o.dubbi=o.dubbi.filter(z=>z!=='categoria');if(['numero','importo','imponibile','iva','doc','soggetto','data'].includes(kk))o.dubbi=o.dubbi.filter(z=>z!=='controlla');
+      if(kk==='salva')r.classList.toggle('off',!v);else if(kk!=='imputa'&&kk!=='collega'&&kk!=='descrizione'&&kk!=='piva')tabellaImport();}));
+    r.querySelector('.imp18m').addEventListener('click',()=>{o.__apri=!o.__apri;tabellaImport();});
     r.querySelectorAll('[data-ed]').forEach(b=>b.addEventListener('click',()=>{o.edizione=+b.dataset.ed;o.dubbi=o.dubbi.filter(z=>z!=='edizione');tabellaImport();}));
     r.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{o.categoria=b.dataset.cat;o.dubbi=o.dubbi.filter(z=>z!=='categoria');tabellaImport();}));
     LI.appendChild(r);});
-  F.innerHTML='';const n=rows.filter(o=>o.salva).length;const dub=rows.filter(o=>o.salva&&o.dubbi.length).length;
-  bottoni(F,[['‹ Scegli altri documenti',()=>passoScelta()],AION&&dub?['Chiedi all’assistente le caselle ✦ ('+dub+')',async()=>{await aiutoAI();}]:null,['Salva '+n+(n===1?' documento':' documenti'),()=>salvaImport(),true]]);}
+  F.innerHTML='';bottoni(F,[['‹ Altri documenti',()=>passoScelta()],['Salva '+tot+(tot===1?' documento':' documenti'),()=>salvaImport(),true]]);}
 async function aiutoAI(){const rows=IMP18.rows.filter(o=>o.salva&&o.dubbi.length);let fatti=0;stEl.textContent='L’assistente controlla '+rows.length+' documenti…';
   for(const o of rows){const r=await ai('documento',{testo:JSON.stringify({tipo:DOC18[o.doc][0],numero:o.numero,data:o.data,cliente:o.soggetto,descrizione:o.descrizione,totale:o.importo,storno:o.storno})});if(r.err){stEl.textContent=r.err;break;}
     let x={};try{x=JSON.parse(String(r.testo).replace(/^```json|```$/g,''));}catch(e){continue;}
     if(o.dubbi.includes('edizione')&&[2026,2027,2028].includes(+x.edizione)){o.edizione=+x.edizione;}if(o.dubbi.includes('categoria')&&CAT18.includes(x.categoria))o.categoria=x.categoria;if(o.dubbi.includes('festa')&&x.festa)o.festa=String(x.festa).slice(0,60);
     o.ai=true;fatti++;}
-  stEl.textContent=fatti?'L’assistente ha proposto '+fatti+(fatti===1?' documento':' documenti')+': le caselle ✦ restano da confermare.':stEl.textContent;tabellaImport();}
+  stEl.textContent=fatti?'L’assistente ha controllato '+fatti+(fatti===1?' documento':' documenti')+': le caselle ✦ restano da confermare.':stEl.textContent;tabellaImport();}
 async function salvaImport(){const rows=IMP18.rows.filter(o=>o.salva);if(!rows.length){stEl.textContent='Nessun documento da salvare.';return;}
   const F=IMP18.ov.querySelector('.imp18f');F.innerHTML='<p class="muted">Salvo '+rows.length+' documenti…</p>';const ins={};let link=0,ok=0;const avv=[];
   for(const o of rows){try{const file=o.__file?await carica(o.__file,'v-fatt'):null;const g=isNota(o.doc)?trovaOrig(o.storno,rows):null;
@@ -5176,7 +5214,7 @@ async function salvaImport(){const rows=IMP18.rows.filter(o=>o.salva);if(!rows.l
   // note di credito caricate insieme alla loro fattura
   for(const o of rows)if(isNota(o.doc)&&o.storno&&ins[o.numero]&&!ins[o.numero].dati.orig_id&&ins[o.storno]){await CTX.sb.from('voci_dati').update({dati:Object.assign({},ins[o.numero].dati,{orig_id:ins[o.storno].id})}).eq('id',ins[o.numero].id);}
   await loadVD();IMP18.salvato=true;rerender();
-  F.innerHTML='';const B=IMP18.ov.querySelector('.imp18b');B.innerHTML='<div class="ev15cd ok"><b>'+ok+(ok===1?' documento salvato':' documenti salvati')+'</b><span>'+link+' collegati a sponsor, donatori o fornitori.</span></div>'+(avv.length?'<div class="ev14crit"><b>Da sistemare</b>'+avv.map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>':'');
+  F.innerHTML='';const B=IMP18.ov.querySelector('.imp18b');B.innerHTML='';B.appendChild(assist18('Fatto: ho salvato <b>'+ok+(ok===1?' documento':' documenti')+'</b> e '+(link===1?'ne ho collegato 1':'ne ho collegati '+link)+' a sponsor, donatori o fornitori. Li trovi nella sezione Fatture, divisi per tipo.'));B.insertAdjacentHTML('beforeend',''+(avv.length?'<div class="ev14crit"><b>Da sistemare</b>'+avv.map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>':''));
   bottoni(F,[['Carica altri documenti',()=>passoScelta()],['Chiudi',()=>IMP18.chiudi(),true]]);}
 async function collegaLista(o,d,avv){const y=+o.edizione;
   if(o.categoria==='Sponsor'&&(y===2026||y===2027)){const voce=y===2026?'v-sp26':'v-sp27';const r=spDi(voce,o.soggetto,o.piva);if(r)return {voce,id:r.id};

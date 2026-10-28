@@ -41,3 +41,32 @@
 .imp18sp label.ck{flex-direction:row;display:flex;align-items:center;gap:8px;width:auto;font-size:15px;color:#16161D;margin:0}
 .imp18sp label.ck input,.imp18rh label.ck input{width:22px;height:22px;flex:none;margin:0}
 .imp18rh label.ck{display:flex;align-items:center;gap:6px;font-weight:700}
+/* schermata di caricamento semplificata, nello stile della Home */
+.imp18in{background:#F4F5F8}
+.imp18b{display:flex;flex-direction:column;gap:12px}
+.imp18as{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,#EEF3FF,#F6F1FF);border-radius:18px;padding:12px 14px}
+.imp18as>div{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}
+.imp18as>div b{font-size:15px}
+.imp18as>div span{font-size:15.5px;line-height:1.45}
+.imp18drop2{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#fff;border-radius:22px;padding:34px 18px;box-shadow:var(--shadow);cursor:pointer;color:#16161D}
+.imp18drop2 svg{color:var(--navy)}
+.imp18drop2 b{font-size:19px}
+.imp18drop2 span{color:var(--muted);font-size:15px;max-width:440px}
+.imp18drop2 em{font-style:normal;font-weight:800;color:#1E7F55}
+.imp18drop2.ok{box-shadow:inset 0 0 0 2px #1E7F55,var(--shadow)}
+.imp18list{gap:10px}
+.imp18c{cursor:default;gap:10px;padding:12px 14px 12px 18px;box-shadow:var(--shadow);border:0}
+.imp18c.da{background:#FFFBF0}
+.imp18c.off{opacity:.45}
+.imp18c .ph{flex-wrap:nowrap}
+.imp18c .pa b{font-size:16.5px}
+.imp18t{font-size:19px;white-space:nowrap}
+.imp18q{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.imp18q .seg button{min-height:42px;font-size:15px}
+.imp18q .ck,.imp18a .ck{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.imp18q .ck input,.imp18a .ck input,.imp18g .ck input{width:22px;height:22px;margin:0;flex:none}
+.imp18w{display:flex;flex-direction:column;gap:2px;font-size:14.5px}
+.imp18w .ko{color:#B3261E}.imp18w .wa{color:#8A5A00}.imp18w .ai{color:#4B3BA8}
+.imp18a{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #F1F2F6;padding-top:8px}
+.imp18g .ck{flex-direction:row;color:#16161D;font-size:15px}
+@media (max-width:760px){.imp18q .seg{width:100%}.imp18q .seg button{flex:1}.imp18c .ph{flex-wrap:wrap}.imp18t{margin-left:auto}}
