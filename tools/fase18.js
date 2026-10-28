@@ -8,7 +8,7 @@ const nrm18=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'
 const docDi=d=>d.doc||(d.tipo==='Ricavo'?'FVL':'PAS');
 const isNota=k=>k==='NCV'||k==='NVD';
 const isBruna=d=>!d.festa||/bruna/i.test(d.festa);
-const docsV=()=>(VD['v-fatt']||[]);
+const docsV=()=>(VD['v-fatt']||[]).filter(r=>!r.dati.kind);
 // --- lettura dei documenti emessi dall'Associazione (FVL, FVD, NCV, NVD, Ricevuta) ---
 function stacca(l){l=String(l).replace(/\s+/g,' ').trim();const t=l.split(' ');const sg=x=>/^[A-Za-z0-9€]$/.test(x);const o=[];let i=0;
   while(i<t.length){if(sg(t[i])){let j=i;while(j<t.length&&sg(t[j]))j++;if(j-i>=3){let w=t.slice(i,j).join('');if(j<t.length&&/^\d+,\d{2}$/.test(t[j])&&/\d$/.test(w)){w+=t[j];j++;}o.push(w);i=j;continue;}}o.push(t[i]);i++;}return o.join(' ');}
@@ -93,7 +93,7 @@ async function leggiTutti(files){const B=IMP18.ov.querySelector('.imp18b'),F=IMP
   for(let i=0;i<files.length;i+=20){const ch=files.slice(i,i+20);const L=await Promise.all(ch.map(f=>leggiDoc(f)));rows.push(...L);const n=Math.min(files.length,i+20);P.querySelector('span').textContent=n+' di '+files.length+(files.length>20?' · a gruppi di 20':'');P.querySelector('i').style.setProperty('--w',(n/files.length*100)+'%');}
   // note di credito: prendono categoria, edizione e festa dalla fattura stornata
   rows.forEach(o=>{if(isNota(o.doc)){const g=trovaOrig(o.storno,rows);if(g){const d=g.d;if(d.categoria){o.categoria=d.categoria;o.dubbi=o.dubbi.filter(x=>x!=='categoria');}if(d.edizione&&!o.dubbi.includes('edizione')===false){o.edizione=d.edizione;o.dubbi=o.dubbi.filter(x=>x!=='edizione');}if(d.festa&&!o.festa){o.festa=d.festa;o.dubbi=o.dubbi.filter(x=>x!=='festa');}}}
-    o.salva=!avvisi18(o,rows).some(([k,t])=>/^Già caricato|^Doppione/.test(t));if(o.festa&&!/bruna/i.test(o.festa))o.imputa=false;o.collega=true;});
+    if(!o.prodotti){o.prodotti=proponiProd(o,rows);if((o.doc==='RIC'||o.doc==='FVL')&&o.prodotti.length&&o.categoria!=='Sponsor'){o.categoria='Sponsor';if(o.doc==='RIC')o.dubbi.push('categoria');}}o.salva=!avvisi18(o,rows).some(([k,t])=>/^Già caricato|^Doppione/.test(t));if(o.festa&&!/bruna/i.test(o.festa))o.imputa=false;o.collega=true;});
   IMP18.rows=rows;tabellaImport();}
 function campiImport(o){const n=isNota(o.doc);return '<div class="imp18g">'+
   '<label>Tipo<select data-k="doc">'+DOCK.map(k=>'<option value="'+k+'"'+(k===o.doc?' selected':'')+'>'+DOC1[k]+'</option>').join('')+'</select></label>'+
@@ -119,14 +119,14 @@ function tabellaImport(){const B=IMP18.ov.querySelector('.imp18b'),F=IMP18.ov.qu
     const r=h('<article class="post9 imp18c'+(o.salva?'':' off')+(da?' da':'')+'" style="--c:'+DOC18[k][1]+'"><div class="ph"><span class="av9" style="--c:'+DOC18[k][1]+'">'+(k==='RIC'?'R':k)+'</span><span class="pa"><b>'+esc(o.soggetto||'Senza nome')+'</b><em>'+esc(DOC1[k])+' '+esc(String(o.numero||'').replace(/^Ricevuta\s*/,''))+(o.data?' · '+fmtD(o.data)+' '+o.data.slice(0,4):'')+'</em></span><b class="imp18t">'+(o.importo!=null?eur(+o.importo):'—')+'</b></div>'+
       '<div class="imp18q"><div class="seg wrap">'+anniBilancio().slice(0,2).map(([y])=>'<button type="button" data-ed="'+y+'" aria-pressed="'+(+o.edizione===y)+'">Bruna '+y+'</button>').join('')+'</div>'+
       '<div class="seg wrap">'+['Sponsor','Donazione','Fornitore'].map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(o.categoria===c)+'">'+c+'</button>').join('')+'</div>'+
-      '<label class="ck"><input type="checkbox" data-k="imputa"'+(o.imputa?' checked':'')+'> Nel bilancio</label></div>'+
+      '<label class="ck"><input type="checkbox" data-k="imputa"'+(o.imputa?' checked':'')+'> Nel bilancio</label></div>'+rigaProdSocio(o)+
       (av.length?'<div class="imp18w">'+av.slice(0,2).map(([kk,t])=>'<span class="'+kk+'">'+esc(t)+'</span>').join('')+'</div>':'')+
       '<div class="imp18a"><label class="ck"><input type="checkbox" data-k="salva"'+(o.salva?' checked':'')+'> Da salvare</label><button type="button" class="lnk2 imp18m">'+(o.__apri?'Chiudi i dati':'Modifica i dati')+'</button></div>'+
       (o.__apri?campiImport(o):'')+'</article>');
     r.querySelectorAll('[data-k]').forEach(x=>x.addEventListener('change',()=>{const kk=x.dataset.k;let v=x.type==='checkbox'?x.checked:x.value;if(['imponibile','iva','importo'].includes(kk))v=v===''?null:+v;o[kk]=v;
       if(kk==='festa'){o.dubbi=o.dubbi.filter(z=>z!=='festa');if(v&&!/bruna/i.test(v))o.imputa=false;}if(kk==='categoria')o.dubbi=o.dubbi.filter(z=>z!=='categoria');if(['numero','importo','imponibile','iva','doc','soggetto','data'].includes(kk))o.dubbi=o.dubbi.filter(z=>z!=='controlla');
       if(kk==='salva')r.classList.toggle('off',!v);else if(kk!=='imputa'&&kk!=='collega'&&kk!=='descrizione'&&kk!=='piva')tabellaImport();}));
-    r.querySelector('.imp18m').addEventListener('click',()=>{o.__apri=!o.__apri;tabellaImport();});
+    bindProdSocio(r,o);r.querySelector('.imp18m').addEventListener('click',()=>{o.__apri=!o.__apri;tabellaImport();});
     r.querySelectorAll('[data-ed]').forEach(b=>b.addEventListener('click',()=>{o.edizione=+b.dataset.ed;o.dubbi=o.dubbi.filter(z=>z!=='edizione');tabellaImport();}));
     r.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{o.categoria=b.dataset.cat;o.dubbi=o.dubbi.filter(z=>z!=='categoria');tabellaImport();}));
     LI.appendChild(r);});
@@ -142,7 +142,7 @@ async function salvaImport(){const rows=IMP18.rows.filter(o=>o.salva);if(!rows.l
   for(const o of rows){try{const file=o.__file?await carica(o.__file,'v-fatt'):null;const g=isNota(o.doc)?trovaOrig(o.storno,rows):null;
     const d={doc:o.doc,tipo:o.doc==='PAS'?'Costo':'Ricavo',numero:o.numero||'',data:o.data||'',soggetto:o.soggetto||'',piva:o.piva||'',codcli:o.codcli||'',indirizzo:o.indirizzo||'',descrizione:o.descrizione||'',nota:o.descrizione||'',
       imponibile:o.imponibile,iva:o.iva,aliquota:o.aliquota||null,natura:o.natura||'',importo:o.importo,scadenza:o.scadenza||'',pagamento:o.pagamento||'',banca:o.banca||'',storno:o.storno||'',
-      edizione:+o.edizione||null,festa:o.festa||'',categoria:o.categoria,imputa:!!o.imputa&&isBruna(o),pagata:'No',voce:o.categoria==='Donazione'?'Donazioni':o.categoria==='Sponsor'?'Sponsor':'',letto:o.ai?'assistente':(o.__come||'pdf'),file,
+      edizione:+o.edizione||null,festa:o.festa||'',socio:o.socio||'',prodotti:(o.prodotti||[]).length===1?[{p:o.prodotti[0].p,imp:valDoc(o)}]:(o.prodotti||[]),categoria:o.categoria,imputa:!!o.imputa&&isBruna(o),pagata:'No',voce:o.categoria==='Donazione'?'Donazioni':o.categoria==='Sponsor'?'Sponsor':'',letto:o.ai?'assistente':(o.__come||'pdf'),file,
       storico:[{quando:new Date().toISOString(),chi:CTX.user.id,cambi:[['Documento','','Caricato da '+(o.__nome||'file')]]}]};
     if(g&&g.id)d.orig_id=g.id;
     if(o.collega)d.rif=await collegaLista(o,d,avv);if(d.rif)link++;
@@ -153,9 +153,9 @@ async function salvaImport(){const rows=IMP18.rows.filter(o=>o.salva);if(!rows.l
   F.innerHTML='';const B=IMP18.ov.querySelector('.imp18b');B.innerHTML='';B.appendChild(assist18('Fatto: ho salvato <b>'+ok+(ok===1?' documento':' documenti')+'</b> e '+(link===1?'ne ho collegato 1':'ne ho collegati '+link)+' a sponsor, donatori o fornitori. Li trovi nella sezione Fatture, divisi per tipo.'));B.insertAdjacentHTML('beforeend',''+(avv.length?'<div class="ev14crit"><b>Da sistemare</b>'+avv.map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>':''));
   bottoni(F,[['Carica altri documenti',()=>passoScelta()],['Chiudi',()=>IMP18.chiudi(),true]]);}
 async function collegaLista(o,d,avv){const y=+o.edizione;
-  if(o.categoria==='Sponsor'&&(y===2026||y===2027)){const voce=y===2026?'v-sp26':'v-sp27';const r=spDi(voce,o.soggetto,o.piva);if(r)return {voce,id:r.id};
+  if(o.categoria==='Sponsor'&&(y===2026||y===2027)){const voce=y===2026?'v-sp26':'v-sp27';const r=spDi(voce,o.soggetto,o.piva);if(r){if(o.socio&&!r.dati.socio&&CTX.canEdit(voce))await CTX.sb.from('voci_dati').update({dati:Object.assign({},r.dati,{socio:o.socio})}).eq('id',r.id);return {voce,id:r.id};}
     if(!CTX.canEdit(voce)){avv.push(o.soggetto+': non ho il permesso per creare lo sponsor '+y+'.');return null;}
-    const dd=y===2026?{nome:o.soggetto,piva:o.piva,importo:+o.imponibile||+o.importo||0,conferma:'Non ancora contattato',pacchetto:o.descrizione?String(o.descrizione).slice(0,80):'',nota:'Creato dalla fattura '+o.numero}:{nome:o.soggetto,piva:o.piva,ragione:o.soggetto,indirizzo:o.indirizzo,importo:+o.imponibile||0,stato:'Confermato',nota:'Creato dalla fattura '+o.numero};
+    const dd=y===2026?{nome:o.soggetto,piva:o.piva,importo:+o.imponibile||+o.importo||0,conferma:'Non ancora contattato',socio:o.socio||'',indirizzo:o.indirizzo||'',pagamento:o.pagamento||'',banca:o.banca||'',pacchetto:o.descrizione?String(o.descrizione).slice(0,80):'',nota:'Creato dalla fattura '+o.numero}:{nome:o.soggetto,piva:o.piva,ragione:o.soggetto,indirizzo:o.indirizzo,socio:o.socio||'',pagamento:o.pagamento||'',banca:o.banca||'',importo:+o.imponibile||0,stato:'Confermato',nota:'Creato dalla fattura '+o.numero};
     const {data,error}=await CTX.sb.from('voci_dati').insert({voce,dati:dd}).select().single();if(error){avv.push(o.soggetto+': '+error.message);return null;}return {voce,id:data.id,nuovo:true};}
   if(o.categoria==='Donazione')return {voce:'v-don',chiave:o.piva||nrm18(o.soggetto)};
   if(o.categoria==='Fornitore'){if(y===2027){const f=for27Di(o.soggetto,o.piva);return f?{voce:'v-for27',id:f.id}:null;}const f=forn26Di(o.soggetto);return f?{voce:'s-for',nome:f.n}:null;}
@@ -163,7 +163,8 @@ async function collegaLista(o,d,avv){const y=+o.edizione;
 
 // --- pagina Fatture: 5 gruppi (più i fornitori), edizione, PDF e stampa ---
 let FAT18='FVL',FED18='tutte';
-const filtraDocs=k=>docsV().filter(r=>docDi(r.dati)===k&&(FED18==='tutte'||String(r.dati.edizione||'')===FED18));
+let FQ18='',FP18='';
+const filtraDocs=k=>docsV().filter(r=>{const d=r.dati;if(docDi(d)!==k)return false;if(FED18!=='tutte'&&String(d.edizione||'')!==FED18)return false;if(FP18&&!(d.prodotti||[]).some(x=>x.p===FP18))return false;if(FQ18){const q=FQ18.toLowerCase();if(!((d.soggetto||'')+' '+(d.numero||'')+' '+(d.socio||'')+' '+(d.piva||'')+' '+(d.descrizione||'')).toLowerCase().includes(q))return false;}return true;});
 const noteDi=r=>docsV().filter(x=>isNota(docDi(x.dati))&&(x.dati.orig_id===r.id||(x.dati.storno&&x.dati.storno===r.dati.numero)));
 const origDi=r=>{const d=r.dati;return docsV().find(x=>x.id===d.orig_id||(d.storno&&x.dati.numero===d.storno));};
 async function urlFile(f,scarica){const {data,error}=await CTX.sb.storage.from('documenti').createSignedUrl(f.path,900,scarica?{download:f.nome||true}:undefined);if(error||!data){stEl.textContent='Non riesco ad aprire il file'+(error?': '+error.message:'');return null;}return data.signedUrl;}
@@ -171,7 +172,7 @@ async function scaricaFile(f){const u=await urlFile(f,true);if(u){const a=docume
 async function stampaFile(f){const w=window.open('','_blank');const u=await urlFile(f,false);if(!u){if(w)w.close();return;}if(w){w.location.href=u;setTimeout(()=>{try{w.focus();w.print();}catch(e){}},1500);}else location.href=u;}
 function righeDoc(d){return [['Tipo',DOC1[docDi(d)]],['Numero',esc(d.numero||'—')],d.data?['Data',fmtD(d.data)+' '+String(d.data).slice(0,4)]:null,[docDi(d)==='PAS'?'Fornitore':'Cliente',esc(d.soggetto||'—')],d.piva?['Partita IVA / Cod. fiscale',esc(d.piva)]:null,d.indirizzo?['Indirizzo',esc(d.indirizzo)]:null,
   d.imponibile!=null&&d.imponibile!==''?['Imponibile',eur(+d.imponibile)]:null,d.iva!=null&&d.iva!==''?['IVA'+(d.aliquota?' '+d.aliquota+'%':''),eur(+d.iva)]:null,['Totale','<b>'+eur(+d.importo||0)+'</b>'],d.natura?['Regime',esc(d.natura)]:null,d.scadenza?['Scadenza',fmtD(d.scadenza)]:null,d.pagamento?['Pagamento',esc(d.pagamento)+(d.banca?' · '+esc(d.banca):'')]:null,
-  ['Edizione',d.edizione?'Bruna '+d.edizione:'da indicare'],d.festa&&!/bruna/i.test(d.festa)?['Festa','<span class="neg">'+esc(d.festa)+' · non Bruna</span>']:null,['È',esc(d.categoria||(d.tipo==='Costo'?'Fornitore':'—'))],['Bilancio',d.imputa?'imputata al '+esc(nomeBilancio(d.edizione)):'non imputata'],d.descrizione||d.nota?['Descrizione',esc(d.descrizione||d.nota)]:null];}
+  ['Edizione',d.edizione?'Bruna '+d.edizione:'da indicare'],d.festa&&!/bruna/i.test(d.festa)?['Festa','<span class="neg">'+esc(d.festa)+' · non Bruna</span>']:null,['È',esc(d.categoria||(d.tipo==='Costo'?'Fornitore':'—'))],(d.prodotti||[]).length?[d.tipo==='Costo'?'Costo di':'Prodotto',esc(d.prodotti.map(x=>x.p+(d.prodotti.length>1?' ('+eur(+x.imp||0)+')':'')).join(', '))]:null,d.socio?['Socio che ha fatto lo sponsor',esc(d.socio)]:null,['Bilancio',d.imputa?'imputata al '+esc(nomeBilancio(d.edizione)):'non imputata'],d.descrizione||d.nota?['Descrizione',esc(d.descrizione||d.nota)]:null];}
 function cardDoc(r){const d=r.dati;const k=docDi(d);const N=noteDi(r);const O=isNota(k)?origDi(r):null;const can=CTX.canEdit('v-fatt');const netto=(+d.importo||0)+N.reduce((a,x)=>a+(+x.dati.importo||0),0);
   return {key:r.id,n:d.soggetto||'Senza nome',t:eur(+d.importo||0),c:d.festa&&!/bruna/i.test(d.festa)?'#94A3C0':DOC18[k][1],ic:k==='RIC'?'R':k,k:(d.numero||'')+(d.data?' · '+fmtD(d.data):''),tg:d.festa&&!/bruna/i.test(d.festa)?'Non Bruna':N.length?'Stornata':d.edizione?'Bruna '+d.edizione:'',
     s:[d.categoria,d.imputa?'nel bilancio':'',isNota(k)&&d.storno?'storna '+d.storno:''].filter(Boolean).join(' · '),lab:DOC1[k]+' '+(d.numero||'').replace(/^Ricevuta\s*/,''),
@@ -185,12 +186,13 @@ function cardDoc(r){const d=r.dati;const k=docDi(d);const N=noteDi(r);const O=is
     sideLab:'Dove si trova',side:box=>{box.innerHTML=righe([['Lista',d.rif?(d.rif.voce==='v-don'?'Donatori':d.rif.voce==='v-sp26'?'Sponsor 2026':d.rif.voce==='v-sp27'?'Sponsor 2027':d.rif.voce==='v-for27'?'Fornitori 2027':'Fornitori 2026'):'non collegata'],['Stato',d.pagata==='Sì'?(d.tipo==='Ricavo'?'incassata':'pagata'):(d.tipo==='Ricavo'?'da incassare':'da pagare')]]);
       const go1=d.rif&&{'v-don':'v-don','v-sp26':'v-sp26','v-sp27':'v-sp27','v-for27':'v-for27','s-for':'s-for'}[d.rif.voce];if(go1&&canOpen(go1)){const b=h('<button type="button" class="lnk2">Apri la scheda ›</button>');b.addEventListener('click',()=>go(go1));box.appendChild(b);}}};}
 async function salvaDoc(r,o,cosa){const d=Object.assign({},r.dati,o);d.storico=(r.dati.storico||[]).concat([{quando:new Date().toISOString(),chi:CTX.user.id,cambi:[[cosa,'','']]}]).slice(-30);const {error}=await CTX.sb.from('voci_dati').update({dati:d,aggiornato:new Date().toISOString()}).eq('id',r.id);if(error){stEl.textContent='Errore: '+error.message;return;}await loadVD();rerender();stEl.textContent=cosa+'.';}
-function modDoc(r){const d=r.dati;const f=[['numero','Numero','text'],['data','Data','date'],['soggetto','Cliente o fornitore','text'],['piva','Partita IVA / Cod. fiscale','text'],['imponibile','Imponibile (€)','number'],['iva','IVA (€)','number'],['importo','Totale (€)','number'],['storno','Storna la fattura (solo note di credito)','text'],['festa','Festa','text'],['descrizione','Descrizione','text']];
+function modDoc(r){const d=r.dati;const f=[['numero','Numero','text'],['data','Data','date'],['soggetto','Cliente o fornitore','text'],['piva','Partita IVA / Cod. fiscale','text'],['imponibile','Imponibile (€)','number'],['iva','IVA (€)','number'],['importo','Totale (€)','number'],['storno','Storna la fattura (solo note di credito)','text'],['festa','Festa','text'],['socio','Socio che ha fatto lo sponsor','text'],['descrizione','Descrizione','text']];
   sheet('Modifica '+(d.numero||'documento'),'<div class="ctl"><label for="md_doc">Tipo</label><select id="md_doc">'+DOCK.map(k=>'<option value="'+k+'"'+(k===docDi(d)?' selected':'')+'>'+DOC18[k][0]+'</option>').join('')+'</select></div>'+
     '<div class="ctl"><label for="md_ed">Edizione</label><select id="md_ed">'+anniBilancio().map(([y,l])=>'<option value="'+y+'"'+(+d.edizione===y?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select></div>'+
     '<div class="ctl"><label for="md_cat">È</label><select id="md_cat">'+CAT18.map(c=>'<option'+(d.categoria===c?' selected':'')+'>'+c+'</option>').join('')+'</select></div>'+
+    '<div class="ctl"><label for="md_pp">'+(d.tipo==='Costo'?'È un costo di':'Prodotto venduto')+'</label><select id="md_pp"><option value="">Nessuno</option>'+prodottiEd(d.edizione||2027).filter(p=>d.tipo==='Costo'||p.vende).map(p=>'<option'+(((d.prodotti||[])[0]||{}).p===p.nome?' selected':'')+'>'+esc(p.nome)+'</option>').join('')+'</select></div>'+
     f.map(([k,l,t])=>'<div class="ctl"><label for="md_'+k+'">'+l+'</label><input type="'+t+'" step="0.01" id="md_'+k+'" value="'+esc(d[k]!=null?d[k]:'')+'"></div>').join(''),'Salva',async(x)=>{
-    const o={doc:x.querySelector('#md_doc').value,edizione:+x.querySelector('#md_ed').value,categoria:x.querySelector('#md_cat').value};f.forEach(([k,,t])=>{const v=x.querySelector('#md_'+k).value;o[k]=t==='number'?(v===''?null:+v):v;});o.tipo=o.doc==='PAS'?'Costo':'Ricavo';o.nota=o.descrizione;if(o.festa&&!/bruna/i.test(o.festa))o.imputa=false;
+    const o={doc:x.querySelector('#md_doc').value,edizione:+x.querySelector('#md_ed').value,categoria:x.querySelector('#md_cat').value};f.forEach(([k,,t])=>{const v=x.querySelector('#md_'+k).value;o[k]=t==='number'?(v===''?null:+v):v;});o.tipo=o.doc==='PAS'?'Costo':'Ricavo';o.nota=o.descrizione;const pp=x.querySelector('#md_pp').value;o.prodotti=pp?[{p:pp,imp:valDoc(Object.assign({},d,o))}]:[];if(o.festa&&!/bruna/i.test(o.festa))o.imputa=false;
     await salvaDoc(r,o,'Modificata');});}
 // elenco stampabile e PDF del gruppo
 function tabellaGruppo(k){const L=filtraDocs(k).slice().sort((a,b)=>String(a.dati.data).localeCompare(String(b.dati.data)));const tot=L.reduce((a,r)=>a+(+r.dati.importo||0),0);
@@ -215,7 +217,10 @@ conVista('v-fatt',function(){const id='v-fatt',el=document.getElementById(id);co
     actions:[can?['Carica i documenti (anche tanti insieme)',()=>apriImport(),true]:null,['Scarica PDF dell’elenco',()=>pdfGruppo(FAT18)],['Stampa l’elenco',()=>stampaGruppo(FAT18)],canOpen('v-don')?['Donatori',()=>go('v-don')]:null].filter(Boolean),
     vuoto:'Nessun documento in «'+DOC18[FAT18][0]+'»'+(FED18!=='tutte'?' per la Bruna '+FED18:'')+'.',cards:A.map(cardDoc)});
   const seg=el.querySelector('.c12seg');const ed=h('<div class="seg wrap b26seg fat18ed">'+[['tutte','Tutte le edizioni'],['2026','Bruna 2026'],['2027','Bruna 2027']].map(([k,l])=>'<button type="button" data-v="'+k+'" aria-pressed="'+(k===FED18)+'">'+l+'</button>').join('')+'</div>');
-  ed.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{FED18=b.dataset.v;CSEL[id]=0;CSELK[id]=null;R[id]();addBack(id);}));if(seg)seg.before(ed);},_fatt12);
+  ed.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{FED18=b.dataset.v;CSEL[id]=0;CSELK[id]=null;R[id]();addBack(id);}));if(seg)seg.before(ed);
+  const prs=[...new Set(docsV().flatMap(r=>(r.dati.prodotti||[]).map(x=>x.p)))].sort();
+  const fq=h('<div class="ev14flt fat18q"><div class="ev14q"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="fat18q" placeholder="Cerca per sponsor, cliente, numero o socio" aria-label="Cerca un documento" value="'+esc(FQ18)+'"></div>'+(prs.length?'<div class="ev14sel"><label>Prodotto<select id="fat18p"><option value="">Tutti</option>'+prs.map(x=>'<option'+(x===FP18?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select></label></div>':'')+'</div>');
+  const ri=()=>{CSEL[id]=0;CSELK[id]=null;R[id]();addBack(id);};let tm;fq.querySelector('#fat18q').addEventListener('input',ev=>{clearTimeout(tm);tm=setTimeout(()=>{FQ18=ev.target.value;ri();const i=document.getElementById('fat18q');if(i){i.focus();const n=i.value.length;try{i.setSelectionRange(n,n);}catch(x){}}},350);});const sp=fq.querySelector('#fat18p');if(sp)sp.addEventListener('change',()=>{FP18=sp.value;ri();});ed.after(fq);},_fatt12);
 
 // --- Donatori: lista a parte, con i documenti di ognuno ---
 PAGEX['v-don']='Donazioni e liberalità';ensureSec('v-don');ECO_G.find(g=>g.k==='fatt').p.push(['v-don','Donatori']);ECO_ID['v-don']=ECO_G.find(g=>g.k==='fatt');
