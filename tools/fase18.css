@@ -1,0 +1,43 @@
+/* Fatture: caricamento multiplo, tabella di controllo, documenti nelle card */
+.imp18{position:fixed;inset:0;z-index:300;background:rgba(15,23,42,.45);display:flex;align-items:stretch;justify-content:center;padding:18px}
+.imp18in{background:#F4F5F8;border-radius:24px;width:min(1100px,100%);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.imp18h{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 20px 8px;background:#fff}
+.imp18h h2{margin:2px 0 0;font-size:24px}
+.imp18x{font:inherit;font-size:26px;width:48px;height:48px;border-radius:50%;border:0;background:#16161D;color:#fff;cursor:pointer}
+.imp18b{flex:1;overflow:auto;padding:14px 20px}
+.imp18f{display:flex;flex-wrap:wrap;gap:8px;padding:12px 20px;background:#fff;border-top:1px solid #E6E8EF}
+.imp18f .c12b{margin:0}
+.imp18drop{min-height:220px}
+.imp18prog{position:relative;background:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.imp18prog i{position:absolute;left:0;bottom:0;height:6px;width:var(--w);background:var(--navy);transition:width .3s}
+.imp18sum{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.imp18sum .chip2{border-left:4px solid var(--c)}
+.imp18list{display:flex;flex-direction:column;gap:12px}
+.imp18r{position:relative;background:#fff;border-radius:18px;padding:12px 14px 12px 18px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.imp18r::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+.imp18r.off{opacity:.5}
+.imp18rh{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.imp18rh b{font-size:17px}
+.imp18rh em{font-style:normal;font-size:12.5px;color:var(--muted);margin-left:auto}
+.imp18g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.imp18g label,.imp18sp>div{display:flex;flex-direction:column;gap:3px;font-size:13px;font-weight:700;color:var(--muted)}
+.imp18g .w2{grid-column:span 4}
+.imp18g input,.imp18g select,.imp18sp input{font:inherit;font-size:15.5px;color:#16161D;border:1px solid #DDE2EC;border-radius:10px;min-height:42px;padding:0 10px;background:#fff;width:100%;min-width:0}
+.imp18sp{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;background:#F6F7FB;border-radius:14px;padding:10px 12px}
+.imp18sp .seg button{min-height:40px}
+.imp18sp .ck{font-size:15px;font-weight:700;color:#16161D;display:flex;gap:8px;align-items:center}
+.imp18av{display:flex;flex-direction:column;gap:3px;font-size:14px}
+.imp18av .ko{color:#B3261E}.imp18av .wa{color:#8A5A00}.imp18av .ok{color:#1E7F55}.imp18av .ai{color:#4B3BA8}
+.fat18ed{margin-bottom:6px}
+.fat18box{border-top:1px solid #EEF0F5;margin-top:8px;padding-top:8px;display:flex;flex-direction:column;gap:6px}
+.fat18box .lab{margin:0}
+.fat18docs{display:flex;flex-direction:column;gap:6px}
+.fat18d{position:relative;display:flex;align-items:center;gap:10px;background:#F8F9FC;border-radius:12px;padding:8px 10px 8px 14px;overflow:hidden}
+.fat18d::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.fat18d>span{flex:1;display:flex;flex-direction:column;min-width:0}
+.fat18d small{color:var(--muted);font-size:12.5px}
+.fat18bil{margin-top:14px}
+@media (max-width:760px){.imp18{padding:0}.imp18in{border-radius:0}.imp18g{grid-template-columns:1fr 1fr}.imp18g .w2{grid-column:span 2}.imp18b{padding:12px}.imp18rh em{margin-left:0;flex-basis:100%}}
+.imp18sp label.ck{flex-direction:row;display:flex;align-items:center;gap:8px;width:auto;font-size:15px;color:#16161D;margin:0}
+.imp18sp label.ck input,.imp18rh label.ck input{width:22px;height:22px;flex:none;margin:0}
+.imp18rh label.ck{display:flex;align-items:center;gap:6px;font-weight:700}

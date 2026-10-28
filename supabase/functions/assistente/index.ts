@@ -159,6 +159,11 @@ Deno.serve(async (req) => {
     d = { massimo: 500, testo: "Per l'evento indicato servono questi servizi. Hai SOLO i fornitori presenti nell'archivio dell'Associazione, con i servizi e lo storico che risultano. " +
       "In cinque o sei frasi suggerisci a chi chiedere il preventivo per ogni servizio, quali fornitori potrebbero coprire più servizi insieme e quali servizi restano senza fornitore. " +
       "Non inventare fornitori, prezzi o recensioni; se un dato manca dillo. Chiudi ricordando che la scelta spetta alle persone autorizzate.\n\n" + JSON.stringify({ evento: body.evento, esigenze: body.esigenze, candidati: body.candidati }).slice(0, 8000) };
+  } else if (body.tipo === "documento") {
+    d = { massimo: 200, json: true, testo: "Questo è un documento contabile emesso o ricevuto dall'Associazione Maria SS. della Bruna di Matera (fattura, nota di credito o ricevuta), in JSON. " +
+      'Rispondi SOLO con un oggetto JSON {"edizione": anno della festa a cui si riferisce (numero) oppure null, "categoria": "Sponsor" oppure "Donazione" oppure "Fornitore" oppure "Altro ricavo", "festa": nome della festa oppure null}. ' +
+      "La Festa della Bruna è il 2 luglio: se nella descrizione c'è un anno usa quello; i documenti dopo agosto di solito riguardano l'edizione dell'anno dopo. " +
+      "Le erogazioni liberali e i contributi fuori campo IVA sono Donazione; le sponsorizzazioni sono Sponsor. Se non si capisce metti null. Non inventare.\n\n" + String(body.testo || "").slice(0, 3000) };
   } else if (body.tipo === "bozza") {
     d = { massimo: 600, testo: "Prepara una bozza breve e cortese in italiano per questo scopo, firmata «Associazione Maria SS. della Bruna». Non inventare cifre o impegni.\n\n" +
       String(body.scopo || "").slice(0, 3000) };
